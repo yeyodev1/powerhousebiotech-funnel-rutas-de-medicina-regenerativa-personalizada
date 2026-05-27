@@ -110,7 +110,7 @@ ${califica ? '✅ CALIFICA — Ingeniería completa' : '❌ NO CALIFICA — Pres
     notas: notasConTiempo,
     nota: notasConTiempo,
     tags: etiquetas.join(','),
-    pageDuration,
+    pageDuration: String(pageDuration),
     event_id: scheduleEventId,
     ...getStoredFbParams(),
   }
