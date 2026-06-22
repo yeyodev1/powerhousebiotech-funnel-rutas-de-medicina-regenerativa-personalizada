@@ -17,7 +17,7 @@ const touched = ref(false)
 
 const form = ref({
   tipo: '',
-  alcance: '',
+  volumen: '',
   presupuesto: '',
   reto: '',
   consent: false,
@@ -27,13 +27,13 @@ const wordCount = (s: string) => s.trim().split(/\s+/).filter(Boolean).length
 
 const isValid = () =>
   !!form.value.tipo &&
-  !!form.value.alcance &&
+  !!form.value.volumen &&
   !!form.value.presupuesto &&
   wordCount(form.value.reto) >= 10 &&
   form.value.consent
 
 const qualifies = () => {
-  if (form.value.presupuesto === 'menos1200') return false
+  if (form.value.presupuesto === 'menos3000') return false
   return true
 }
 
@@ -47,70 +47,70 @@ const handleSubmit = async () => {
   const scheduleEventId = generateEventId('schedule')
 
   const tipoLabel: Record<string, string> = {
-    fachada: 'Fachada o lobby corporativo',
-    division: 'Divisiones internas de vidrio templado',
-    cubierta: 'Cubierta de vidrio de alto impacto',
-    louver: 'Puertas Louver',
-    pasamanos: 'Pasamanos modernos',
-    otro: 'Otro',
+    importacion: 'Importación de materia prima / insumos',
+    maquinaria: 'Importación de maquinaria / equipos',
+    exportacion: 'Exportación',
+    ambos: 'Ambos (importación y exportación)',
   }
-  const alcanceLabel: Record<string, string> = {
-    consulta: 'Solo una consulta técnica inicial',
-    medicion: 'Ya tengo planos — necesito medición y cotización',
-    ejecutar: 'Ejecutar la obra completa',
+  const volumenLabel: Record<string, string> = {
+    inicio: 'Menos de 1 contenedor al mes',
+    pequeno: '1–5 contenedores al mes',
+    medio: '6–20 contenedores al mes',
+    alto: 'Más de 20 contenedores al mes',
   }
   const presupuestoLabel: Record<string, string> = {
-    menos1200: 'Menos de $1,200 USD',
-    mas1200: '$1,200–$3,000 USD',
-    mas3000: '$3,000–$8,000 USD',
-    mas8000: '$8,000–$15,000 USD',
-    mas15000: 'Más de $15,000 USD',
+    menos3000: 'Menos de $3,000 USD/mes',
+    mas3000: '$3,000–$10,000 USD/mes',
+    mas10000: '$10,000–$30,000 USD/mes',
+    mas30000: 'Más de $30,000 USD/mes',
   }
 
   const etiquetas = [
-    'funnel-aluvicopp',
+    'funnel-quicksolutions',
     'step-2-cualificacion',
-    califica ? 'califica-alu' : 'no-califica-alu',
+    califica ? 'califica-qs' : 'no-califica-qs',
     `tipo-${form.value.tipo}`,
-    `alcance-${form.value.alcance}`,
+    `volumen-${form.value.volumen}`,
     `budget-${form.value.presupuesto}`,
   ]
 
   const notas = `
 ━━━━━━━━━━━━━━━━━━━━━━━━
-ALUVICOPP — Cualificación Técnica
+QUICK SOLUTIONS — Cualificación
 ━━━━━━━━━━━━━━━━━━━━━━━━
 👤 ${contact.nombre} ${contact.apellido}
 📧 ${contact.email}
 📱 ${contact.telefono}
 ━━━━━━━━━━━━━━━━━━━━━━━━
-🏗 Tipo: ${tipoLabel[form.value.tipo] ?? form.value.tipo}
-📐 Alcance: ${alcanceLabel[form.value.alcance] ?? form.value.alcance}
+📦 Tipo: ${tipoLabel[form.value.tipo] ?? form.value.tipo}
+📊 Volumen: ${volumenLabel[form.value.volumen] ?? form.value.volumen}
 💰 Presupuesto: ${presupuestoLabel[form.value.presupuesto] ?? form.value.presupuesto}
-💡 Reto técnico: ${form.value.reto}
+💡 Reto: ${form.value.reto}
 ━━━━━━━━━━━━━━━━━━━━━━━━
-${califica ? '✅ CALIFICA — Ingeniería completa' : '❌ NO CALIFICA — Presupuesto insuficiente'}
+${califica ? '✅ CALIFICA' : '❌ NO CALIFICA — Presupuesto insuficiente'}
   `.trim()
 
   const pageEntry = Number(sessionStorage.getItem('alu_page_entry')) || Date.now()
   const pageDuration = Math.floor((Date.now() - pageEntry) / 1000)
   const notasConTiempo = `${notas}\n⏳ Tiempo total en página: ${Math.floor(pageDuration / 60)}m ${pageDuration % 60}s`
 
-  const payload = {
+  const etiquetasStr = etiquetas.join(', ')
+  const payload: Record<string, string> = {
     nombre: contact.nombre,
     apellido: contact.apellido,
     email: contact.email,
     telefono: contact.telefono,
     phone: contact.telefono,
+    paso: '2-cualificacion',
     tipo: form.value.tipo,
-    alcance: form.value.alcance,
+    volumen: form.value.volumen,
     presupuesto: form.value.presupuesto,
     reto: form.value.reto,
-    califica: String(califica),
-    etiquetas: etiquetas.join(','),
+    cualifica: califica ? 'true' : 'false',
+    etiquetas: etiquetasStr,
+    tags: etiquetasStr,
     notas: notasConTiempo,
     nota: notasConTiempo,
-    tags: etiquetas.join(','),
     pageDuration: String(pageDuration),
     event_id: scheduleEventId,
     ...getStoredFbParams(),
@@ -149,7 +149,7 @@ onUnmounted(() => document.removeEventListener('keydown', onKeydown))
 watch(() => props.open, (v) => {
   if (v) {
     touched.value = false
-    form.value = { tipo: '', alcance: '', presupuesto: '', reto: '', consent: false }
+    form.value = { tipo: '', volumen: '', presupuesto: '', reto: '', consent: false }
   }
   document.body.style.overflow = v ? 'hidden' : ''
 })
@@ -168,31 +168,29 @@ watch(() => props.open, (v) => {
 
           <div class="cal-header">
             <div class="cal-header-icon" aria-hidden="true">
-              <i class="fa-solid fa-building"></i>
+              <i class="fa-solid fa-ship"></i>
             </div>
             <h2 id="cal-title" class="cal-title">
               Antes de agendar, cuéntanos sobre
-              <span class="cal-accent">tu estructura</span>
+              <span class="cal-accent">tu operación</span>
             </h2>
-            <p class="cal-subtitle">4 preguntas técnicas para preparar tu diagnóstico — 60 segundos.</p>
+            <p class="cal-subtitle">4 preguntas para preparar tu auditoría — 60 segundos.</p>
           </div>
 
           <form class="cal-form" @submit.prevent="handleSubmit" novalidate>
 
-            <!-- Q1 — Tipo de estructura -->
+            <!-- Q1 — Tipo -->
             <fieldset class="cal-fieldset" :class="{ 'has-error': touched && !form.tipo }">
               <legend class="cal-legend">
                 <span class="cal-q-num">01</span>
-                ¿Qué tipo de estructura necesitas?
+                ¿Qué tipo de operaciones realizas?
               </legend>
               <div class="cal-options">
                 <label v-for="opt in [
-                  { value: 'fachada', label: 'Fachada o lobby corporativo' },
-                  { value: 'division', label: 'Divisiones internas de vidrio templado' },
-                  { value: 'cubierta', label: 'Cubierta de vidrio de alto impacto' },
-                  { value: 'louver', label: 'Puertas Louver' },
-                  { value: 'pasamanos', label: 'Pasamanos modernos' },
-                  { value: 'otro', label: 'Otro tipo de estructura' },
+                  { value: 'importacion', label: 'Importación de materia prima / insumos' },
+                  { value: 'maquinaria', label: 'Importación de maquinaria / equipos' },
+                  { value: 'exportacion', label: 'Exportación' },
+                  { value: 'ambos', label: 'Ambos (importación y exportación)' },
                 ]" :key="opt.value" class="cal-option" :class="{ selected: form.tipo === opt.value }">
                   <input type="radio" :value="opt.value" v-model="form.tipo" hidden />
                   <span class="cal-option__radio" aria-hidden="true" />
@@ -202,44 +200,44 @@ watch(() => props.open, (v) => {
               <span v-if="touched && !form.tipo" class="cal-error">Selecciona una opción</span>
             </fieldset>
 
-            <!-- Q2 — Alcance -->
-            <fieldset class="cal-fieldset" :class="{ 'has-error': touched && !form.alcance }">
+            <!-- Q2 — Volumen -->
+            <fieldset class="cal-fieldset" :class="{ 'has-error': touched && !form.volumen }">
               <legend class="cal-legend">
                 <span class="cal-q-num">02</span>
-                ¿Cuál es el alcance de tu proyecto?
+                ¿Cuál es tu volumen mensual aproximado?
               </legend>
               <div class="cal-options">
                 <label v-for="opt in [
-                  { value: 'consulta', label: 'Solo una consulta técnica inicial' },
-                  { value: 'medicion', label: 'Ya tengo planos — necesito medición y cotización' },
-                  { value: 'ejecutar', label: 'Ejecutar la obra completa (diseño + instalación)' },
-                ]" :key="opt.value" class="cal-option" :class="{ selected: form.alcance === opt.value }">
-                  <input type="radio" :value="opt.value" v-model="form.alcance" hidden />
+                  { value: 'inicio', label: 'Menos de 1 contenedor al mes' },
+                  { value: 'pequeno', label: '1–5 contenedores al mes' },
+                  { value: 'medio', label: '6–20 contenedores al mes' },
+                  { value: 'alto', label: 'Más de 20 contenedores al mes' },
+                ]" :key="opt.value" class="cal-option" :class="{ selected: form.volumen === opt.value }">
+                  <input type="radio" :value="opt.value" v-model="form.volumen" hidden />
                   <span class="cal-option__radio" aria-hidden="true" />
                   <span class="cal-option__label">{{ opt.label }}</span>
                 </label>
               </div>
-              <span v-if="touched && !form.alcance" class="cal-error">Selecciona una opción</span>
+              <span v-if="touched && !form.volumen" class="cal-error">Selecciona una opción</span>
             </fieldset>
 
-            <!-- Q3 — Presupuesto -->
-            <fieldset class="cal-fieldset cal-fieldset--budget" :class="{ 'has-error': touched && !form.presupuesto, 'has-investment': form.presupuesto && form.presupuesto !== 'menos1200' }">
+            <!-- Q3 — Presupuesto logístico -->
+            <fieldset class="cal-fieldset cal-fieldset--budget" :class="{ 'has-error': touched && !form.presupuesto, 'has-investment': form.presupuesto && form.presupuesto !== 'menos3000' }">
               <legend class="cal-legend cal-legend--budget">
                 <span class="cal-q-num cal-q-num--budget">03</span>
-                <span>¿Cuál es tu rango de inversión estimado?</span>
+                <span>¿Cuál es tu presupuesto mensual en logística internacional?</span>
                 <i class="fa-solid fa-chart-line cal-legend-chart" aria-hidden="true"></i>
               </legend>
               <div class="cal-options">
-                <label v-for="(opt, i) in [
-                  { value: 'mas15000', label: 'Más de $15,000 USD', premium: true },
-                  { value: 'mas8000', label: '$8,000 – $15,000 USD', premium: true },
-                  { value: 'mas3000', label: '$3,000 – $8,000 USD' },
-                  { value: 'mas1200', label: '$1,200 – $3,000 USD' },
-                  { value: 'menos1200', label: 'Menos de $1,200 USD' },
+                <label v-for="opt in [
+                  { value: 'mas30000', label: 'Más de $30,000 USD/mes', premium: true },
+                  { value: 'mas10000', label: '$10,000 – $30,000 USD/mes', premium: true },
+                  { value: 'mas3000', label: '$3,000 – $10,000 USD/mes' },
+                  { value: 'menos3000', label: 'Menos de $3,000 USD/mes' },
                 ]" :key="opt.value" class="cal-option" :class="{
                   selected: form.presupuesto === opt.value,
                   'cal-option--premium': opt.premium && form.presupuesto === opt.value,
-                  'cal-option--low': opt.value === 'menos1200' && form.presupuesto === 'menos1200',
+                  'cal-option--low': opt.value === 'menos3000' && form.presupuesto === 'menos3000',
                   'cal-option--premium-hover': opt.premium && form.presupuesto !== opt.value,
                 }">
                   <input type="radio" :value="opt.value" v-model="form.presupuesto" hidden />
@@ -248,19 +246,19 @@ watch(() => props.open, (v) => {
                   <span class="cal-option__label">{{ opt.label }}</span>
                 </label>
               </div>
-              <span v-if="touched && !form.presupuesto" class="cal-error">Selecciona un rango de inversión</span>
+              <span v-if="touched && !form.presupuesto" class="cal-error">Selecciona un rango</span>
             </fieldset>
 
-            <!-- Q4 — Reto técnico -->
+            <!-- Q4 — Reto -->
             <fieldset class="cal-fieldset" :class="{ 'has-error': touched && wordCount(form.reto) < 10 }">
               <legend class="cal-legend">
                 <span class="cal-q-num">04</span>
-                ¿Qué reto técnico o desafío tiene tu proyecto?
+                ¿Cuál es tu principal desafío logístico o aduanero?
               </legend>
               <textarea
                 v-model="form.reto"
                 class="cal-textarea"
-                placeholder="Ej: Necesito una fachada de vidrio templado para un edificio corporativo de 4 pisos que resista vientos fuertes y mantenga aislación acústica..."
+                placeholder="Ej: Tenemos retenciones frecuentes en aduana por clasificación arancelaria de nuestra materia prima importada desde Asia..."
                 rows="4"
                 aria-describedby="q4-hint"
               ></textarea>
@@ -268,7 +266,7 @@ watch(() => props.open, (v) => {
                 {{ wordCount(form.reto) }}/10 palabras mínimo
               </span>
               <span v-if="touched && wordCount(form.reto) < 10" class="cal-error">
-                Describe tu reto con al menos 10 palabras
+                Describe tu desafío con al menos 10 palabras
               </span>
             </fieldset>
 
@@ -277,7 +275,7 @@ watch(() => props.open, (v) => {
               <input type="checkbox" v-model="form.consent" />
               <span class="cal-consent__box" aria-hidden="true" />
               <span class="cal-consent__text">
-                Acepto que Aluvicopp me contacte para brindarme una sesión de diagnóstico estructural personalizada.
+                Acepto que Quick Solutions me contacte para brindarme una sesión de auditoría logística personalizada.
               </span>
             </label>
             <span v-if="touched && !form.consent" class="cal-error">Debes aceptar para continuar</span>
@@ -586,11 +584,6 @@ watch(() => props.open, (v) => {
     color: #6A7E95;
     line-height: 1.5;
   }
-}
-
-@keyframes gem-shine {
-  0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
-  50% { opacity: 0.6; transform: scale(0.9) rotate(10deg); }
 }
 
 .cal-submit {

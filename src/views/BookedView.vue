@@ -20,7 +20,7 @@ onMounted(() => {
   const alreadyFired = sessionStorage.getItem('os_complete_fired')
   if (!alreadyFired) {
     ;(window as any).fbq?.('track', 'CompleteRegistration', {
-      content_name: 'diagnostico-agendado',
+      content_name: 'auditoria-agendada',
     })
     sessionStorage.setItem('os_complete_fired', '1')
   }
@@ -30,17 +30,17 @@ const nextSteps = [
   {
     icon: 'fa-solid fa-envelope',
     title: 'Revisa tu email',
-    body: 'Te enviamos la confirmación con todos los detalles de tu sesión de diagnóstico estructural.',
+    body: 'Te enviamos la confirmación con todos los detalles de tu sesión de auditoría logística.',
   },
   {
     icon: 'fa-brands fa-whatsapp',
     title: 'Te contactamos por WhatsApp',
-    body: 'José te escribirá para confirmar la cita y conocer los detalles técnicos de tu proyecto.',
+    body: 'El equipo de Quick Solutions te escribirá para confirmar la cita y conocer los detalles de tu operación.',
   },
   {
-    icon: 'fa-solid fa-building',
-    title: 'Prepara tus planos',
-    body: 'Si tienes planos o medidas del espacio, tenlos a mano para aprovechar al máximo la sesión.',
+    icon: 'fa-solid fa-file-invoice',
+    title: 'Prepara tu documentación',
+    body: 'Si tienes registros de costos logísticos, partidas arancelarias o facturas recientes, tenlos a mano.',
   },
 ]
 </script>
@@ -49,7 +49,7 @@ const nextSteps = [
   <div class="booked">
 
     <header class="booked__topbar">
-      <h2 class="booked__logo-text">ALUVICOPP</h2>
+      <h2 class="booked__logo-text">QUICK SOLUTIONS</h2>
     </header>
 
     <main class="booked__main">
@@ -66,15 +66,15 @@ const nextSteps = [
           </p>
           <h1 class="booked__hero-title">
             <template v-if="contactName">
-              {{ contactName }}, ya tenemos tu diagnóstico agendado
+              {{ contactName }}, ya tenemos tu auditoría agendada
             </template>
             <template v-else>
-              Ya tenemos tu diagnóstico agendado
+              Ya tenemos tu auditoría agendada
             </template>
           </h1>
           <p class="booked__hero-subtitle">
-            Tu sesión de diagnóstico estructural con Aluvicopp está confirmada. Revisa tu correo o
-            WhatsApp para todos los detalles. Si necesitas reagendar, escríbenos.
+            Tu sesión de auditoría logística con Quick Solutions está confirmada. Revisa tu correo
+            o WhatsApp para todos los detalles. Si necesitas reagendar, escríbenos.
           </p>
         </template>
 
@@ -84,11 +84,11 @@ const nextSteps = [
               ¡Listo, {{ contactName }}!
             </template>
             <template v-else>
-              ¡Tu diagnóstico está confirmado!
+              ¡Tu auditoría está confirmada!
             </template>
           </h1>
           <p class="booked__hero-subtitle">
-            Tu sesión de diagnóstico estructural con Aluvicopp ha sido agendada correctamente.
+            Tu sesión de auditoría logística con Quick Solutions ha sido agendada correctamente.
             En breve recibirás todos los detalles.
           </p>
         </template>
@@ -109,16 +109,16 @@ const nextSteps = [
       </section>
 
       <section class="booked__team" aria-labelledby="team-heading">
-        <p id="team-heading" class="booked__team-label">Tu especialista</p>
+        <p id="team-heading" class="booked__team-label">Tu equipo</p>
         <div class="booked__team-card">
           <div class="booked__team-avatar" aria-hidden="true">
-            <i class="fa-solid fa-hard-hat"></i>
+            <i class="fa-solid fa-helmet-safety"></i>
           </div>
           <div class="booked__team-info">
-            <strong class="booked__team-name">José</strong>
-            <span class="booked__team-role">Fundador — Especialista en Soluciones Estructurales</span>
+            <strong class="booked__team-name">Jefferson Bazán</strong>
+            <span class="booked__team-role">Fundador — Arquitecto de la Cadena de Suministro</span>
             <p class="booked__team-note">
-              "Cada estructura que diseñamos es el reflejo de nuestro compromiso con la precisión, la seguridad y la estética que tu patrimonio merece."
+              "No necesitas un bombero que apague incendios. Necesitas un socio estratégico que evite que ocurran. Eso es lo que hacemos en Quick Solutions."
             </p>
           </div>
         </div>
@@ -126,9 +126,8 @@ const nextSteps = [
 
       <p class="booked__disclaimer">
         <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-        Los resultados mencionados en el video corresponden a casos reales. Cada proyecto de ingeniería
-        estructural es único y los resultados dependen de las especificaciones técnicas, materiales
-        seleccionados y condiciones del espacio.
+        Los resultados mencionados en el video corresponden a casos reales. Cada cadena de suministro
+        es única y los resultados dependen de las condiciones específicas de cada operación y corporación.
       </p>
 
     </main>
@@ -138,7 +137,7 @@ const nextSteps = [
         <RouterLink to="/politicas-privacidad">Política de Privacidad</RouterLink>
         <RouterLink to="/aviso-legal">Aviso Legal</RouterLink>
       </nav>
-      <p class="booked__footer-copy">© {{ new Date().getFullYear() }} Aluvicopp. Todos los derechos reservados.</p>
+      <p class="booked__footer-copy">© {{ new Date().getFullYear() }} Quick Solutions. Todos los derechos reservados.</p>
     </footer>
 
   </div>
@@ -248,7 +247,7 @@ const nextSteps = [
   border-radius: 14px;
   padding: 1.5rem 1.25rem;
   position: relative;
-  box-shadow: 0 2px 10px rgba(0, 63, 125, 0.04);
+  box-shadow: 0 2px 10px rgba(0, 82, 165, 0.04);
 }
 
 .booked__step-num {
@@ -309,7 +308,7 @@ const nextSteps = [
   justify-content: center;
   flex-shrink: 0;
   border: 3px solid #ffffff;
-  box-shadow: 0 3px 12px rgba(0, 63, 125, 0.15);
+  box-shadow: 0 3px 12px rgba(0, 82, 165, 0.15);
   i { color: rgba(#ffffff, 0.85); font-size: 2rem; }
 }
 

@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const iframeHeight = ref(1100)
 
-const BASE_URL = 'https://api.leadconnectorhq.com/widget/booking/SXm1h5OYAatW5bt0fObz'
+const BASE_URL = 'https://api.leadconnectorhq.com/widget/booking/bDoTPmyIA6ng4o5iqD9i'
 
 const calendarUrl = computed(() => {
   try {
@@ -53,7 +53,7 @@ onUnmounted(() => window.removeEventListener('message', onMessage))
   <div class="booking">
 
     <header class="booking__topbar">
-      <h2 class="booking__logo-text">ALUVICOPP</h2>
+      <h2 class="booking__logo-text">QUICK SOLUTIONS</h2>
     </header>
 
     <main class="booking__main">
@@ -76,16 +76,17 @@ onUnmounted(() => window.removeEventListener('message', onMessage))
 
       <section class="booking__heading">
         <p class="booking__eyebrow">
-          <i class="fa-solid fa-compass-drafting" aria-hidden="true"></i>
+          <i class="fa-solid fa-ship" aria-hidden="true"></i>
           Casi listo
         </p>
         <h1 class="booking__title">
           Elige el horario de tu
-          <span class="booking__title-accent">diagnóstico estructural</span>
+          <span class="booking__title-accent">auditoría logística</span>
         </h1>
         <p class="booking__subtitle">
-          Una sesión de 20 minutos con José para evaluar tu proyecto, resolver tus dudas técnicas
-          y definir los siguientes pasos para tu estructura de vidrio y aluminio.
+          Una sesión de 30 minutos con el equipo de Quick Solutions para analizar tu matriz de costos
+          actual, partidas arancelarias y rutas logísticas. Identificaremos ahorros y riesgos ocultos
+          en tu cadena de suministro.
         </p>
       </section>
 
@@ -93,11 +94,11 @@ onUnmounted(() => window.removeEventListener('message', onMessage))
         <iframe
           :src="calendarUrl"
           :style="{ height: iframeHeight + 'px' }"
-          title="Agenda tu diagnóstico con Aluvicopp"
+          title="Agenda tu auditoría con Quick Solutions"
           class="calendar__iframe"
           frameborder="0"
           scrolling="no"
-          id="SXm1h5OYAatW5bt0fObz"
+          id="bDoTPmyIA6ng4o5iqD9i"
         ></iframe>
       </div>
 
@@ -108,7 +109,7 @@ onUnmounted(() => window.removeEventListener('message', onMessage))
         <RouterLink to="/politicas-privacidad">Política de Privacidad</RouterLink>
         <RouterLink to="/aviso-legal">Aviso Legal</RouterLink>
       </nav>
-      <p class="booking__footer-copy">© {{ new Date().getFullYear() }} Aluvicopp. Todos los derechos reservados.</p>
+      <p class="booking__footer-copy">© {{ new Date().getFullYear() }} Quick Solutions. Todos los derechos reservados.</p>
     </footer>
 
   </div>
@@ -208,7 +209,7 @@ onUnmounted(() => window.removeEventListener('message', onMessage))
 
 .calendar__wrap {
   border-radius: 16px; overflow: hidden; border: 1px solid #E4EDF7;
-  box-shadow: 0 4px 24px rgba(0, 63, 125, 0.07);
+  box-shadow: 0 4px 24px rgba(0, 82, 165, 0.07);
 }
 
 .calendar__iframe { width: 100%; display: block; min-height: 600px; }

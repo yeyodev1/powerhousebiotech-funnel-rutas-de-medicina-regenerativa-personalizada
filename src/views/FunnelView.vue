@@ -24,70 +24,69 @@ const stats = [
   {
     icon: 'fa-solid fa-building',
     number: '500+',
-    text: 'Estructuras de vidrio y aluminio instaladas en proyectos corporativos y residenciales',
+    text: 'Corporaciones multinacionales e industrias confían en nuestra ingeniería de cadena de suministro',
   },
   {
     icon: 'fa-solid fa-chart-line',
-    number: '20%',
-    text: 'Incremento promedio en plusvalía de propiedades intervenidas con nuestras soluciones',
+    number: '95%',
+    text: 'Reducción de incidencias y retenciones aduaneras con la metodología IFAC',
   },
   {
     icon: 'fa-solid fa-award',
     number: '15+',
-    text: 'Años de experiencia en ingeniería estructural de precisión con materiales certificados',
+    text: 'Años de experiencia en ingeniería de flujo aduanero y logística de precisión',
   },
 ]
 
 const before = [
-  'Materiales de baja calidad que se deterioran en meses por exposición al sol y salinidad',
-  'Instalaciones sin ingeniería de cargas que ponen en riesgo la seguridad de las personas',
-  'Filtraciones de agua a los 3 meses por falta de drenaje y sellado inadecuado',
-  'Proveedores que no cumplen los plazos de entrega, generando lucro cesante en tu operación',
-  'Acabados que pierden su estética en poco tiempo, obligando a costosos mantenimientos recurrentes',
+  'Retenciones de contenedores en puerto por errores milimétricos de clasificación arancelaria que paralizan tu producción',
+  'Sobrecostos ocultos por almacenaje, demoras, multas y reclasificaciones de última hora que destruyen tu margen',
+  'Agencias "bomberos" que solo reaccionan cuando el incendio ya ocurrió y te cobran por apagarlo',
+  'Capital de trabajo paralizado por semanas mientras un contenedor retenido espera una corrección documental',
+  'Penalizaciones de clientes internacionales por incumplimiento de plazos debido a fallas logísticas evitables',
 ]
 
 const pillars = [
   {
     num: '01',
-    icon: 'fa-solid fa-calculator',
-    title: 'Ingeniería de Detalle y Adaptabilidad',
-    body: 'Cálculo milimétrico de cargas de viento, vibración y dilatación térmica. Cada estructura se diseña específicamente para las condiciones de tu espacio, asegurando estabilidad y seguridad absoluta.',
+    icon: 'fa-solid fa-search',
+    title: 'Auditoría Técnica y Control Previo Anticipado',
+    body: 'Revisión profunda en origen: partidas arancelarias, certificados de origen, facturas comerciales y regulaciones fitosanitarias antes de activar el contenedor en el buque. Reduce más del 90% de incidencias y retenciones en puerto de destino.',
   },
   {
     num: '02',
-    icon: 'fa-solid fa-flask',
-    title: 'Selección de Materiales por Durabilidad',
-    body: 'Vidrio templado de seguridad 5x más resistente que el vidrio común, con pruebas de estrés térmico. Perfilería de aluminio anodizado y lacado que no se corroe con la salinidad ni el clima extremo.',
+    icon: 'fa-solid fa-arrows-spin',
+    title: 'Sincronización Integral de la Cadena Multimodal',
+    body: 'Unificación directa de transporte internacional (marítimo, aéreo, terrestre), aduana, estiba y transporte local blindado con candados satelitales y escolta armada. Optimiza tiempos de tránsito terrestre hasta en un 32%.',
   },
   {
     num: '03',
-    icon: 'fa-solid fa-sun',
-    title: 'Estética Funcional de Alto Impacto',
-    body: 'El vidrio como puente de luz natural, no como barrera. Diseñamos espacios que fluyen visualmente, maximizando la iluminación natural y creando ambientes que elevan la productividad y el bienestar.',
+    icon: 'fa-solid fa-shield',
+    title: 'Blindaje de Flujo de Caja y Gestión de Riesgos',
+    body: 'Precalculación matemática de tasas y tributos para eliminar imprevistos financieros. Estructuración de pólizas de seguro al 100% del valor real de la mercancía. Convertimos la logística en un activo medible y de alto rendimiento.',
   },
 ]
 
 const testimonials = [
   {
-    quote: 'Necesitábamos que nuestro edificio corporativo estuviera listo en 30 días para rentarlo a una multinacional. José y su equipo no solo cumplieron el plazo, sino que la calidad de la fachada de vidrio y los acabados fue determinante para que la multinacional firmara el contrato.',
+    quote: 'Necesitábamos que nuestra importación de maquinaria pesada estuviera liberada en máximo 5 días. La agencia anterior nos dejó un contenedor retenido 18 días por un error en el certificado de origen. Con Quick Solutions y su metodología IFAC, no solo liberaron en 48 horas, sino que además nos identificaron $12,000 en sobrecostos que estábamos pagando por rutas ineficientes.',
     author: 'Ing. Ricardo Méndez',
-    role: 'Gerente de Infraestructura — Edificio Corporativo',
+    role: 'Gerente de Logística — Corporación Metalúrgica',
   },
   {
-    quote: 'Buscábamos privacidad acústica para los consultorios de nuestra clínica estética, pero sin perder la sensación de amplitud y luz natural. Las divisiones de vidrio templado de Aluvicopp resolvieron exactamente eso. Nuestros pacientes notan la diferencia.',
-    author: 'Dora Elena Salazar',
-    role: 'Directora — Clínica Estética',
+    quote: 'Creíamos que los retrasos y los gastos imprevistos eran el costo normal de hacer negocios internacionales. Quick Solutions nos demostró que estábamos equivocados. Hoy nuestra cadena de suministro opera con previsibilidad financiera absoluta y nuestros costos logísticos se redujeron un 28%.',
+    author: 'Carolina Santillán',
+    role: 'Directora de Operaciones — Industria Química',
   },
   {
-    quote: 'Tengo dos hijos pequeños y mi prioridad era la seguridad sin sacrificar el diseño moderno. Los pasamanos de vidrio templado con anclajes internos que instalaron son impresionantes. Se ven flotantes pero son sólidos como una roca. Mi esposa está feliz.',
-    author: 'Andrés Balareso',
-    role: 'Residente Premium — Urbanización Privada',
+    quote: 'Al principio dudaba porque nuestro volumen de importación es alto y no quería arriesgar la operación con un cambio de proveedor logístico. Jefferson y su equipo hicieron una auditoría gratuita que nos mostró $45,000 en ahorros potenciales. Eso nos convenció. Llevamos 3 años con ellos y cero retenciones.',
+    author: 'Andrés Montero',
+    role: 'CEO — Grupo Corporativo',
   },
 ]
 
 const activeTestimonial = ref(0)
 
-// Countdown urgency
 const BLOCK_HOURS = 6
 const hours = ref('00')
 const minutes = ref('00')
@@ -123,20 +122,19 @@ onUnmounted(() => {
   stopProofRotation()
 })
 
-// Social proof toast (FOMO)
 type Proof = { who: string; where: string; minutesAgo: number }
 
 const PROOFS: Proof[] = [
-  { who: 'Inmobiliaria Torres',       where: 'Quito',          minutesAgo: 3 },
-  { who: 'Clínica Dental D\'Salud',   where: 'Cumbayá',        minutesAgo: 7 },
-  { who: 'Constructora del Pacífico', where: 'Guayaquil',      minutesAgo: 12 },
-  { who: 'Estudio Jurídico M&B',      where: 'Quito',          minutesAgo: 18 },
-  { who: 'Hotel Boutique Casa Verde', where: 'Tumbaco',        minutesAgo: 22 },
-  { who: 'Arq. Felipe Ordóñez',       where: 'Samborondón',    minutesAgo: 27 },
-  { who: 'Residencia Valle Alto',     where: 'Los Chillos',    minutesAgo: 34 },
-  { who: 'Centro Comercial Manta',    where: 'Manta',          minutesAgo: 41 },
-  { who: 'Grupo Financiero Sur',      where: 'Cuenca',         minutesAgo: 48 },
-  { who: 'Laboratorios Farmacéuticos',where: 'Quito',          minutesAgo: 55 },
+  { who: 'Corporación Metalúrgica',       where: 'Guayaquil',     minutesAgo: 3 },
+  { who: 'Industria Química del Sur',     where: 'Quito',         minutesAgo: 8 },
+  { who: 'Grupo Logístico del Pacífico',  where: 'Manta',         minutesAgo: 14 },
+  { who: 'Consorcio Alimenticio',         where: 'Guayaquil',     minutesAgo: 19 },
+  { who: 'Maquinaria Pesada S.A.',        where: 'Cuenca',        minutesAgo: 25 },
+  { who: 'Textiles Internacionales',      where: 'Quito',         minutesAgo: 31 },
+  { who: 'Petroindustria del Ecuador',    where: 'Esmeraldas',    minutesAgo: 38 },
+  { who: 'Laboratorios Farmacéuticos',    where: 'Guayaquil',     minutesAgo: 44 },
+  { who: 'Automotriz Andina',            where: 'Quito',         minutesAgo: 50 },
+  { who: 'Grupo Corporativo M&B',         where: 'Guayaquil',     minutesAgo: 57 },
 ]
 
 const proofVisible = ref(false)
@@ -182,18 +180,16 @@ const dismissProof = () => {
 <template>
   <div class="funnel">
 
-    <!-- TOP BAR -->
     <header class="funnel__topbar">
-      <h2 class="funnel__logo-text">ALUVICOPP</h2>
-      <p class="funnel__logo-sub">Ingeniería Estructural en Vidrio y Aluminio</p>
+      <h2 class="funnel__logo-text">QUICK SOLUTIONS</h2>
+      <p class="funnel__logo-sub">Arquitectos de la Cadena de Suministro</p>
     </header>
 
-    <!-- URGENCY BANNER -->
     <div class="funnel__urgency" role="banner">
       <div class="funnel__urgency-info">
         <span class="funnel__urgency-dot" aria-hidden="true" />
         <i class="fa-solid fa-bolt funnel__urgency-icon" aria-hidden="true"></i>
-        <span class="funnel__urgency-text">CUPOS PARA <strong>DIAGNÓSTICO ESTRUCTURAL</strong> — Cierran en:</span>
+        <span class="funnel__urgency-text">CUPOS PARA <strong>AUDITORÍA LOGÍSTICA GRATUITA</strong> — Cierran en:</span>
         <div class="funnel__timer" aria-live="polite" aria-label="Tiempo restante">
           <span class="funnel__timer-block"><strong>{{ hours }}</strong><small>h</small></span>
           <span class="funnel__timer-sep" aria-hidden="true">:</span>
@@ -205,15 +201,14 @@ const dismissProof = () => {
       <button
         type="button"
         class="funnel__urgency-cta"
-        aria-label="Agendar diagnóstico estructural"
+        aria-label="Agendar auditoría logística"
         @click="openModal()"
       >
-        AGENDAR MI DIAGNÓSTICO
+        AGENDAR MI AUDITORÍA
         <span aria-hidden="true">→</span>
       </button>
     </div>
 
-    <!-- SOCIAL PROOF TOAST -->
     <Transition name="proof-fade">
       <div v-if="proofVisible && currentProof" class="funnel__proof" role="status" aria-live="polite">
         <div class="funnel__proof-icon" aria-hidden="true">
@@ -225,7 +220,7 @@ const dismissProof = () => {
             <span>{{ currentProof.where }}</span>
           </p>
           <p class="funnel__proof-text">
-            Acaba de agendar un <strong>diagnóstico estructural</strong>
+            Acaba de agendar una <strong>auditoría logística</strong>
           </p>
           <p class="funnel__proof-meta">
             <i class="fa-solid fa-clock" aria-hidden="true"></i>
@@ -243,71 +238,68 @@ const dismissProof = () => {
       </div>
     </Transition>
 
-    <!-- HERO -->
     <section class="funnel__hero" aria-labelledby="funnel-headline">
       <div class="funnel__container">
 
         <p class="funnel__eyebrow">
-          <i class="fa-solid fa-compass-drafting" aria-hidden="true"></i>
-          Ingeniería Estructural de Precisión
+          <i class="fa-solid fa-ship" aria-hidden="true"></i>
+          Ingeniería de la Cadena de Suministro
         </p>
 
         <h1 id="funnel-headline" class="funnel__headline">
-          Profesionaliza tu espacio y elimina las paradas no programadas con
-          <span class="funnel__headline-accent">ingeniería estructural de precisión</span>
+          Profesionaliza tu cadena de suministro y elimina las paradas no programadas con
+          <span class="funnel__headline-accent">ingeniería de datos y previsibilidad absoluta</span>
         </h1>
 
         <p class="funnel__hero-sub">
-          Descubre cómo Aluvicopp transforma espacios corporativos, clínicas y residencias de alto
-          estándar con estructuras de vidrio templado y aluminio de grado industrial que elevan
-          la plusvalía de tus activos hasta en un <strong>20%</strong>.
+          Descubre cómo Quick Solutions transforma la logística internacional de grandes corporaciones
+          con su metodología IFAC (Ingeniería de Flujo Aduanero Continuo), eliminando retenciones,
+          sobrecostos e imprevistos que paralizan tu operación y destruyen tu margen.
         </p>
 
         <ul class="funnel__benefits" role="list">
           <li class="funnel__benefit">
             <i class="fa-solid fa-check-circle" aria-hidden="true"></i>
-            Sin materiales de baja calidad que se deterioran en meses
+            Sin retenciones de contenedores por errores de clasificación arancelaria
           </li>
           <li class="funnel__benefit">
             <i class="fa-solid fa-check-circle" aria-hidden="true"></i>
-            Sin instalaciones sin ingeniería que comprometen la seguridad
+            Sin sobrecostos ocultos ni reclasificaciones de última hora
           </li>
           <li class="funnel__benefit">
             <i class="fa-solid fa-check-circle" aria-hidden="true"></i>
-            Sin retrasos en la entrega que generan lucro cesante
+            Sin capital de trabajo paralizado por demoras logísticas evitables
           </li>
           <li class="funnel__benefit">
             <i class="fa-solid fa-check-circle" aria-hidden="true"></i>
-            Con materiales certificados y cálculo estructural milimétrico
+            Con previsibilidad financiera absoluta y blindaje corporativo real
           </li>
         </ul>
 
         <div class="funnel__urgency-callout" role="note">
           <i class="fa-solid fa-fire" aria-hidden="true"></i>
-          <span>Para tomadores de decisiones que <strong>entienden el valor de la ingeniería</strong> sobre el precio — no para quienes buscan precio, sino quienes buscan patrimonio.</span>
+          <span>Para <strong>tomadores de decisiones</strong> que entienden la logística como una <strong>palanca financiera estratégica</strong> — no para quienes buscan el tramitador más barato.</span>
         </div>
 
-        <!-- VSL -->
         <div class="funnel__vsl-wrap">
           <div class="funnel__vsl" @click="openModal()" role="button" aria-label="Ver video" tabindex="0">
             <div class="funnel__vsl-bg">
-              <img src="https://fast.wistia.com/embed/medias/h792lc4zkb/swatch" class="funnel__vsl-thumb" alt="" />
+              <img src="https://fast.wistia.com/embed/medias/bivr0yu5qp/swatch" class="funnel__vsl-thumb" alt="" />
               <div class="funnel__vsl-blur-overlay"></div>
             </div>
             <div class="funnel__vsl-overlay">
               <div class="funnel__vsl-play">
                 <i class="fa-solid fa-play" aria-hidden="true"></i>
               </div>
-              <p class="funnel__vsl-caption">Mira el video y descubre cómo la ingeniería de precisión protege tu patrimonio</p>
+              <p class="funnel__vsl-caption">Mira el video y descubre cómo la ingeniería de datos transforma tu cadena de suministro</p>
             </div>
           </div>
         </div>
 
-        <!-- CTA -->
         <div class="funnel__cta-wrap">
           <button class="funnel__cta-btn" @click="openModal()">
             <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
-            AGENDAR DIAGNÓSTICO ESTRUCTURAL GRATIS
+            AGENDAR AUDITORÍA LOGÍSTICA GRATIS
           </button>
           <p class="funnel__cta-sub">
             <i class="fa-solid fa-lock" aria-hidden="true"></i>
@@ -318,7 +310,6 @@ const dismissProof = () => {
       </div>
     </section>
 
-    <!-- STATS -->
     <section class="funnel__stats" aria-label="Resultados comprobados">
       <div class="funnel__container">
         <p class="funnel__section-label funnel__section-label--light">Resultados reales — clientes reales</p>
@@ -334,16 +325,16 @@ const dismissProof = () => {
       </div>
     </section>
 
-    <!-- PROBLEMA / DOLORES -->
     <section class="funnel__problem" aria-labelledby="problem-heading">
       <div class="funnel__container">
         <p class="funnel__section-label">¿Te identificas con esto?</p>
         <h2 id="problem-heading" class="funnel__section-title">
-          La falsa economía de contratar al más barato
+          El mito corporativo de que los retrasos e imprevistos son "normales"
         </h2>
         <p class="funnel__problem-intro">
-          Contratar a un "maestro" independiente sin respaldo técnico no es un ahorro — es un pasivo
-          que pagas en seguridad, estética y tiempo. Esto es lo que realmente obtienes:
+          Contratar a un "tramitador aduanero reactivo" no es un ahorro — es un pasivo que pagas
+          en producción detenida, capital paralizado y penalizaciones de clientes. Esto es lo que
+          realmente estás pagando:
         </p>
         <div class="funnel__problem-grid">
           <div v-for="(item, i) in before" :key="i" class="funnel__problem-item">
@@ -357,71 +348,68 @@ const dismissProof = () => {
       </div>
     </section>
 
-    <!-- SOLUCIÓN / PILARES -->
     <section class="funnel__method" aria-labelledby="method-heading">
       <div class="funnel__container">
-        <p class="funnel__section-label">El sistema Aluvicopp</p>
+        <p class="funnel__section-label">La metodología IFAC</p>
         <h2 id="method-heading" class="funnel__section-title">
-          Tres pilares de arquitectura estructural de alto valor
+          Tres pilares de ingeniería de flujo aduanero continuo
         </h2>
 
-        <!-- Pilar 1 -->
         <div class="funnel__pillar-card">
           <div class="funnel__pillar-num" aria-hidden="true">01</div>
           <div class="funnel__pillar-content">
             <div class="funnel__pillar-icon" aria-hidden="true">
-              <i class="fa-solid fa-calculator"></i>
+              <i class="fa-solid fa-search"></i>
             </div>
-            <h3 class="funnel__pillar-title">Ingeniería de Detalle y Adaptabilidad</h3>
+            <h3 class="funnel__pillar-title">Auditoría Técnica y Control Previo Anticipado</h3>
             <p class="funnel__pillar-body">
-              No hacemos "vidriería artesanal". Cada proyecto comienza con un análisis estructural:
-              cálculo de cargas de viento, vibraciones, dilatación térmica y resistencia sísmica.
-              Diseñamos específicamente para las condiciones de tu ubicación — costa, sierra o clima extremo.
+              No esperamos a que el contenedor llegue a puerto para revisar la documentación.
+              Analizamos en origen cada partida arancelaria, certificado y factura antes de que
+              la carga se active en el buque. Resultado: más del 90% de reducción de incidencias
+              y retenciones aduaneras.
             </p>
           </div>
         </div>
 
-        <!-- Pilar 2 -->
         <div class="funnel__pillar-card">
           <div class="funnel__pillar-num" aria-hidden="true">02</div>
           <div class="funnel__pillar-content">
             <div class="funnel__pillar-icon" aria-hidden="true">
-              <i class="fa-solid fa-flask"></i>
+              <i class="fa-solid fa-arrows-spin"></i>
             </div>
-            <h3 class="funnel__pillar-title">Selección de Materiales por Durabilidad</h3>
+            <h3 class="funnel__pillar-title">Sincronización Integral de la Cadena Multimodal</h3>
             <p class="funnel__pillar-body">
-              Vidrio templado de seguridad con pruebas de estrés térmico — 5 veces más resistente que
-              el vidrio común. Perfilería de aluminio anodizado y lacado que resiste la corrosión por
-              salinidad y la radiación UV. Materiales certificados con vida útil de 20+ años.
+              Unificamos transporte internacional (marítimo, aéreo, terrestre), despacho aduanero,
+              estiba y transporte local blindado con candados satelitales y escolta armada.
+              Un solo punto de control para toda la cadena. Optimizamos tiempos de tránsito
+              terrestre hasta en un 32%.
             </p>
           </div>
         </div>
 
-        <!-- Pilar 3 -->
         <div class="funnel__pillar-card">
           <div class="funnel__pillar-num" aria-hidden="true">03</div>
           <div class="funnel__pillar-content">
             <div class="funnel__pillar-icon" aria-hidden="true">
-              <i class="fa-solid fa-sun"></i>
+              <i class="fa-solid fa-shield"></i>
             </div>
-            <h3 class="funnel__pillar-title">Estética Funcional de Alto Impacto</h3>
+            <h3 class="funnel__pillar-title">Blindaje de Flujo de Caja y Gestión de Riesgos</h3>
             <p class="funnel__pillar-body">
-              El vidrio como puente de luz natural, no como barrera. Maximizamos la iluminación
-              natural para reducir costos energéticos hasta en un 30%. Diseñamos para que tu espacio
-              se vea y se sienta premium — porque la primera impresión de clientes e inversionistas
-              comienza con la fachada.
+              Precalculamos matemáticamente cada tasa y tributo para eliminar imprevistos financieros.
+              Estructuramos pólizas de seguro al 100% del valor real de la mercancía. Tu logística
+              deja de ser un centro de costo imprevisible y se convierte en un activo medible
+              de alto rendimiento.
             </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- PRUEBA SOCIAL / TESTIMONIOS -->
     <section class="funnel__testimonials" aria-labelledby="testimonials-heading">
       <div class="funnel__container">
         <p class="funnel__section-label">Casos de éxito</p>
         <h2 id="testimonials-heading" class="funnel__section-title">
-          Lo que dicen quienes ya confiaron en Aluvicopp
+          Lo que dicen quienes ya confiaron en Quick Solutions
         </h2>
 
         <div class="funnel__test-carousel">
@@ -461,57 +449,57 @@ const dismissProof = () => {
       </div>
     </section>
 
-    <!-- AUTORIDAD — José / Aluvicopp -->
     <section class="funnel__authority" aria-labelledby="authority-heading">
       <div class="funnel__container funnel__authority-inner">
         <div class="funnel__authority-photo-wrap">
           <div class="funnel__authority-avatar" aria-hidden="true">
-            <i class="fa-solid fa-hard-hat"></i>
+            <i class="fa-solid fa-helmet-safety"></i>
           </div>
         </div>
         <div class="funnel__authority-content">
-          <p class="funnel__authority-eyebrow">Fundador y Director Técnico</p>
-          <h2 id="authority-heading" class="funnel__authority-name">José</h2>
-          <p class="funnel__authority-role">Especialista en Soluciones Estructurales de Vidrio y Aluminio</p>
+          <p class="funnel__authority-eyebrow">Líder y Fundador</p>
+          <h2 id="authority-heading" class="funnel__authority-name">Jefferson Bazán</h2>
+          <p class="funnel__authority-role">Arquitecto de la Cadena de Suministro — Ingeniería de Datos</p>
           <p class="funnel__authority-bio">
-            Con más de 15 años de experiencia en ingeniería estructural, he dedicado mi carrera a
-            transformar la manera en que los espacios corporativos, clínicas y residencias de alto
-            estándar utilizan el vidrio y el aluminio como elementos estructurales. Mi filosofía es
-            simple: <strong>la mediocridad en los acabados es un impuesto invisible que pagas en
-            imagen y plusvalía</strong>.
+            En los inicios, operábamos como el 99% de las agencias: reactivos. Hasta que una gran
+            industria metalúrgica sufrió la retención de maquinaria pesada por casi un mes debido a
+            un error milimétrico del broker en el certificado de origen. Su gerente general me dijo:
+            <strong>"No necesito un bombero que me cobre por apagar el incendio cuando mi fábrica ya
+            está parada. Necesito un socio estratégico que evite que el incendio ocurra."</strong>
+            Eso cambió todo. Hoy la metodología IFAC es la respuesta a esa sentencia.
           </p>
           <ul class="funnel__authority-creds" role="list">
-            <li><i class="fa-solid fa-check-circle" aria-hidden="true"></i> Especialista en cálculo estructural de vidrio templado</li>
-            <li><i class="fa-solid fa-check-circle" aria-hidden="true"></i> Certificación en instalación de perfilería de aluminio de alta resistencia</li>
-            <li><i class="fa-solid fa-check-circle" aria-hidden="true"></i> Gestión integral: del diseño estructural a la instalación final</li>
-            <li><i class="fa-solid fa-check-circle" aria-hidden="true"></i> Solo superviso personalmente 5 proyectos grandes al mes</li>
+            <li><i class="fa-solid fa-check-circle" aria-hidden="true"></i> Especialista en ingeniería de flujo aduanero continuo</li>
+            <li><i class="fa-solid fa-check-circle" aria-hidden="true"></i> Certificación en gestión de cadenas multimodales internacionales</li>
+            <li><i class="fa-solid fa-check-circle" aria-hidden="true"></i> Gestión integral: de la auditoría en origen al blindaje financiero</li>
+            <li><i class="fa-solid fa-check-circle" aria-hidden="true"></i> Solo acepto 5 nuevas cuentas corporativas al mes</li>
           </ul>
         </div>
       </div>
     </section>
 
-    <!-- ESCASEZ + CTA FINAL -->
     <section class="funnel__scarcity" aria-labelledby="scarcity-heading">
       <div class="funnel__container">
         <div class="funnel__scarcity-badge">
           <i class="fa-solid fa-gem" aria-hidden="true"></i>
-          Atención personalizada de José
+          Atención personalizada de Jefferson Bazán
         </div>
         <h2 id="scarcity-heading" class="funnel__scarcity-title">
-          José solo supervisa <span class="funnel__scarcity-accent">5 proyectos grandes al mes</span>
+          Solo aceptamos <span class="funnel__scarcity-accent">5 nuevos clientes corporativos al mes</span>
         </h2>
         <p class="funnel__scarcity-sub">
-          Para garantizar la calidad que nos distingue, cada proyecto pasa por su supervisión directa.
-          Cuando se llenan los 5 cupos, el resto espera al siguiente mes.
+          Para garantizar el nivel de análisis y personalización que nos distingue, cada cliente
+          pasa por la revisión directa de nuestro equipo de ingenieros senior. Cuando se llenan
+          los 5 cupos, el resto espera al siguiente mes.
         </p>
         <p class="funnel__scarcity-cta-text">
-          Agenda hoy tu <strong>Sesión de Diagnóstico Arquitectónico y Presupuesto Técnico</strong>
-          sin costo — 20 minutos en los que José evaluará tu proyecto y te dará una visión clara de
-          lo que necesita tu espacio.
+          Agenda hoy tu <strong>Sesión de Diagnóstico de Auditoría Logística y Aduanera Completa</strong>
+          sin costo — 30 minutos en los que analizaremos tu matriz de costos, partidas arancelarias
+          y rutas logísticas para identificar ahorros y riesgos ocultos.
         </p>
         <button class="funnel__cta-btn funnel__cta-btn--final" @click="openModal()">
           <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
-          AGENDAR MI DIAGNÓSTICO ESTRUCTURAL GRATIS
+          AGENDAR MI AUDITORÍA LOGÍSTICA GRATIS
         </button>
         <p class="funnel__cta-sub">
           <i class="fa-solid fa-lock" aria-hidden="true"></i>
@@ -520,17 +508,16 @@ const dismissProof = () => {
       </div>
     </section>
 
-    <!-- FOOTER -->
     <footer class="funnel__footer">
       <div class="funnel__container funnel__footer-inner">
-        <h2 class="funnel__footer-logo-text">ALUVICOPP</h2>
-        <p class="funnel__footer-desc">Ingeniería Estructural en Vidrio y Aluminio</p>
+        <h2 class="funnel__footer-logo-text">QUICK SOLUTIONS</h2>
+        <p class="funnel__footer-desc">Arquitectos de la Cadena de Suministro</p>
         <nav class="funnel__footer-links" aria-label="Legal">
           <RouterLink to="/politicas-privacidad">Política de Privacidad</RouterLink>
           <RouterLink to="/aviso-legal">Aviso Legal</RouterLink>
         </nav>
         <p class="funnel__footer-copy">
-          © {{ new Date().getFullYear() }} Aluvicopp. Todos los derechos reservados.
+          © {{ new Date().getFullYear() }} Quick Solutions. Todos los derechos reservados.
         </p>
       </div>
     </footer>
@@ -558,7 +545,6 @@ const dismissProof = () => {
   }
 }
 
-// ── Top bar ──────────────────────────────────────────────────────────────────
 .funnel__topbar {
   background: #ffffff;
   border-bottom: 1px solid #E8EDF5;
@@ -586,12 +572,11 @@ const dismissProof = () => {
   margin: 0;
 }
 
-// ── Urgency banner ───────────────────────────────────────────────────────────
 .funnel__urgency {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: linear-gradient(90deg, colors.$ALU-URGENT 0%, colors.$ALU-URGENT-DARK 100%);
+  background: linear-gradient(90deg, colors.$QS-URGENT 0%, colors.$QS-URGENT-DARK 100%);
   color: #ffffff;
   padding: 0.65rem 0.85rem;
   display: flex;
@@ -603,8 +588,8 @@ const dismissProof = () => {
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.03em;
-  border-bottom: 2px solid colors.$ALU-URGENT-LIGHT;
-  box-shadow: 0 2px 12px rgba(colors.$ALU-URGENT, 0.35);
+  border-bottom: 2px solid colors.$QS-URGENT-LIGHT;
+  box-shadow: 0 2px 12px rgba(colors.$QS-URGENT, 0.35);
   text-transform: uppercase;
 
   @media (min-width: 768px) {
@@ -629,8 +614,8 @@ const dismissProof = () => {
   align-items: center;
   gap: 0.4rem;
   background: #ffffff;
-  color: colors.$ALU-URGENT-DARK;
-  border: 2px solid colors.$ALU-URGENT-LIGHT;
+  color: colors.$QS-URGENT-DARK;
+  border: 2px solid colors.$QS-URGENT-LIGHT;
   border-radius: 999px;
   padding: 0.45rem 1rem;
   font-family: fonts.$font-accent;
@@ -666,7 +651,6 @@ const dismissProof = () => {
   50%      { box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4); transform: scale(1.04); }
 }
 
-// ── Social proof toast ────────────────────────────────────────────────────────
 .funnel__proof {
   position: fixed;
   bottom: 1rem;
@@ -782,9 +766,9 @@ const dismissProof = () => {
 }
 
 .funnel__urgency-icon {
-  color: colors.$ALU-URGENT-LIGHT;
+  color: colors.$QS-URGENT-LIGHT;
   font-size: 1.1rem;
-  filter: drop-shadow(0 0 6px rgba(colors.$ALU-URGENT-LIGHT, 0.6));
+  filter: drop-shadow(0 0 6px rgba(colors.$QS-URGENT-LIGHT, 0.6));
   animation: bolt-flash 1.8s infinite;
 }
 
@@ -801,10 +785,10 @@ const dismissProof = () => {
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: colors.$ALU-URGENT-LIGHT;
+  background: colors.$QS-URGENT-LIGHT;
   flex-shrink: 0;
   animation: dot-pulse 1.5s infinite;
-  box-shadow: 0 0 0 0 rgba(colors.$ALU-URGENT-LIGHT, 0.6);
+  box-shadow: 0 0 0 0 rgba(colors.$QS-URGENT-LIGHT, 0.6);
 }
 
 @keyframes dot-pulse {
@@ -847,13 +831,12 @@ const dismissProof = () => {
   @media (min-width: 768px) { font-size: 1.7rem; }
 }
 
-// ── Urgency callout ───────────────────────────────────────────────────────────
 .funnel__urgency-callout {
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  background: colors.$ALU-URGENT-BG;
-  border-left: 4px solid colors.$ALU-URGENT;
+  background: colors.$QS-URGENT-BG;
+  border-left: 4px solid colors.$QS-URGENT;
   border-radius: 8px;
   padding: 0.85rem 1rem;
   margin: 1.25rem 0 1.5rem;
@@ -862,8 +845,8 @@ const dismissProof = () => {
   color: colors.$OS-DARK;
   font-weight: 600;
 
-  i { color: colors.$ALU-URGENT; font-size: 1.15rem; flex-shrink: 0; }
-  strong { color: colors.$ALU-URGENT-DARK; font-weight: 800; }
+  i { color: colors.$QS-URGENT; font-size: 1.15rem; flex-shrink: 0; }
+  strong { color: colors.$QS-URGENT-DARK; font-weight: 800; }
 
   @media (min-width: 768px) {
     font-size: 1rem;
@@ -871,7 +854,6 @@ const dismissProof = () => {
   }
 }
 
-// ── Hero ─────────────────────────────────────────────────────────────────────
 .funnel__hero {
   padding: 3.5rem 0 3rem;
   background: linear-gradient(180deg, #EEF4FF 0%, #ffffff 70%);
@@ -935,7 +917,6 @@ const dismissProof = () => {
   i { color: colors.$OS-BLUE; font-size: 0.82rem; flex-shrink: 0; }
 }
 
-// ── VSL ──────────────────────────────────────────────────────────────────────
 .funnel__vsl-wrap { margin-bottom: 2rem; }
 
 .funnel__vsl {
@@ -946,10 +927,10 @@ const dismissProof = () => {
   overflow: hidden;
   cursor: pointer;
   border: 2px solid #D8E6F5;
-  box-shadow: 0 8px 40px rgba(0, 63, 125, 0.12);
+  box-shadow: 0 8px 40px rgba(0, 82, 165, 0.12);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-  &:hover { transform: translateY(-2px); box-shadow: 0 16px 48px rgba(0, 63, 125, 0.2); }
+  &:hover { transform: translateY(-2px); box-shadow: 0 16px 48px rgba(0, 82, 165, 0.2); }
   &:focus-visible { outline: 3px solid colors.$OS-BLUE; outline-offset: 2px; }
 }
 
@@ -1017,7 +998,6 @@ const dismissProof = () => {
   max-width: 420px;
 }
 
-// ── CTA ──────────────────────────────────────────────────────────────────────
 .funnel__cta-wrap {
   display: flex;
   flex-direction: column;
@@ -1060,7 +1040,6 @@ const dismissProof = () => {
   i { font-size: 0.72rem; }
 }
 
-// ── Stats ────────────────────────────────────────────────────────────────────
 .funnel__stats {
   background: colors.$OS-NAVY;
   padding: 3rem 0;
@@ -1110,7 +1089,6 @@ const dismissProof = () => {
   margin: 0;
 }
 
-// ── Problem ──────────────────────────────────────────────────────────────────
 .funnel__problem {
   padding: 4rem 0;
   background: #ffffff;
@@ -1169,7 +1147,6 @@ const dismissProof = () => {
   margin-top: 2px;
 }
 
-// ── Pillars ──────────────────────────────────────────────────────────────────
 .funnel__method {
   padding: 4rem 0;
   background: #F5F8FF;
@@ -1190,7 +1167,7 @@ const dismissProof = () => {
   border-radius: 16px;
   padding: 1.75rem 2rem;
   position: relative;
-  box-shadow: 0 2px 12px rgba(0, 63, 125, 0.05);
+  box-shadow: 0 2px 12px rgba(0, 82, 165, 0.05);
 
   @media (max-width: 640px) { flex-direction: column; padding: 1.5rem; }
 }
@@ -1235,7 +1212,6 @@ const dismissProof = () => {
   margin: 0;
 }
 
-// ── Testimonials ─────────────────────────────────────────────────────────────
 .funnel__testimonials {
   padding: 4rem 0;
   background: #ffffff;
@@ -1255,7 +1231,7 @@ const dismissProof = () => {
   padding: 2rem;
   max-width: 720px;
   margin: 0 auto;
-  box-shadow: 0 4px 24px rgba(0, 63, 125, 0.07);
+  box-shadow: 0 4px 24px rgba(0, 82, 165, 0.07);
 }
 
 .funnel__test-quote {
@@ -1316,7 +1292,6 @@ const dismissProof = () => {
   &:hover { background: colors.$OS-BLUE; }
 }
 
-// ── Authority ────────────────────────────────────────────────────────────────
 .funnel__authority {
   padding: 4rem 0;
   background: linear-gradient(135deg, #EEF4FF 0%, #F9FBFF 100%);
@@ -1342,7 +1317,7 @@ const dismissProof = () => {
   align-items: center;
   justify-content: center;
   border: 4px solid #ffffff;
-  box-shadow: 0 4px 20px rgba(0, 63, 125, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 82, 165, 0.2);
   i { color: rgba(#ffffff, 0.7); font-size: 3rem; }
 }
 
@@ -1398,7 +1373,6 @@ const dismissProof = () => {
   }
 }
 
-// ── Scarcity + CTA Final ──────────────────────────────────────────────────────
 .funnel__scarcity {
   padding: 4.5rem 0;
   background: colors.$OS-NAVY;
@@ -1462,7 +1436,6 @@ const dismissProof = () => {
 
 .funnel__scarcity .funnel__cta-sub { color: rgba(#ffffff, 0.5); }
 
-// ── Footer ───────────────────────────────────────────────────────────────────
 .funnel__footer {
   background: colors.$OS-DARK;
   padding: 2rem 1.5rem;

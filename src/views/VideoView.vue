@@ -16,7 +16,7 @@ const validateCapture = () => {
   const e: Record<string, string> = {}
   if (captureForm.value.nombre.trim().length < 2) e.nombre = 'Ingresa tu nombre'
   if (captureForm.value.apellido.trim().length < 2) e.apellido = 'Ingresa tu apellido'
-  if (captureForm.value.empresa.trim().length < 2) e.empresa = 'Ingresa el nombre de tu proyecto'
+  if (captureForm.value.empresa.trim().length < 2) e.empresa = 'Ingresa el nombre de tu empresa'
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(captureForm.value.email.trim())) e.email = 'Email inválido'
   if (captureForm.value.telefono.trim().length < 7) e.telefono = 'Teléfono inválido'
   captureErrors.value = e
@@ -96,7 +96,7 @@ onUnmounted(() => { if (timer) clearInterval(timer) })
   <div class="vv-page">
 
     <header class="vv-topbar">
-      <h2 class="vv-topbar__logo-text">ALUVICOPP</h2>
+      <h2 class="vv-topbar__logo-text">QUICK SOLUTIONS</h2>
     </header>
 
     <main class="vv-main">
@@ -111,22 +111,23 @@ onUnmounted(() => { if (timer) clearInterval(timer) })
 
       <section class="vv-headline">
         <p class="vv-eyebrow">
-          <i class="fa-solid fa-compass-drafting" aria-hidden="true"></i>
+          <i class="fa-solid fa-ship" aria-hidden="true"></i>
           Antes de agendar
         </p>
         <h1 class="vv-h1">
-          Descubre por qué los proyectos de ingeniería
-          <span class="vv-accent">eligen a Aluvicopp</span>
+          Descubre por qué las grandes corporaciones
+          <span class="vv-accent">eligen a Quick Solutions</span>
         </h1>
         <p class="vv-subtitle">
-          Ve el video completo. José te explica cómo la ingeniería estructural de precisión protege tu
-          patrimonio y transforma tus espacios con vidrio templado y aluminio de grado industrial.
+          Ve el video completo. Jefferson Bazán te explica cómo la metodología IFAC transforma tu
+          cadena de suministro con ingeniería de datos, eliminando retenciones, sobrecostos y
+          paralizaciones que destruyen tu margen operativo.
         </p>
       </section>
 
       <div class="vv-video-wrapper">
         <div class="vv-video-ratio">
-          <wistia-player media-id="h792lc4zkb" aspect="1.7777777777777777"></wistia-player>
+          <wistia-player media-id="bivr0yu5qp" aspect="1.7777777777777777"></wistia-player>
         </div>
       </div>
 
@@ -150,7 +151,7 @@ onUnmounted(() => { if (timer) clearInterval(timer) })
           @click="calendarOpen = true"
         >
           <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
-          AGENDAR MI DIAGNÓSTICO ESTRUCTURAL
+          AGENDAR MI AUDITORÍA LOGÍSTICA
         </button>
 
         <p class="vv-cta-sub">
@@ -163,23 +164,23 @@ onUnmounted(() => { if (timer) clearInterval(timer) })
         <div class="vv-authority__inner">
           <div class="vv-authority__photo-wrap">
             <div class="vv-authority__avatar" aria-hidden="true">
-              <i class="fa-solid fa-hard-hat"></i>
+              <i class="fa-solid fa-helmet-safety"></i>
             </div>
           </div>
           <div class="vv-authority__content">
-            <p class="vv-authority__eyebrow">Fundador y Director Técnico</p>
-            <h2 id="authority-heading" class="vv-authority__name">José</h2>
-            <p class="vv-authority__role">Especialista en Soluciones Estructurales de Vidrio y Aluminio</p>
+            <p class="vv-authority__eyebrow">Líder y Fundador</p>
+            <h2 id="authority-heading" class="vv-authority__name">Jefferson Bazán</h2>
+            <p class="vv-authority__role">Arquitecto de la Cadena de Suministro — Ingeniería de Datos</p>
             <p class="vv-authority__bio">
-              Con más de 15 años de experiencia en ingeniería estructural, me he dedicado a
-              transformar espacios corporativos y residenciales con soluciones de vidrio templado
-              y aluminio de precisión. Mi compromiso es que cada proyecto sea una inversión
-              que dure toda la vida.
+              Con más de 15 años de experiencia en logística internacional y gestión aduanera, me he
+              dedicado a transformar la manera en que las grandes corporaciones entienden su cadena
+              de suministro. Mi filosofía es simple: <strong>la imprevisibilidad logística es un
+              impuesto invisible que pagas en producción detenida y capital paralizado</strong>.
             </p>
             <ul class="vv-authority__creds" role="list">
-              <li><i class="fa-solid fa-check-circle" aria-hidden="true"></i> Especialista en cálculo estructural de vidrio templado</li>
-              <li><i class="fa-solid fa-check-circle" aria-hidden="true"></i> Certificación en perfilería de aluminio de alta resistencia</li>
-              <li><i class="fa-solid fa-check-circle" aria-hidden="true"></i> Gestión integral: del diseño estructural a la instalación</li>
+              <li><i class="fa-solid fa-check-circle" aria-hidden="true"></i> Especialista en ingeniería de flujo aduanero continuo</li>
+              <li><i class="fa-solid fa-check-circle" aria-hidden="true"></i> Certificación en gestión de cadenas multimodales internacionales</li>
+              <li><i class="fa-solid fa-check-circle" aria-hidden="true"></i> Gestión integral: de la auditoría en origen al blindaje financiero</li>
             </ul>
           </div>
         </div>
@@ -192,7 +193,7 @@ onUnmounted(() => { if (timer) clearInterval(timer) })
         <RouterLink to="/politicas-privacidad">Política de Privacidad</RouterLink>
         <RouterLink to="/aviso-legal">Aviso Legal</RouterLink>
       </nav>
-      <p class="vv-footer__copy">© {{ new Date().getFullYear() }} Aluvicopp. Todos los derechos reservados.</p>
+      <p class="vv-footer__copy">© {{ new Date().getFullYear() }} Quick Solutions. Todos los derechos reservados.</p>
     </footer>
 
   </div>
@@ -204,11 +205,11 @@ onUnmounted(() => { if (timer) clearInterval(timer) })
       <div v-if="captureOpen" class="capture-overlay" role="dialog" aria-modal="true" aria-labelledby="capture-title">
         <div class="capture-modal">
           <div class="capture-modal__header">
-            <h2 class="capture-modal__logo-text">ALUVICOPP</h2>
+            <h2 class="capture-modal__logo-text">QUICK SOLUTIONS</h2>
             <h2 id="capture-title" class="capture-modal__title">
               Antes de ver el video, <span>confirma tus datos</span>
             </h2>
-            <p class="capture-modal__sub">Para personalizar tu diagnóstico estructural</p>
+            <p class="capture-modal__sub">Para personalizar tu diagnóstico logístico</p>
           </div>
           <form class="capture-modal__form" @submit.prevent="submitCapture" novalidate>
             <div class="capture-row">
@@ -224,13 +225,13 @@ onUnmounted(() => { if (timer) clearInterval(timer) })
               </div>
             </div>
             <div class="capture-field" :class="{ error: captureTouched.empresa && captureErrors.empresa }">
-              <label>Tu proyecto</label>
-              <input v-model="captureForm.empresa" type="text" placeholder="Ej: Fachada Corporativa" @blur="captureTouched.empresa = true" />
+              <label>Tu empresa</label>
+              <input v-model="captureForm.empresa" type="text" placeholder="Ej: Importadora XYZ" @blur="captureTouched.empresa = true" />
               <span v-if="captureTouched.empresa && captureErrors.empresa" class="capture-field__error">{{ captureErrors.empresa }}</span>
             </div>
             <div class="capture-field" :class="{ error: captureTouched.email && captureErrors.email }">
               <label>Email</label>
-              <input v-model="captureForm.email" type="email" placeholder="tu@email.com" @blur="captureTouched.email = true" />
+              <input v-model="captureForm.email" type="email" placeholder="tu@empresa.com" @blur="captureTouched.email = true" />
               <span v-if="captureTouched.email && captureErrors.email" class="capture-field__error">{{ captureErrors.email }}</span>
             </div>
             <div class="capture-field" :class="{ error: captureTouched.telefono && captureErrors.telefono }">
@@ -370,7 +371,7 @@ onUnmounted(() => { if (timer) clearInterval(timer) })
   aspect-ratio: 16 / 9;
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 63, 125, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 82, 165, 0.12);
   border: 1px solid #E4EDF7;
   background: colors.$OS-NAVY;
 
@@ -380,7 +381,7 @@ onUnmounted(() => { if (timer) clearInterval(timer) })
     height: 100%;
 
     &:not(:defined) {
-      background: center / contain no-repeat url('https://fast.wistia.com/embed/medias/h792lc4zkb/swatch');
+      background: center / contain no-repeat url('https://fast.wistia.com/embed/medias/bivr0yu5qp/swatch');
       display: block;
       filter: blur(5px);
       padding-top: 56.25%;
@@ -481,7 +482,7 @@ onUnmounted(() => { if (timer) clearInterval(timer) })
   height: 90px;
   border-radius: 50%;
   border: 3px solid #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 63, 125, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 82, 165, 0.15);
   overflow: hidden;
   background: colors.$OS-NAVY;
   display: flex;

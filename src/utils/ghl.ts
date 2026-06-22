@@ -1,4 +1,4 @@
-const GHL_WEBHOOK = 'https://services.leadconnectorhq.com/hooks/hV6oVhNySQrHdT6JLqUW/webhook-trigger/M8FUKbXoYlshxr7P5U3g'
+const GHL_WEBHOOK = import.meta.env.VITE_WEBHOOK_TRACKING ?? 'https://services.leadconnectorhq.com/hooks/AIfaQhtY6ww2dKc5xq8r/webhook-trigger/EHeiuQ0FuekJ68p7JWbd'
 
 export function generateEventId(prefix = 'evt'): string {
   return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2)}`
@@ -13,6 +13,6 @@ export async function trackStage(etapa: string, data: Record<string, string> & {
       body: JSON.stringify({ etapa, event_id, ...data }),
     })
   } catch {
-    // silencioso — nunca bloquear la UX por un fallo de tracking
+    // silencioso
   }
 }

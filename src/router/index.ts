@@ -21,7 +21,6 @@ declare module 'vue-router' {
   }
 }
 
-// ── Router ─────────────────────────────────────────────────────────────────────
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior: () => ({ top: 0, behavior: 'instant' }),
@@ -32,14 +31,14 @@ const router = createRouter({
       name: 'funnel',
       component: FunnelView,
       meta: {
-        title: 'Aluvicopp | Ingeniería Estructural en Vidrio y Aluminio',
+        title: 'Quick Solutions | Arquitectos de la Cadena de Suministro',
         description:
-          'Especialistas en ingeniería estructural de vidrio templado y aluminio. Transformamos espacios corporativos, clínicas y residencias con precisión suiza. Agenda tu diagnóstico gratuito.',
-        canonical: 'https://aluvicopp.com/',
-        ogTitle: 'Aluvicopp | Ingeniería Estructural de Precisión',
+          'Quick Solutions — Arquitectos de la cadena de suministro basados en ingeniería de datos. Eliminamos retenciones, sobrecostos e imprevistos con la metodología IFAC. Diagnóstico de auditoría logística gratuito.',
+        canonical: 'https://quicksolutions.ec/',
+        ogTitle: 'Quick Solutions | Arquitectos de la Cadena de Suministro',
         ogDescription:
-          'Diseño, cálculo e instalación de estructuras de vidrio templado y aluminio de alto impacto. Plusvalía garantizada.',
-        ogUrl: 'https://aluvicopp.com/',
+          'Transformamos tu logística internacional con ingeniería de datos y previsibilidad absoluta. Sin retenciones, sin sobrecostos, sin sorpresas.',
+        ogUrl: 'https://quicksolutions.ec/',
       } satisfies RouteMeta,
     },
     {
@@ -47,12 +46,12 @@ const router = createRouter({
       name: 'video',
       component: VideoView,
       meta: {
-        title: 'Mira el video | Aluvicopp — Paso 1 de 2',
-        description: 'Descubre cómo la ingeniería estructural de precisión protege tu patrimonio. Video exclusivo de Aluvicopp.',
-        canonical: 'https://aluvicopp.com/ver-video',
-        ogTitle: 'Mira el video | Aluvicopp',
-        ogDescription: 'Ve el video y agenda tu diagnóstico estructural gratuito con José de Aluvicopp.',
-        ogUrl: 'https://aluvicopp.com/ver-video',
+        title: 'Mira el video | Quick Solutions — Paso 1 de 2',
+        description: 'Descubre cómo la metodología IFAC elimina retenciones, sobrecostos e imprevistos en tu cadena de suministro.',
+        canonical: 'https://quicksolutions.ec/ver-video',
+        ogTitle: 'Mira el video | Quick Solutions',
+        ogDescription: 'Ve el video y agenda tu diagnóstico de auditoría logística gratuito con Jefferson Bazán.',
+        ogUrl: 'https://quicksolutions.ec/ver-video',
       } satisfies RouteMeta,
     },
     {
@@ -60,12 +59,12 @@ const router = createRouter({
       name: 'booking',
       component: BookingView,
       meta: {
-        title: 'Agenda tu Diagnóstico | Aluvicopp — Paso 2 de 2',
-        description: 'Selecciona el día y hora para tu Diagnóstico Estructural gratuito con José de Aluvicopp.',
-        canonical: 'https://aluvicopp.com/agendar',
-        ogTitle: 'Agenda tu Diagnóstico | Aluvicopp',
-        ogDescription: 'Elige tu horario y reserva tu Diagnóstico Estructural gratuito.',
-        ogUrl: 'https://aluvicopp.com/agendar',
+        title: 'Agenda tu Diagnóstico | Quick Solutions — Paso 2 de 2',
+        description: 'Selecciona el día y hora para tu Diagnóstico de Auditoría Logística gratuito con el equipo de Quick Solutions.',
+        canonical: 'https://quicksolutions.ec/agendar',
+        ogTitle: 'Agenda tu Diagnóstico | Quick Solutions',
+        ogDescription: 'Elige tu horario y reserva tu Auditoría Logística gratuita.',
+        ogUrl: 'https://quicksolutions.ec/agendar',
       } satisfies RouteMeta,
     },
     {
@@ -73,12 +72,12 @@ const router = createRouter({
       name: 'booked',
       component: BookedView,
       meta: {
-        title: 'Diagnóstico Confirmado | Aluvicopp',
-        description: 'Tu diagnóstico estructural con Aluvicopp está confirmado. Revisa tu correo y prepárate.',
-        canonical: 'https://aluvicopp.com/cita-confirmada',
-        ogTitle: 'Diagnóstico Confirmado | Aluvicopp',
-        ogDescription: 'Tu diagnóstico está reservado. Te contactaremos pronto.',
-        ogUrl: 'https://aluvicopp.com/cita-confirmada',
+        title: 'Diagnóstico Confirmado | Quick Solutions',
+        description: 'Tu diagnóstico de auditoría logística con Quick Solutions está confirmado. Revisa tu correo.',
+        canonical: 'https://quicksolutions.ec/cita-confirmada',
+        ogTitle: 'Diagnóstico Confirmado | Quick Solutions',
+        ogDescription: 'Tu auditoría logística está reservada. Te contactaremos pronto.',
+        ogUrl: 'https://quicksolutions.ec/cita-confirmada',
       } satisfies RouteMeta,
     },
     {
@@ -86,12 +85,12 @@ const router = createRouter({
       name: 'no-space',
       component: NoSpaceView,
       meta: {
-        title: 'Sin Cupos Disponibles | Aluvicopp',
-        description: 'En este momento los cupos de diagnóstico estructural de Aluvicopp están completos. Te notificaremos cuando se libere un espacio.',
-        canonical: 'https://aluvicopp.com/sin-espacio',
-        ogTitle: 'Sin Cupos Disponibles | Aluvicopp',
-        ogDescription: 'Los cupos de diagnóstico están completos. Te avisaremos cuando haya disponibilidad.',
-        ogUrl: 'https://aluvicopp.com/sin-espacio',
+        title: 'Sin Cupos Disponibles | Quick Solutions',
+        description: 'En este momento los cupos de auditoría logística de Quick Solutions están completos.',
+        canonical: 'https://quicksolutions.ec/sin-espacio',
+        ogTitle: 'Sin Cupos Disponibles | Quick Solutions',
+        ogDescription: 'Los cupos de auditoría están completos. Te avisaremos cuando haya disponibilidad.',
+        ogUrl: 'https://quicksolutions.ec/sin-espacio',
       } satisfies RouteMeta,
     },
     {
@@ -99,12 +98,12 @@ const router = createRouter({
       name: 'privacy-policy',
       component: PrivacyPolicyView,
       meta: {
-        title: 'Política de Privacidad | Aluvicopp',
-        description: 'Política de privacidad de Aluvicopp. Información sobre el tratamiento de datos personales.',
-        canonical: 'https://aluvicopp.com/politicas-privacidad',
-        ogTitle: 'Política de Privacidad | Aluvicopp',
-        ogDescription: 'Política de privacidad de Aluvicopp.',
-        ogUrl: 'https://aluvicopp.com/politicas-privacidad',
+        title: 'Política de Privacidad | Quick Solutions',
+        description: 'Política de privacidad de Quick Solutions. Información sobre el tratamiento de datos personales.',
+        canonical: 'https://quicksolutions.ec/politicas-privacidad',
+        ogTitle: 'Política de Privacidad | Quick Solutions',
+        ogDescription: 'Política de privacidad de Quick Solutions.',
+        ogUrl: 'https://quicksolutions.ec/politicas-privacidad',
       } satisfies RouteMeta,
     },
     {
@@ -112,12 +111,12 @@ const router = createRouter({
       name: 'legal-notice',
       component: LegalNoticeView,
       meta: {
-        title: 'Aviso Legal | Aluvicopp',
-        description: 'Aviso legal de Aluvicopp. Términos y condiciones de uso del sitio web.',
-        canonical: 'https://aluvicopp.com/aviso-legal',
-        ogTitle: 'Aviso Legal | Aluvicopp',
-        ogDescription: 'Aviso legal de Aluvicopp.',
-        ogUrl: 'https://aluvicopp.com/aviso-legal',
+        title: 'Aviso Legal | Quick Solutions',
+        description: 'Aviso legal de Quick Solutions. Términos y condiciones de uso del sitio web.',
+        canonical: 'https://quicksolutions.ec/aviso-legal',
+        ogTitle: 'Aviso Legal | Quick Solutions',
+        ogDescription: 'Aviso legal de Quick Solutions.',
+        ogUrl: 'https://quicksolutions.ec/aviso-legal',
       } satisfies RouteMeta,
     },
   ],
@@ -144,7 +143,7 @@ const setCanonical = (href: string) => {
 
 router.afterEach((to) => {
   const meta = to.meta
-  document.title = meta.title ?? 'Aluvicopp'
+  document.title = meta.title ?? 'Quick Solutions'
   setMeta('description', meta.description ?? '')
   setOgMeta('og:title', meta.ogTitle ?? meta.title ?? '')
   setOgMeta('og:description', meta.ogDescription ?? meta.description ?? '')
@@ -155,8 +154,8 @@ router.afterEach((to) => {
 })
 
 // ── Router Guards ──────────────────────────────────────────────────────────────
-const BOOKED_TTL_MS = 3 * 24 * 60 * 60 * 1000  // 3 días
-const DISQ_TTL_MS   = 48 * 60 * 60 * 1000      // 48 horas
+const BOOKED_TTL_MS = 3 * 24 * 60 * 60 * 1000
+const DISQ_TTL_MS   = 48 * 60 * 60 * 1000
 
 const readTimestamp = (key: string): number | null => {
   const raw = localStorage.getItem(key)
@@ -169,7 +168,6 @@ const isFresh = (key: string, ttl: number): boolean => {
   const ts = readTimestamp(key)
   if (ts === null) return false
   if (Date.now() - ts <= ttl) return true
-  // Expirado → limpiar para que no quede colgado
   localStorage.removeItem(key)
   return false
 }
@@ -183,23 +181,19 @@ router.beforeEach((to, from, next) => {
   const bookedFresh = isFresh('os_booked_at', BOOKED_TTL_MS)
   const disqFresh   = isFresh('os_disq_at',   DISQ_TTL_MS)
 
-  // /cita-confirmada solo es accesible si tiene booking fresco
   if (routeName === 'booked') {
     if (!bookedFresh) return next({ name: 'funnel' })
     return next()
   }
 
-  // Si tiene booking fresco → redirigir todo a /cita-confirmada
   if (bookedFresh) {
     return next({ name: 'booked' })
   }
 
-  // Si está descalificado dentro de 48h → no permitir booking ni booked
   if (disqFresh && ['booking', 'booked'].includes(routeName)) {
     return next({ name: 'no-space' })
   }
 
-  // /sin-espacio solo si está descalificado fresco (evita acceso directo)
   if (routeName === 'no-space' && !disqFresh) {
     return next({ name: 'funnel' })
   }

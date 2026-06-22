@@ -29,7 +29,7 @@ onMounted(() => {
   <div class="nospace">
 
     <header class="nospace__topbar">
-      <h2 class="nospace__logo-text">ALUVICOPP</h2>
+      <h2 class="nospace__logo-text">QUICK SOLUTIONS</h2>
     </header>
 
     <main class="nospace__main">
@@ -39,7 +39,7 @@ onMounted(() => {
         <span>
           <template v-if="contactName">{{ contactName }}, podrás</template>
           <template v-else>Podrás</template>
-          volver y solicitar un nuevo diagnóstico en
+          volver y solicitar una nueva auditoría en
           <strong>{{ hoursLeft }} hora{{ hoursLeft !== 1 ? 's' : '' }}</strong>
         </span>
       </div>
@@ -48,56 +48,35 @@ onMounted(() => {
         <div class="nospace__icon-wrap" aria-hidden="true">
           <i class="fa-solid fa-calendar-xmark nospace__icon"></i>
         </div>
-        <h1 class="nospace__title">Sin cupos disponibles en este momento</h1>
-        <p class="nospace__subtitle">
-          Trabajamos con un número limitado de proyectos para garantizar un diagnóstico de calidad.
-          En este momento nuestros cupos de asesoría estructural están completos.
+
+        <h1 class="nospace__title">Cupos completos para auditoría logística</h1>
+
+        <p class="nospace__body">
+          Nuestro equipo de ingenieros senior tiene la capacidad limitada para mantener la calidad
+          de análisis que nos distingue. En este momento los <strong>5 cupos mensuales</strong>
+          de Quick Solutions están completos.
+        </p>
+
+        <p class="nospace__body">
+          Cuando se libere un espacio, podrás agendar tu Diagnóstico de Auditoría Logística
+          y Aduanera Completa sin costo.
+        </p>
+
+        <div class="nospace__divider" aria-hidden="true"></div>
+
+        <h2 class="nospace__subtitle">Mientras tanto</h2>
+        <p class="nospace__body">
+          Mientras esperas, te recomendamos preparar tu matriz de costos logísticos actuales,
+          partidas arancelarias de tus principales productos y cualquier duda técnica que
+          quieras resolver en tu sesión con Jefferson Bazán.
         </p>
       </div>
 
-      <div class="nospace__steps">
-        <p class="nospace__steps-title">¿Qué puedes hacer ahora?</p>
-        <ul class="nospace__steps-list" role="list">
-          <li>
-            <div class="nospace__step-icon" aria-hidden="true">
-              <i class="fa-solid fa-envelope"></i>
-            </div>
-            <div>
-              <strong>Revisa tu email</strong>
-              <p>Te notificaremos cuando se libere un espacio en la agenda de Aluvicopp.</p>
-            </div>
-          </li>
-          <li>
-            <div class="nospace__step-icon" aria-hidden="true">
-              <i class="fa-brands fa-whatsapp"></i>
-            </div>
-            <div>
-              <strong>Proyecto urgente</strong>
-              <p>Si tu proyecto necesita atención inmediata, contáctanos por WhatsApp y evaluaremos tu caso.</p>
-            </div>
-          </li>
-        </ul>
-      </div>
-
-      <div class="nospace__teaser">
-        <div class="nospace__teaser-badge">
-          <i class="fa-solid fa-book-open" aria-hidden="true"></i>
-          Próximamente
-        </div>
-        <h2 class="nospace__teaser-title">Guía de Selección de Vidrio Templado y Aluminio</h2>
-        <p class="nospace__teaser-body">
-          Estamos preparando una guía completa para ayudarte a seleccionar el tipo de vidrio
-          templado y perfil de aluminio ideal según tu tipo de espacio, clima y necesidades
-          estructurales — sin necesidad de llamar a un especialista.
-        </p>
-      </div>
-
-      <div class="nospace__back">
-        <RouterLink to="/" class="nospace__back-link">
-          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-          Volver al inicio
-        </RouterLink>
-      </div>
+      <p class="nospace__footer-note">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        Quick Solutions trabaja exclusivamente con corporaciones multinacionales e industrias
+        de alto volumen. No trabajamos con importadores pequeños ni modalidades simplificadas.
+      </p>
 
     </main>
 
@@ -106,7 +85,7 @@ onMounted(() => {
         <RouterLink to="/politicas-privacidad">Política de Privacidad</RouterLink>
         <RouterLink to="/aviso-legal">Aviso Legal</RouterLink>
       </nav>
-      <p class="nospace__footer-copy">© {{ new Date().getFullYear() }} Aluvicopp. Todos los derechos reservados.</p>
+      <p class="nospace__footer-copy">© {{ new Date().getFullYear() }} Quick Solutions. Todos los derechos reservados.</p>
     </footer>
 
   </div>
@@ -147,27 +126,29 @@ onMounted(() => {
 
 .nospace__main {
   flex: 1;
-  max-width: 600px;
+  max-width: 560px;
   margin: 0 auto;
-  padding: 2rem 1.5rem 3rem;
+  padding: 3rem 1.5rem;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  align-items: center;
+  gap: 2rem;
 }
 
 .nospace__cooldown {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  background: rgba(colors.$OS-BLUE, 0.06);
+  background: #F0F6FF;
   border: 1px solid rgba(colors.$OS-BLUE, 0.2);
-  border-radius: 10px;
-  padding: 0.75rem 1rem;
-  font-size: 0.84rem;
+  border-radius: 999px;
+  padding: 0.6rem 1.25rem;
+  font-family: fonts.$font-interface;
+  font-size: 0.82rem;
   color: colors.$OS-NAVY;
   i { color: colors.$OS-BLUE; flex-shrink: 0; }
-  strong { font-weight: 700; }
+  strong { font-weight: 800; }
 }
 
 .nospace__card {
@@ -176,81 +157,79 @@ onMounted(() => {
   border-radius: 20px;
   padding: 2.5rem 2rem;
   text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
 }
 
 .nospace__icon-wrap {
-  width: 80px; height: 80px; border-radius: 50%;
-  background: rgba(colors.$OS-RED, 0.07);
-  border: 1.5px solid rgba(colors.$OS-RED, 0.18);
-  display: flex; align-items: center; justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(colors.$OS-NAVY, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin: 0 auto 1.25rem;
 }
 
-.nospace__icon { font-size: 2.4rem; color: rgba(colors.$OS-RED, 0.7); line-height: 1; }
+.nospace__icon {
+  font-size: 1.8rem;
+  color: colors.$OS-NAVY;
+}
 
 .nospace__title {
   @include fonts.heading-font(800);
-  font-size: 1.5rem; color: colors.$OS-DARK; margin: 0 0 0.75rem; letter-spacing: -0.02em;
+  font-size: 1.6rem;
+  color: colors.$OS-DARK;
+  margin: 0 0 1rem;
+  line-height: 1.2;
+}
+
+.nospace__body {
+  font-size: 0.92rem;
+  color: #4A5F7A;
+  line-height: 1.65;
+  margin: 0 0 1rem;
+
+  &:last-of-type { margin-bottom: 0; }
+  strong { color: colors.$OS-DARK; font-weight: 700; }
 }
 
 .nospace__subtitle {
-  font-size: 0.9rem; color: #4A5F7A; line-height: 1.6; margin: 0 auto; max-width: 420px;
+  @include fonts.heading-font(800);
+  font-size: 1.2rem;
+  color: colors.$OS-DARK;
+  margin: 0 0 0.75rem;
 }
 
-.nospace__steps {
-  background: #F5F8FF; border: 1px solid #E4EDF7; border-radius: 16px; padding: 1.5rem 1.75rem;
+.nospace__divider {
+  width: 48px;
+  height: 3px;
+  background: colors.$OS-BLUE;
+  border-radius: 99px;
+  margin: 1.5rem auto;
 }
 
-.nospace__steps-title {
-  font-family: fonts.$font-interface; font-size: 0.76rem; font-weight: 700;
-  letter-spacing: 0.07em; text-transform: uppercase; color: colors.$OS-NAVY; margin: 0 0 1rem;
-}
-
-.nospace__steps-list {
-  list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1rem;
-
-  li { display: flex; gap: 1rem; align-items: flex-start; strong { display: block; font-size: 0.9rem; color: colors.$OS-DARK; margin-bottom: 0.2rem; } p { font-size: 0.83rem; color: #4A5F7A; line-height: 1.5; margin: 0; } }
-}
-
-.nospace__step-icon {
-  width: 38px; height: 38px; border-radius: 10px; background: colors.$OS-NAVY;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  i { color: #ffffff; font-size: 1rem; }
-}
-
-.nospace__teaser {
-  background: #F9FBFF; border: 1.5px solid rgba(colors.$OS-NAVY, 0.15);
-  border-radius: 16px; padding: 1.75rem; box-shadow: 0 4px 20px rgba(0, 63, 125, 0.06);
-}
-
-.nospace__teaser-badge {
-  display: inline-flex; align-items: center; gap: 0.4rem;
-  padding: 0.28rem 0.75rem; border-radius: 999px;
-  background: rgba(colors.$OS-NAVY, 0.07); border: 1px solid rgba(colors.$OS-NAVY, 0.18);
-  font-family: fonts.$font-interface; font-size: 0.7rem; font-weight: 700;
-  color: colors.$OS-NAVY; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.85rem;
-  i { font-size: 0.68rem; }
-}
-
-.nospace__teaser-title {
-  @include fonts.heading-font(700); font-size: 1.05rem; color: colors.$OS-DARK; margin: 0 0 0.5rem;
-}
-
-.nospace__teaser-body {
-  font-size: 0.85rem; color: #4A5F7A; line-height: 1.6; margin: 0;
-}
-
-.nospace__back { display: flex; justify-content: center; }
-
-.nospace__back-link {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  font-size: 0.86rem; color: colors.$OS-NAVY; text-decoration: none; font-weight: 600;
-  transition: color 0.2s; &:hover { color: colors.$OS-BLUE; } i { font-size: 0.78rem; }
+.nospace__footer-note {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  font-size: 0.76rem;
+  color: #A0B0C5;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 420px;
+  text-align: left;
+  i { font-size: 0.8rem; flex-shrink: 0; margin-top: 1px; color: #C0D0E0; }
 }
 
 .nospace__footer {
-  padding: 1.5rem; border-top: 1px solid #F0F4FB;
-  display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center;
+  padding: 1.5rem;
+  border-top: 1px solid #F0F4FB;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
 
   &-links { display: flex; gap: 1.5rem; a { font-size: 0.76rem; color: #B0C0D5; text-decoration: none; &:hover { color: colors.$OS-NAVY; } } }
   &-copy { font-size: 0.72rem; color: #C8D8ED; margin: 0; }

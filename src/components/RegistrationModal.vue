@@ -76,7 +76,7 @@ const urgencyOpts: { value: Exclude<Urgency, ''>; label: string; sub: string; ho
 ]
 
 function calcTags(urgency: Urgency): string[] {
-  const base = ['aluvicopp', 'funnel-registro']
+  const base = ['quicksolutions', 'funnel-registro']
   if (urgency === 'inmediato')    return [...base, 'urgente', 'contrato-inmediato']
   if (urgency === 'proximos')     return [...base, 'urgencia-media']
   if (urgency === 'planificando') return [...base, 'planificando']
@@ -89,12 +89,12 @@ function buildNote(f: typeof form.value, country: string, pageDuration: number):
   const secs = pageDuration % 60
   return [
     '━━━━━━━━━━━━━━━━━━━━━━━━',
-    'ALUVICOPP — Registro Inicial',
+    'QUICK SOLUTIONS — Registro Inicial',
     '━━━━━━━━━━━━━━━━━━━━━━━━',
     `👤 ${f.nombre} ${f.apellido}`,
     `📧 ${f.email}`,
     `📱 ${f.phone}`,
-    `🏗 Proyecto: ${f.empresa}`,
+    `🏢 Empresa: ${f.empresa}`,
     `⏱ Urgencia: ${f.urgencia ? URGENCY_LABEL[f.urgencia] : '—'}`,
     `🌎 País: ${country}`,
     `⏳ Tiempo en página: ${mins}m ${secs}s`,
@@ -205,6 +205,7 @@ const handleSubmit = async () => {
   const leadEventId = `lead_${Date.now()}_${Math.random().toString(36).slice(2)}`
   const pageDur = getPageDuration()
 
+  const tags = calcTags(form.value.urgencia)
   const payload = {
     nombre: form.value.nombre.trim(),
     apellido: form.value.apellido.trim(),
@@ -216,18 +217,22 @@ const handleSubmit = async () => {
     pais: selectedCountry.value.name,
     urgencia: form.value.urgencia,
     urgenciaLabel: form.value.urgencia ? URGENCY_LABEL[form.value.urgencia] : '',
-    tags: calcTags(form.value.urgencia),
+    paso: '1-registro-inicial',
+    etiquetas: tags.join(', '),
+    tags,
+    notas: buildNote(form.value, selectedCountry.value.name, pageDur),
     nota: buildNote(form.value, selectedCountry.value.name, pageDur),
     pageDuration: pageDur,
-    source: 'aluvicopp-web',
+    source: 'quicksolutions-web',
     timestamp: new Date().toISOString(),
     event_id: leadEventId,
     ...getStoredFbParams(),
   }
 
-  console.info('[Aluvicopp Registro]', payload)
+  console.info('[Quick Solutions Registro]', payload)
 
-  await fetch('https://services.leadconnectorhq.com/hooks/hV6oVhNySQrHdT6JLqUW/webhook-trigger/M8FUKbXoYlshxr7P5U3g', {
+  const webhookUrl = import.meta.env.VITE_WEBHOOK_REGISTRO ?? 'https://services.leadconnectorhq.com/hooks/AIfaQhtY6ww2dKc5xq8r/webhook-trigger/EHeiuQ0FuekJ68p7JWbd'
+  await fetch(webhookUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -300,8 +305,8 @@ watch(dropdownOpen, open => {
           </button>
 
           <div class="rmodal__header">
-            <p class="rmodal__eyebrow">Diagnóstico estructural gratuito</p>
-            <h2 id="rmodal-title" class="rmodal__title">Agenda tu sesión<br><span class="rmodal__title-accent">sin costo</span></h2>
+            <p class="rmodal__eyebrow">Auditoría logística gratuita</p>
+            <h2 id="rmodal-title" class="rmodal__title">Agenda tu auditoría<br><span class="rmodal__title-accent">sin costo</span></h2>
             <p class="rmodal__subtitle">Cupos limitados — completa tus datos y accede al video exclusivo.</p>
           </div>
 
@@ -401,12 +406,12 @@ watch(dropdownOpen, open => {
 
             <!-- Empresa -->
             <div class="rmodal__field" :class="{ 'has-error': touched.empresa && errors.empresa }">
-              <label for="r-empresa">Nombre de tu proyecto</label>
+              <label for="r-empresa">Nombre de tu empresa</label>
               <input
                 id="r-empresa"
                 v-model="form.empresa"
                 type="text"
-                placeholder="Ej: Fachada Corporativa"
+                placeholder="Ej: Importadora XYZ"
                 autocomplete="organization"
                 @blur="onBlur('empresa')"
               />
@@ -417,7 +422,7 @@ watch(dropdownOpen, open => {
             <div class="rmodal__field rmodal__field--urgency" :class="{ 'has-error': touched.urgencia && errors.urgencia }">
               <label class="rmodal__urgency-label">
                 <i class="fa-solid fa-bolt" aria-hidden="true"></i>
-                ¿Cuándo necesitas ejecutar tu proyecto?
+                ¿Cuándo necesitas optimizar tu cadena de suministro?
               </label>
               <div class="rmodal__urgency-opts" role="radiogroup">
                 <label
