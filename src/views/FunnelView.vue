@@ -5,19 +5,19 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const navOpen = ref(false)
-const form = ref({ nombre: '', email: '', telefono: '' })
+const nombre = ref('')
+const email = ref('')
 const phoneNum = ref('')
 const countryCode = ref('+52')
 const showCountryPicker = ref(false)
-const errors = ref<Record<string, string>>({})
-const loading = ref(false)
+const formErrors = ref<Record<string, string>>({})
+const submitLoading = ref(false)
 
 import logoSrc from '@/assets/logos/logo.png'
 import juanPhoto from '@/assets/team/juan.png'
 import heroBg from '@/assets/stock/ancianos.jpg'
 
 const WEBHOOK = 'https://services.leadconnectorhq.com/hooks/P62nq2IVqxaQbOrD3P1R/webhook-trigger/rG4rYvva3xMz9mEx11Xq'
-
 const countries = [
   { code: '+52', flag: '🇲🇽', label: 'MX' },
   { code: '+1', flag: '🇺🇸', label: 'US' },
@@ -40,34 +40,33 @@ function selectCountry(c: typeof countries[0]) {
   showCountryPicker.value = false
 }
 
-function validate() {
-  const e: Record<string, string> = {}
-  if (form.value.nombre.trim().length < 2) e.nombre = 'Ingresa tu nombre'
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email.trim())) e.email = 'Email inválido'
-  if (phoneNum.value.trim().length < 7) e.telefono = 'Teléfono inválido'
-  errors.value = e
-  return Object.keys(e).length === 0
-}
-
 function getFullPhone() {
   return countryCode.value + ' ' + phoneNum.value.trim()
 }
 
+function validatePersonal() {
+  const e: Record<string, string> = {}
+  if (nombre.value.trim().length < 2) e.nombre = 'Ingresa tu nombre'
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) e.email = 'Email inválido'
+  if (phoneNum.value.trim().length < 7) e.telefono = 'Teléfono inválido'
+  formErrors.value = e
+  return Object.keys(e).length === 0
+}
+
 async function handleSubmit() {
-  if (!validate()) return
+  if (!validatePersonal()) return
   const fullPhone = getFullPhone()
-  form.value.telefono = fullPhone
-  loading.value = true
+  submitLoading.value = true
   try {
     await fetch(WEBHOOK, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre: form.value.nombre, email: form.value.email, telefono: fullPhone, paso: 'registro_inicial' }),
+      body: JSON.stringify({ nombre: nombre.value, email: email.value, telefono: fullPhone, paso: 'registro_inicial' }),
     })
-  } catch {}
+  } catch { }
   await new Promise((r) => setTimeout(r, 400))
-  loading.value = false
-  const q = new URLSearchParams({ nombre: form.value.nombre, email: form.value.email, telefono: fullPhone })
+  submitLoading.value = false
+  const q = new URLSearchParams({ nombre: nombre.value, email: email.value, telefono: fullPhone })
   router.push('/formulario?' + q.toString())
 }
 
@@ -183,25 +182,15 @@ function scrollTo(id: string) {
       <div class="phb-hero__bg" :style="{ backgroundImage: `url(${heroBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }"></div>
       <div class="phb-hero__grid">
         <div class="phb-hero__content">
-          <p class="phb-hero__badge">Evaluación de Viabilidad Regenerativa™</p>
+          <p class="phb-hero__badge">La medicina esta cambiando</p>
           <h1 class="phb-hero__title">
-            Puedes recibir el mejor tratamiento del mundo<br />
-            <span class="phb-hero__accent">y tu cuerpo estar igual de enfermo.</span>
+            La medicina regenerativa es el avance de salud mas importante del siglo XXI<br />
           </h1>
           <ul class="phb-hero__list">
             <li><i class="fa-solid fa-circle-check"></i>Evaluamos tu capacidad de autoreparación.</li>
             <li><i class="fa-solid fa-circle-check"></i>Explicamos la gravedad real de tus análisis de laboratorio.</li>
             <li><i class="fa-solid fa-circle-check"></i>Diseñamos tu ruta crítica de regeneración.</li>
           </ul>
-          <p class="phb-hero__sub">
-            +15 años liderando la medicina regenerativa en LATAM.
-          </p>
-          <div class="phb-hero__links">
-            <a href="https://powerhousebiotech.com/" target="_blank" rel="noopener noreferrer" class="phb-hero__btn">
-              VER POWERHOUSE BIOTECH
-              <i class="fa-solid fa-arrow-right"></i>
-            </a>
-          </div>
         </div>
 
         <div class="phb-hero__form-wrap">
@@ -215,24 +204,24 @@ function scrollTo(id: string) {
               <div class="phb-field">
                 <i class="fa-regular fa-user phb-field__icon"></i>
                 <input
-                  v-model="form.nombre"
+                  v-model="nombre"
                   placeholder="Nombre completo"
-                  :class="{ error: errors.nombre }"
-                  @input="errors.nombre = ''"
+                  :class="{ error: formErrors.nombre }"
+                  @input="formErrors.nombre = ''"
                 />
               </div>
-              <p v-if="errors.nombre" class="phb-field__error">{{ errors.nombre }}</p>
+              <p v-if="formErrors.nombre" class="phb-field__error">{{ formErrors.nombre }}</p>
               <div class="phb-field">
                 <i class="fa-regular fa-envelope phb-field__icon"></i>
                 <input
-                  v-model="form.email"
+                  v-model="email"
                   type="email"
                   placeholder="Correo electrónico"
-                  :class="{ error: errors.email }"
-                  @input="errors.email = ''"
+                  :class="{ error: formErrors.email }"
+                  @input="formErrors.email = ''"
                 />
               </div>
-              <p v-if="errors.email" class="phb-field__error">{{ errors.email }}</p>
+              <p v-if="formErrors.email" class="phb-field__error">{{ formErrors.email }}</p>
               <div class="phb-field phb-field--phone">
                 <div class="phb-phone-pick">
                   <button type="button" class="phb-phone-pick__btn" @click="showCountryPicker = !showCountryPicker">
@@ -259,13 +248,13 @@ function scrollTo(id: string) {
                   v-model="phoneNum"
                   type="tel"
                   placeholder="Teléfono / WhatsApp"
-                  :class="{ error: errors.telefono }"
-                  @input="errors.telefono = ''"
+                  :class="{ error: formErrors.telefono }"
+                  @input="formErrors.telefono = ''"
                 />
               </div>
-              <p v-if="errors.telefono" class="phb-field__error">{{ errors.telefono }}</p>
-              <button type="submit" class="phb-form-card__btn" :disabled="loading">
-                {{ loading ? 'Enviando...' : 'EVALUAR MI CAPACIDAD REGENERATIVA →' }}
+              <p v-if="formErrors.telefono" class="phb-field__error">{{ formErrors.telefono }}</p>
+              <button type="submit" class="phb-form-card__btn" :disabled="submitLoading">
+                {{ submitLoading ? 'Enviando...' : 'INICIA AQUI TU EVALUACIÓN →' }}
               </button>
             </form>
             <p class="phb-form-card__foot">
@@ -310,7 +299,7 @@ function scrollTo(id: string) {
       <div class="phb-founder__inner">
         <p class="phb-section-label">FOUNDER & CEO — HEALTH DECISION PLATFORM</p>
         <h2 class="phb-section-title">Juan Román Garza.</h2>
-        <p class="phb-founder__role">Longevidad Regenerativa y Medicina de Frontera.</p>
+        <p class="phb-founder__role">Medicina regenerativa de precisión y longevidad.</p>
         <div class="phb-founder__body">
           <div class="phb-founder__photo-wrap">
             <img :src="juanPhoto" alt="Juan Román Garza" class="phb-founder__photo" />
@@ -330,12 +319,11 @@ function scrollTo(id: string) {
             </div>
           </div>
           <p class="phb-founder__bio">
-            Conecta Psicología, Tecnología y Medicina Regenerativa para ayudarte a optimizar tu
-            salud celular y el rendimiento humano. Como fundador de PowerHouse Biotech, Juan
-            Román ha liderado la evaluación de viabilidad de más de 100,000 casos clínicos. Su
-            enfoque integral abarca desde Células Madre y Exosomas hasta la Psicooncología y la
-            Psicología Organizacional, estableciendo un estándar internacional para líderes
-            empresariales y pacientes que buscan la verdad biológica.
+            Juan Román II Garza Delgado es estratega, investigador y emprendedor en longevidad regenerativa, medicina de precisión y liderazgo bio-consciente.
+            <br>
+            Como fundador y visionario de Eternal Medical Center y PowerHouse Biotech, impulsa un ecosistema innovador que integra medicina regenerativa, diagnóstico avanzado, tecnologías de salud, educación y optimización humana.
+            <br>
+            Su trabajo combina biología del envejecimiento, biomarcadores, inteligencia artificial y pensamiento sistémico para desarrollar modelos que ayuden a las personas a extender sus años de salud, funcionalidad y alto desempeño.
           </p>
           <div class="phb-founder__links">
             <a href="https://juanromangarza.com/" target="_blank" rel="noopener noreferrer" class="phb-founder__btn">
@@ -503,8 +491,15 @@ function scrollTo(id: string) {
     letter-spacing: 0.05em;
     color: $PHB-TEXT-1;
 
-    small { font-weight: 400; font-size: 0.85em; }
-    sup { font-size: 0.5em; top: -0.6em; }
+    small {
+      font-weight: 400;
+      font-size: 0.85em;
+    }
+
+    sup {
+      font-size: 0.5em;
+      top: -0.6em;
+    }
   }
 }
 
@@ -524,7 +519,9 @@ function scrollTo(id: string) {
     transition: color 0.2s;
     white-space: nowrap;
 
-    &:hover { color: $PHB-CYAN; }
+    &:hover {
+      color: $PHB-CYAN;
+    }
   }
 
   &__cta {
@@ -565,7 +562,9 @@ function scrollTo(id: string) {
       text-align: center;
     }
 
-    &--open { transform: translateY(0); }
+    &--open {
+      transform: translateY(0);
+    }
   }
 }
 
@@ -589,18 +588,38 @@ function scrollTo(id: string) {
     left: 4px;
     right: 4px;
 
-    &:nth-child(1) { top: 4px; }
-    &:nth-child(2) { top: 12px; }
-    &:nth-child(3) { top: 20px; }
+    &:nth-child(1) {
+      top: 4px;
+    }
+
+    &:nth-child(2) {
+      top: 12px;
+    }
+
+    &:nth-child(3) {
+      top: 20px;
+    }
   }
 
   &.open {
-    span:nth-child(1) { top: 12px; transform: rotate(45deg); }
-    span:nth-child(2) { opacity: 0; }
-    span:nth-child(3) { top: 12px; transform: rotate(-45deg); }
+    span:nth-child(1) {
+      top: 12px;
+      transform: rotate(45deg);
+    }
+
+    span:nth-child(2) {
+      opacity: 0;
+    }
+
+    span:nth-child(3) {
+      top: 12px;
+      transform: rotate(-45deg);
+    }
   }
 
-  @media (max-width: 768px) { display: block; }
+  @media (max-width: 768px) {
+    display: block;
+  }
 }
 
 // ── HERO ──────────────────────────────────────────────────────────────────────
@@ -628,20 +647,16 @@ function scrollTo(id: string) {
     position: absolute;
     inset: 0;
     background-image:
-      repeating-linear-gradient(
-        0deg,
+      repeating-linear-gradient(0deg,
         transparent,
         transparent 60px,
         rgba(255, 255, 255, 0.018) 60px,
-        rgba(255, 255, 255, 0.018) 61px
-      ),
-      repeating-linear-gradient(
-        90deg,
+        rgba(255, 255, 255, 0.018) 61px),
+      repeating-linear-gradient(90deg,
         transparent,
         transparent 60px,
         rgba(255, 255, 255, 0.018) 60px,
-        rgba(255, 255, 255, 0.018) 61px
-      );
+        rgba(255, 255, 255, 0.018) 61px);
     pointer-events: none;
     z-index: 2;
   }
@@ -710,7 +725,11 @@ function scrollTo(id: string) {
     color: $PHB-TEXT-2;
     line-height: 1.5;
 
-    i { color: $PHB-CYAN; font-size: 0.82rem; flex-shrink: 0; }
+    i {
+      color: $PHB-CYAN;
+      font-size: 0.82rem;
+      flex-shrink: 0;
+    }
   }
 }
 
@@ -743,13 +762,19 @@ function scrollTo(id: string) {
   text-decoration: none;
   transition: background 0.2s, border-color 0.2s, transform 0.15s;
 
-  i { font-size: 0.8rem; transition: transform 0.2s; }
+  i {
+    font-size: 0.8rem;
+    transition: transform 0.2s;
+  }
 
   &:hover {
     background: rgba($PHB-CYAN, 0.15);
     border-color: $PHB-CYAN;
     transform: translateY(-1px);
-    i { transform: translateX(3px); }
+
+    i {
+      transform: translateX(3px);
+    }
   }
 }
 
@@ -814,13 +839,23 @@ function scrollTo(id: string) {
     outline: none;
     transition: border-color 0.2s, background 0.2s;
 
-    &::placeholder { color: $PHB-TEXT-3; }
-    &:focus { border-color: $PHB-CYAN; background: color.adjust($PHB-SURFACE-2, $lightness: 2%); }
-    &.error { border-color: $PHB-URGENT; }
+    &::placeholder {
+      color: $PHB-TEXT-3;
+    }
+
+    &:focus {
+      border-color: $PHB-CYAN;
+      background: color.adjust($PHB-SURFACE-2, $lightness: 2%);
+    }
+
+    &.error {
+      border-color: $PHB-URGENT;
+    }
   }
 
   &--phone {
     gap: 0.5rem;
+
     input {
       padding-left: 1rem;
       flex: 1;
@@ -848,13 +883,27 @@ function scrollTo(id: string) {
     cursor: pointer;
     white-space: nowrap;
     transition: border-color 0.2s;
-    i { font-size: 0.6rem; color: $PHB-TEXT-3; margin-left: 0.15rem; }
-    &:hover { border-color: $PHB-CYAN; }
+
+    i {
+      font-size: 0.6rem;
+      color: $PHB-TEXT-3;
+      margin-left: 0.15rem;
+    }
+
+    &:hover {
+      border-color: $PHB-CYAN;
+    }
   }
 
-  &__flag { font-size: 1.15rem; line-height: 1; }
+  &__flag {
+    font-size: 1.15rem;
+    line-height: 1;
+  }
 
-  &__code { font-weight: 600; font-size: 0.82rem; }
+  &__code {
+    font-weight: 600;
+    font-size: 0.82rem;
+  }
 
   &__drop {
     position: absolute;
@@ -885,11 +934,23 @@ function scrollTo(id: string) {
     font-size: 0.85rem;
     cursor: pointer;
     transition: background 0.15s;
-    &:hover { background: rgba($PHB-CYAN, 0.08); }
-    &.active { background: rgba($PHB-CYAN, 0.12); color: $PHB-TEXT-1; font-weight: 600; }
+
+    &:hover {
+      background: rgba($PHB-CYAN, 0.08);
+    }
+
+    &.active {
+      background: rgba($PHB-CYAN, 0.12);
+      color: $PHB-TEXT-1;
+      font-weight: 600;
+    }
   }
 
-  &__label { color: $PHB-TEXT-3; font-size: 0.78rem; margin-left: auto; }
+  &__label {
+    color: $PHB-TEXT-3;
+    font-size: 0.78rem;
+    margin-left: auto;
+  }
 }
 
 .phb-field__error {
@@ -919,7 +980,10 @@ function scrollTo(id: string) {
     box-shadow: 0 8px 28px rgba($PHB-CYAN, 0.4);
   }
 
-  &:disabled { opacity: 0.6; cursor: default; }
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
 }
 
 .phb-form-card__foot {
@@ -930,7 +994,10 @@ function scrollTo(id: string) {
   margin: 1rem 0 0;
   font-size: 0.72rem;
   color: $PHB-TEXT-3;
-  i { font-size: 0.68rem; }
+
+  i {
+    font-size: 0.68rem;
+  }
 }
 
 // ── SECTION LABELS ────────────────────────────────────────────────────────────
@@ -943,7 +1010,9 @@ function scrollTo(id: string) {
   color: rgba($PHB-CYAN, 0.6);
   margin: 0 0 0.75rem;
 
-  &--light { color: rgba(255, 255, 255, 0.45); }
+  &--light {
+    color: rgba(255, 255, 255, 0.45);
+  }
 }
 
 .phb-section-title {
@@ -986,8 +1055,13 @@ function scrollTo(id: string) {
   grid-template-columns: repeat(5, 1fr);
   gap: 1rem;
 
-  @media (max-width: 1024px) { grid-template-columns: repeat(3, 1fr); }
-  @media (max-width: 640px) { grid-template-columns: 1fr; }
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .phb-dif__card {
@@ -1185,7 +1259,9 @@ function scrollTo(id: string) {
   transition: transform 0.15s, box-shadow 0.2s;
   box-shadow: 0 4px 20px rgba($PHB-CYAN, 0.2);
 
-  i { font-size: 0.78rem; }
+  i {
+    font-size: 0.78rem;
+  }
 
   &:hover {
     transform: translateY(-1px);
@@ -1199,7 +1275,9 @@ function scrollTo(id: string) {
   text-decoration: none;
   transition: color 0.2s;
 
-  &:hover { color: $PHB-CYAN; }
+  &:hover {
+    color: $PHB-CYAN;
+  }
 }
 
 // ── RUTA 5 PASOS ──────────────────────────────────────────────────────────────
@@ -1246,7 +1324,10 @@ function scrollTo(id: string) {
   align-items: center;
   margin-bottom: 1rem;
 
-  @media (max-width: 768px) { margin-bottom: 0; flex-shrink: 0; }
+  @media (max-width: 768px) {
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
 }
 
 .phb-ruta__num {
@@ -1266,7 +1347,11 @@ function scrollTo(id: string) {
   justify-content: center;
   border: 2px solid $PHB-BORDER-MEDIUM;
   box-shadow: 0 4px 16px rgba($PHB-CYAN, 0.08);
-  i { color: $PHB-CYAN; font-size: 1.2rem; }
+
+  i {
+    color: $PHB-CYAN;
+    font-size: 1.2rem;
+  }
 }
 
 .phb-ruta__connector {
@@ -1278,13 +1363,17 @@ function scrollTo(id: string) {
   background: linear-gradient(90deg, rgba($PHB-CYAN, 0.25), rgba($PHB-CYAN, 0.05));
   z-index: 0;
 
-  @media (max-width: 768px) { display: none; }
+  @media (max-width: 768px) {
+    display: none;
+  }
 }
 
 .phb-ruta__step-body {
   text-align: center;
 
-  @media (max-width: 768px) { text-align: left; }
+  @media (max-width: 768px) {
+    text-align: left;
+  }
 
   h3 {
     font-family: fonts.$font-principal;
@@ -1452,14 +1541,20 @@ function scrollTo(id: string) {
   gap: 0.6rem;
   margin-bottom: 0.5rem;
 
-  img { height: 28px; width: auto; }
+  img {
+    height: 28px;
+    width: auto;
+  }
 
   span {
     @include fonts.heading-font(700);
     font-size: 1rem;
     color: $PHB-TEXT-2;
     letter-spacing: 0.06em;
-    sup { font-size: 0.45em; }
+
+    sup {
+      font-size: 0.45em;
+    }
   }
 }
 
@@ -1472,7 +1567,10 @@ function scrollTo(id: string) {
     color: $PHB-CYAN;
     text-decoration: none;
     transition: color 0.2s;
-    &:hover { color: $PHB-BLUE-LIGHT; }
+
+    &:hover {
+      color: $PHB-BLUE-LIGHT;
+    }
   }
 }
 
@@ -1497,7 +1595,9 @@ function scrollTo(id: string) {
     text-decoration: none;
     transition: color 0.2s;
 
-    &:hover { color: $PHB-TEXT-2; }
+    &:hover {
+      color: $PHB-TEXT-2;
+    }
   }
 }
 
@@ -1505,6 +1605,9 @@ function scrollTo(id: string) {
   font-size: 0.7rem;
   color: rgba(255, 255, 255, 0.18);
   margin: 0;
-  sup { font-size: 0.55em; }
+
+  sup {
+    font-size: 0.55em;
+  }
 }
 </style>

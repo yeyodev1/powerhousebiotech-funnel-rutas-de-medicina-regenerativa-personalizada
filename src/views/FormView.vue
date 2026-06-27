@@ -1,26 +1,162 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
 
-const router = useRouter()
-const route = useRoute()
 const WEBHOOK = 'https://services.leadconnectorhq.com/hooks/P62nq2IVqxaQbOrD3P1R/webhook-trigger/rG4rYvva3xMz9mEx11Xq'
 
-const data = ref({
-  nombre: '', edad: '', ciudad: '', email: '', telefono: '',
-  diagnostico: [] as string[], diagnosticoOtro: '',
-  tiempoCondicion: '', tomaMedicamentos: '', terapiasPrevias: [] as string[],
-  impactoCalidad: '', preocupacion: '',
-  conocimiento: '', expectativas: '',
-  estres: '', descanso: '', situacion: '', entiendeGarantia: '',
-  invertirEnClaridad: '', situacionFinanciera: '', seguroMedico: '',
-  planOptimizacion: '', chequeos: '',
-  tieneMedico: '', relacionMedico: '', recomendacionesMedico: '',
-  medicoMencionoRM: '', dispuestoCoordinar: '', confirmacion: '',
-})
+interface QuestionItem {
+  id: number
+  section: number
+  text: string
+  interpretation: string
+  biomarkers: string
+}
+
+interface SectionData {
+  id: number
+  title: string
+  questions: QuestionItem[]
+}
+
+const sectionsData: SectionData[] = [
+  {
+    id: 1,
+    title: 'I. Salud metabólica',
+    questions: [
+      { id: 1, section: 1, text: 'Después de consumir pan, arroz, pasta, postres o bebidas azucaradas, ¿presenta sueño, cansancio, hambre o dificultad para concentrarse?', interpretation: 'Respuesta glucémica ineficiente o señales compatibles con resistencia a la insulina.', biomarkers: 'Glucosa en ayunas, HbA1c, insulina, HOMA-IR, HOMA-B, TyG y METS-IR.' },
+      { id: 2, section: 1, text: '¿Ha aumentado de peso principalmente alrededor del abdomen o le resulta difícil reducir cintura aun cuando intenta comer menos?', interpretation: 'Adiposidad central asociada con deterioro de la sensibilidad a la insulina.', biomarkers: 'BMI, insulina, HOMA-IR, TyG-BMI, METS-IR, triglicéridos, HDL y TG/HDL.' },
+      { id: 3, section: 1, text: '¿Siente hambre nuevamente menos de tres horas después de comer o necesita consumir azúcar, café o carbohidratos para recuperar energía?', interpretation: 'Inestabilidad energética, hiperinsulinemia compensatoria o mala selección de alimentos.', biomarkers: 'Glucosa, insulina, HbA1c, HOMA-IR, HOMA-B y TyG.' },
+      { id: 4, section: 1, text: '¿Ha presentado sed excesiva, necesidad de orinar con frecuencia, visión borrosa o pérdida inexplicable de peso?', interpretation: 'Posible desregulación glucémica que requiere evaluación clínica prioritaria.', biomarkers: 'Glucosa en ayunas, HbA1c, glucosa en orina, cetonas en orina y osmolalidad sérica estimada.' },
+      { id: 5, section: 1, text: '¿Tiene antecedentes personales o familiares de prediabetes, diabetes, hígado graso, obesidad o síndrome metabólico?', interpretation: 'Mayor predisposición cardiometabólica y necesidad de vigilancia longitudinal.', biomarkers: 'Glucosa, HbA1c, insulina, HOMA-IR, TyG, TyG-BMI, METS-IR, triglicéridos y HDL.' },
+    ],
+  },
+  {
+    id: 2,
+    title: 'II. Salud cardiovascular',
+    questions: [
+      { id: 6, section: 2, text: '¿Experimenta presión o dolor en el pecho, falta de aire, mareo o fatiga desproporcionada al caminar o subir escaleras?', interpretation: 'Señal de alerta cardiovascular; no debe esperarse al resultado del panel para buscar valoración médica.', biomarkers: 'ApoB, LDL, non-HDL, colesterol remanente, triglicéridos, Lp(a), PCR y AIP.' },
+      { id: 7, section: 2, text: '¿Le han diagnosticado presión arterial elevada o registra mediciones superiores a las recomendadas?', interpretation: 'Mayor carga vascular, renal y metabólica.', biomarkers: 'Glucosa, HbA1c, creatinina, eGFR, ACR urinaria, ácido úrico, sodio, potasio y Na/K.' },
+      { id: 8, section: 2, text: '¿Algún familiar directo presentó infarto, embolia o enfermedad cardiovascular a una edad temprana?', interpretation: 'Posible riesgo hereditario que no siempre se refleja únicamente en el colesterol convencional.', biomarkers: 'Lp(a), ApoB, LDL, non-HDL, AC, AIP, Chol/HDL y LDL/HDL.' },
+      { id: 9, section: 2, text: '¿Fuma, vapea, permanece sentado gran parte del día o realiza menos de 150 minutos de actividad física por semana?', interpretation: 'Exposición conductual asociada con mayor riesgo vascular, inflamatorio y metabólico.', biomarkers: 'HDL, triglicéridos, TG/HDL, PCR, CRP-BMI, glucosa, insulina y HOMA-IR.' },
+      { id: 10, section: 2, text: '¿Su alimentación contiene con frecuencia embutidos, frituras, comida rápida, grasas trans, alcohol o productos ultraprocesados?', interpretation: 'Posible elevación de carga aterogénica y triglicéridos.', biomarkers: 'ApoB, LDL, VLDL, triglicéridos, non-HDL, colesterol remanente, AIP, TG/HDL y VLDL-C/HDL.' },
+    ],
+  },
+  {
+    id: 3,
+    title: 'III. Carga inflamatoria',
+    questions: [
+      { id: 11, section: 3, text: '¿Presenta dolor muscular o articular persistente, rigidez al despertar o sensación de inflamación generalizada?', interpretation: 'Posible actividad inflamatoria sistémica o musculoesquelética que necesita correlación clínica.', biomarkers: 'PCR, albúmina, CAR, CRP-BMI, SII, AISI, SIRI y ferritina/PCR.' },
+      { id: 12, section: 3, text: '¿Se despierta cansado aun después de dormir suficientes horas o siente que su cuerpo tarda demasiado en recuperarse?', interpretation: 'Inflamación de bajo grado, estrés fisiológico, trastorno del sueño o alteración metabólica.', biomarkers: 'PCR, SII, SI-BMI, SIRI, cortisol, glucosa, insulina, vitamina D y TSH.' },
+      { id: 13, section: 3, text: '¿Padece gingivitis, problemas dentales, infecciones recurrentes, enfermedades inflamatorias o lesiones que tardan en sanar?', interpretation: 'Posible fuente inflamatoria persistente o alteración de respuesta inmunológica.', biomarkers: 'PCR, leucocitos, neutrófilos, linfocitos, NLR, PLR, SII, AISI y albúmina.' },
+      { id: 14, section: 3, text: '¿Combina exceso de grasa abdominal, poco ejercicio, mala calidad de sueño y consumo frecuente de ultraprocesados?', interpretation: 'Microentorno proinflamatorio relacionado con adiposidad y resistencia metabólica.', biomarkers: 'CRP-BMI, SI-BMI, BMI, HOMA-IR, TyG-BMI, PCR, TG/HDL y ácido úrico/HDL.' },
+    ],
+  },
+  {
+    id: 4,
+    title: 'IV. Salud renal',
+    questions: [
+      { id: 15, section: 4, text: '¿Ha notado espuma persistente en la orina, hinchazón de piernas, tobillos, manos o párpados?', interpretation: 'Posible pérdida urinaria de proteínas o alteración en el manejo de líquidos.', biomarkers: 'Albúmina en orina, proteína en orina, ACR urinaria, creatinina, eGFR y albúmina sérica.' },
+      { id: 16, section: 4, text: '¿Se levanta varias veces durante la noche a orinar o ha cambiado notablemente la cantidad de orina que produce?', interpretation: 'Posible alteración renal, prostática, metabólica o del balance de líquidos.', biomarkers: 'Creatinina, eGFR, BUN, BUN/Cr, glucosa, HbA1c, glucosa en orina, PSA total y PSA libre.' },
+      { id: 17, section: 4, text: '¿Ha presentado ardor al orinar, infecciones urinarias repetidas, dolor lumbar o sangre visible en la orina?', interpretation: 'Posible infección, inflamación, cálculo o lesión urinaria; la sangre visible requiere atención médica.', biomarkers: 'Leucocitos en orina, nitritos, sangre oculta, eritrocitos, proteína, apariencia y color de orina.' },
+      { id: 18, section: 4, text: '¿Utiliza con frecuencia antiinflamatorios, diuréticos, suplementos en dosis altas o ha tenido periodos prolongados de deshidratación?', interpretation: 'Posible estrés renal o alteración del equilibrio hidroelectrolítico.', biomarkers: 'BUN, creatinina, BUN/Cr, eGFR, sodio, potasio, osmolalidad, anion gap y CO₂.' },
+    ],
+  },
+  {
+    id: 5,
+    title: 'V. Salud hepática',
+    questions: [
+      { id: 19, section: 5, text: '¿Consume alcohol varias veces por semana o suele beber grandes cantidades en una sola ocasión?', interpretation: 'Exposición asociada con estrés hepático y cambios en enzimas o relaciones hepáticas.', biomarkers: 'GGT, ALT, AST, De Ritis, GGT/ALT, GGT/ALP, triglicéridos y ferritina.' },
+      { id: 20, section: 5, text: '¿Tiene abdomen prominente, triglicéridos elevados, prediabetes, diabetes o diagnóstico previo de hígado graso?', interpretation: 'Posible disfunción hepática de origen metabólico.', biomarkers: 'ALT, AST, GGT, FIB-4, APRI, glucosa, HbA1c, insulina, HOMA-IR y triglicéridos.' },
+      { id: 21, section: 5, text: '¿Ha presentado dolor debajo de las costillas del lado derecho, náusea frecuente, orina oscura, piel amarillenta o comezón generalizada?', interpretation: 'Posible alteración hepatobiliar; la coloración amarilla requiere valoración médica inmediata.', biomarkers: 'ALP, GGT, ALT, AST, bilirrubina en orina, albúmina, globulina y A/G Ratio.' },
+      { id: 22, section: 5, text: '¿Consume varios medicamentos, hormonas, productos herbales, anabólicos o suplementos sin supervisión?', interpretation: 'Posible exposición hepatotóxica o interacción entre sustancias.', biomarkers: 'ALT, AST, GGT, ALP, De Ritis, GGT/ALT, GGT/ALP, albúmina y globulina.' },
+    ],
+  },
+  {
+    id: 6,
+    title: 'VI. Sistema inmune',
+    questions: [
+      { id: 23, section: 6, text: '¿Ha tenido infecciones respiratorias, digestivas, urinarias o cutáneas con mayor frecuencia de lo habitual?', interpretation: 'Posible alteración de la respuesta inmunitaria o exposición persistente.', biomarkers: 'Leucocitos, neutrófilos, linfocitos, monocitos, NLR, LMR, NMR y SIRI.' },
+      { id: 24, section: 6, text: '¿Padece alergias, asma, dermatitis, congestión recurrente o reacciones frecuentes a alimentos o medicamentos?', interpretation: 'Posible componente alérgico o hipersensibilidad.', biomarkers: 'Eosinófilos, porcentaje de eosinófilos, basófilos, porcentaje de basófilos y leucocitos totales.' },
+      { id: 25, section: 6, text: '¿Tiene alguna enfermedad autoinmune diagnosticada, fiebre recurrente, ganglios inflamados o sudoración nocturna?', interpretation: 'Posible activación o desregulación inmunológica que requiere evaluación médica dirigida.', biomarkers: 'Leucocitos y diferencial, NLR, PLR, LMR, SII, AISI, SIRI, PCR, albúmina y globulina.' },
+      { id: 26, section: 6, text: '¿Sus heridas tardan en cerrar o suele recuperarse lentamente después de enfermedades, cirugías o entrenamientos?', interpretation: 'Posible alteración inmunitaria, inflamatoria, metabólica o nutricional.', biomarkers: 'Leucocitos, linfocitos, neutrófilos, PCR, albúmina, glucosa, HbA1c, vitamina D, hierro y ferritina.' },
+    ],
+  },
+  {
+    id: 7,
+    title: 'VII. Balance hematológico y oxigenación',
+    questions: [
+      { id: 27, section: 7, text: '¿Siente cansancio, debilidad, palpitaciones o falta de aire al realizar actividades que antes toleraba?', interpretation: 'Posible anemia, deficiencia de hierro o menor capacidad de transporte de oxígeno.', biomarkers: 'Glóbulos rojos, hemoglobina, hematocrito, VCM, HCM, RDW, hierro, TSAT y ferritina.' },
+      { id: 28, section: 7, text: '¿Experimenta mareo al levantarse, dolor de cabeza frecuente, palidez, manos frías o dificultad para concentrarse?', interpretation: 'Posible alteración hematológica, nutricional o circulatoria.', biomarkers: 'Hemoglobina, hematocrito, glóbulos rojos, VCM, RDW, hierro, ferritina, vitamina B12 y folato.' },
+      { id: 29, section: 7, text: '¿Presenta moretones sin explicación, sangrado frecuente de encías o nariz, o tarda en detenerse una hemorragia?', interpretation: 'Posible alteración plaquetaria o de coagulación que necesita valoración específica.', biomarkers: 'Plaquetas, VPM, MPR, PLR, hemoglobina y hematocrito.' },
+      { id: 30, section: 7, text: '¿Sigue una dieta muy restrictiva, dona sangre con frecuencia o ha tenido sangrado digestivo, úlceras o cirugía gastrointestinal?', interpretation: 'Mayor probabilidad de deficiencia de hierro, B12 o folato.', biomarkers: 'Hierro sérico, TSAT, ferritina, hemoglobina, VCM, RDW, vitamina B12, ácido fólico, Hcy/B12 y Hcy/Folate.' },
+    ],
+  },
+  {
+    id: 8,
+    title: 'VIII. Energía y eficiencia fisiológica',
+    questions: [
+      { id: 31, section: 8, text: '¿Tiene energía aceptable al despertar, pero presenta una caída marcada durante la mañana o la tarde?', interpretation: 'Posible inestabilidad metabólica, alteración del sueño o carga de estrés.', biomarkers: 'Glucosa, insulina, HOMA-IR, cortisol, ESR cortisol/glucosa, TSH y ferritina.' },
+      { id: 32, section: 8, text: '¿Se agota rápidamente al hacer ejercicio o necesita varios días para recuperarse de una actividad moderada?', interpretation: 'Posible baja reserva funcional, alteración hormonal, inflamatoria o hematológica.', biomarkers: 'Hemoglobina, ferritina, magnesio, IGF-1, cortisol, IGF-1/cortisol, PCR y vitamina D.' },
+      { id: 33, section: 8, text: '¿Tiene calambres, espasmos, debilidad muscular, temblores o palpitaciones frecuentes?', interpretation: 'Posible alteración mineral, electrolítica, tiroidea o neuromuscular.', biomarkers: 'Magnesio, calcio, calcio corregido, Mg/Ca, sodio, potasio, Na/K, TSH y vitamina D.' },
+      { id: 34, section: 8, text: '¿Ha perdido fuerza, masa muscular o rendimiento físico aun cuando mantiene una alimentación y entrenamiento razonables?', interpretation: 'Posible predominio catabólico o insuficiente recuperación.', biomarkers: 'IGF-1, cortisol, IGF-1/cortisol, testosterona, T/cortisol, DHEA-S y vitamina D.' },
+    ],
+  },
+  {
+    id: 9,
+    title: 'IX. Estado nutricional, tiroideo y electrolítico',
+    questions: [
+      { id: 35, section: 9, text: '¿Su alimentación excluye grupos completos de alimentos o contiene poca proteína, vegetales, frutas o alimentos frescos?', interpretation: 'Posible insuficiencia de micronutrientes o proteína.', biomarkers: 'Albúmina, vitamina B12, ácido fólico, vitamina D, hierro, ferritina, magnesio y calcio.' },
+      { id: 36, section: 9, text: '¿Presenta hormigueo, entumecimiento, problemas de memoria, lengua sensible o sensación de quemazón en manos o pies?', interpretation: 'Posible alteración neurológica o deficiencia de vitaminas del complejo B.', biomarkers: 'Vitamina B12, ácido fólico, homocisteína, Hcy/B12, Hcy/Folate, VCM y RDW.' },
+      { id: 37, section: 9, text: '¿Siente frío cuando otros no, tiene estreñimiento, piel seca, caída de cabello o lentitud física y mental?', interpretation: 'Posible alteración tiroidea o metabólica.', biomarkers: 'TSH, colesterol total, LDL, triglicéridos, glucosa, sodio y CK como prueba complementaria si fuera necesario.' },
+      { id: 38, section: 9, text: '¿Padece diarrea o vómito frecuentes, utiliza diuréticos o laxantes, suda excesivamente o consume muy poca agua?', interpretation: 'Posible desequilibrio de líquidos, minerales o electrolitos.', biomarkers: 'Sodio, potasio, cloruro, CO₂, calcio, magnesio, Na/K, anion gap, BUN/Cr y osmolalidad.' },
+    ],
+  },
+  {
+    id: 10,
+    title: 'X. Eje androgénico, composición corporal y próstata',
+    questions: [
+      { id: 39, section: 10, text: '¿Ha disminuido su deseo sexual, la frecuencia de erecciones espontáneas o la calidad de las erecciones?', interpretation: 'Posible alteración androgénica, metabólica, vascular o relacionada con estrés.', biomarkers: 'Testosterona total, estradiol, T/E2, DHEA-S, T/DHEA-S, glucosa, HOMA-IR, ApoB y triglicéridos.' },
+      { id: 40, section: 10, text: '¿Ha perdido masa muscular o fuerza mientras aumenta la grasa abdominal o del pecho?', interpretation: 'Posible desequilibrio entre composición corporal, andrógenos y metabolismo.', biomarkers: 'Testosterona, estradiol, T/E2, DHEA-S, BMI, insulina, HOMA-IR, cortisol y T/cortisol.' },
+      { id: 41, section: 10, text: '¿Ha notado menor motivación, concentración, iniciativa, tolerancia al esfuerzo o estabilidad emocional?', interpretation: 'Posible interacción entre hormonas sexuales, sueño, estrés y metabolismo.', biomarkers: 'Testosterona, DHEA-S, cortisol, T/cortisol, DHEA-S/cortisol, TSH, vitamina D y glucosa.' },
+      { id: 42, section: 10, text: '¿Tiene dificultad para iniciar la orina, flujo débil, urgencia, goteo o necesidad de levantarse varias veces por la noche?', interpretation: 'Posible alteración prostática o urinaria.', biomarkers: 'PSA total, PSA libre, PSA libre/PSA total, examen de orina, creatinina y eGFR.' },
+      { id: 43, section: 10, text: '¿Utiliza o ha utilizado testosterona, anabólicos, finasterida, medicamentos prostáticos o tratamientos para fertilidad?', interpretation: 'Factor esencial para contextualizar resultados hormonales, hematológicos y prostáticos.', biomarkers: 'Testosterona, estradiol, T/E2, DHEA-S, PSA total, PSA libre, hemoglobina, hematocrito, ALT, AST y lípidos.' },
+    ],
+  },
+  {
+    id: 11,
+    title: 'XI. Longevidad y edad fenotípica',
+    questions: [
+      { id: 44, section: 11, text: 'Comparado con hace cinco años, ¿ha disminuido claramente su fuerza, velocidad para caminar, equilibrio o capacidad para subir escaleras?', interpretation: 'Posible pérdida acelerada de reserva funcional.', biomarkers: 'PhenoAge, PhenoAgeAccel, albúmina, PCR, glucosa, creatinina, hemoglobina, RDW e IGF-1.' },
+      { id: 45, section: 11, text: '¿Se enferma con mayor facilidad o tarda más tiempo en recuperarse de infecciones, lesiones, estrés o viajes?', interpretation: 'Posible disminución de resiliencia fisiológica.', biomarkers: 'PhenoAge, PhenoAgeAccel, PCR, albúmina, leucocitos, linfocitos, glucosa, vitamina D y DHEA-S/cortisol.' },
+      { id: 46, section: 11, text: '¿Ha percibido deterioro progresivo de memoria, atención, agilidad mental o capacidad para aprender?', interpretation: 'Posible envejecimiento funcional, alteración metabólica o deficiencia nutricional.', biomarkers: 'PhenoAge, PhenoAgeAccel, homocisteína, Hcy/B12, Hcy/Folate, vitamina B12, folato, glucosa y HbA1c.' },
+    ],
+  },
+  {
+    id: 12,
+    title: 'XII. Estrés y carga alostática',
+    questions: [
+      { id: 47, section: 12, text: '¿Duerme menos de siete horas, se despierta varias veces o comienza el día sin sentirse recuperado?', interpretation: 'Posible carga de estrés sostenida y recuperación insuficiente.', biomarkers: 'Cortisol, CAI, DHEA-S/cortisol, ESR cortisol/glucosa, PCR, glucosa y testosterona/cortisol.' },
+      { id: 48, section: 12, text: '¿Se siente permanentemente en alerta, irritable, ansioso o incapaz de relajarse aun cuando no existe una urgencia inmediata?', interpretation: 'Posible activación sostenida del sistema de respuesta al estrés.', biomarkers: 'Cortisol, CAI, DHEA-S/cortisol, glucosa, PCR, insulina y T/cortisol.' },
+      { id: 49, section: 12, text: '¿Utiliza café, bebidas energéticas, azúcar, alcohol o medicamentos para poder activarse durante el día o desconectarse por la noche?', interpretation: 'Posible compensación conductual de fatiga, estrés o alteraciones del sueño.', biomarkers: 'Cortisol, glucosa, insulina, HOMA-IR, GGT, triglicéridos, magnesio y DHEA-S/cortisol.' },
+      { id: 50, section: 12, text: '¿En los últimos seis meses ha vivido presión laboral, económica, familiar o emocional que percibe superior a su capacidad de recuperación?', interpretation: 'Mayor carga alostática y posible predominio catabólico.', biomarkers: 'CAI, cortisol, PCR, DHEA-S/cortisol, IGF-1/cortisol, testosterona/cortisol, glucosa, HbA1c y CRP-BMI.' },
+    ],
+  },
+]
+
+const answers = ref<Record<number, number>>({})
+const showInfo = ref<Record<number, boolean>>({})
+
+const nombre = ref('')
+const email = ref('')
 const phoneNum = ref('')
 const countryCode = ref('+52')
 const showCountryPicker = ref(false)
+const formErrors = ref<Record<string, string>>({})
+const submitLoading = ref(false)
+const formSubmitted = ref(false)
+
+const mode = ref<'intro' | 'wizard' | 'done'>('intro')
+const activeStep = ref(0)
+const dir = ref<'fwd' | 'back'>('fwd')
 
 const countries = [
   { code: '+52', flag: '🇲🇽', label: 'MX' },
@@ -39,185 +175,90 @@ const countries = [
 
 const currentCountry = computed(() => countries.find(c => c.code === countryCode.value) || countries[0])
 
+const currentSection = computed(() => sectionsData[activeStep.value])
+const totalSteps = computed(() => sectionsData.length)
+const isFirstStep = computed(() => activeStep.value === 0)
+const isLastStep = computed(() => activeStep.value === totalSteps.value - 1)
+
+const totalQuestions = computed(() => sectionsData.reduce((sum, s) => sum + s.questions.length, 0))
+const answeredCount = computed(() => Object.keys(answers.value).length)
+const overallProgress = computed(() => totalQuestions.value > 0 ? Math.round((answeredCount.value / totalQuestions.value) * 100) : 0)
+const stepProgress = computed(() => Math.round(((activeStep.value + 1) / totalSteps.value) * 100))
+
 function selectCountry(c: typeof countries[0]) {
   countryCode.value = c.code
   showCountryPicker.value = false
 }
 
-type QType = 'text' | 'tel' | 'email' | 'number' | 'radio' | 'checkbox' | 'textarea'
-interface Question {
-  key: string
-  section: string
-  sectionNum: number
-  question: string
-  sub?: string
-  type: QType
-  options?: { value: string; label: string }[]
-  placeholder?: string
-  multiKey?: string
-  multiOtroKey?: string
-  tip?: string
+function toggleInfo(id: number) {
+  showInfo.value[id] = !showInfo.value[id]
 }
 
-const questions: Question[] = [
-  // ── SECCIÓN 1 ──
-  { key: 'nombre', section: 'Información Básica', sectionNum: 1, question: '¿Cuál es tu nombre completo?', type: 'text', placeholder: 'Ej: Juan Pérez', tip: 'Tu nombre nos permite personalizar cada recomendación para ti.' },
-  { key: 'edad', section: 'Información Básica', sectionNum: 1, question: '¿Cuántos años tienes?', type: 'number', placeholder: 'Ej: 45', tip: 'Tu edad biológica puede ser muy distinta a tu edad cronológica. La medicina regenerativa trabaja con la primera.' },
-  { key: 'ciudad', section: 'Información Básica', sectionNum: 1, question: '¿En qué ciudad y país vives?', type: 'text', placeholder: 'Ej: Ciudad de México, MX', tip: 'Queremos confirmar si tienes acceso presencial a nuestros centros de evaluación.' },
-  { key: 'email', section: 'Información Básica', sectionNum: 1, question: '¿Cuál es tu correo electrónico?', type: 'email', placeholder: 'correo@ejemplo.com', tip: 'Tus datos están protegidos con total confidencialidad. Solo los usaremos para tu evaluación.' },
-  { key: 'telefono', section: 'Información Básica', sectionNum: 1, question: '¿Cuál es tu teléfono o WhatsApp?', type: 'tel', placeholder: 'Ej: +52 55 1234 5678', tip: 'Te contactaremos solo para coordinar tu evaluación, nada de spam.' },
+function setAnswer(questionId: number, value: number) {
+  answers.value[questionId] = value
+}
 
-  // ── SECCIÓN 2 ──
-  { key: 'diagnostico', section: 'Tu Condición de Salud Actual', sectionNum: 2, question: '¿Cuál es tu diagnóstico principal?', sub: 'Selecciona todas las opciones que apliquen.', type: 'checkbox', multiKey: 'diagnostico', multiOtroKey: 'diagnosticoOtro', tip: 'Cada condición tiene un perfil biológico único. Identificarlo con precisión es el primer paso hacia la regeneración.', options: [
-    { value: 'Diabetes', label: 'Diabetes' },
-    { value: 'Hipertensión', label: 'Hipertensión' },
-    { value: 'Artritis / Problema articular', label: 'Artritis / Problema articular' },
-    { value: 'Enfermedad autoinmune', label: 'Enfermedad autoinmune' },
-    { value: 'Enfermedad neurodegenerativa', label: 'Enfermedad neurodegenerativa' },
-    { value: 'Problema metabólico', label: 'Problema metabólico' },
-    { value: 'Otro', label: 'Otro' },
-  ]},
-  { key: 'tiempoCondicion', section: 'Tu Condición de Salud Actual', sectionNum: 2, question: '¿Cuánto tiempo llevas con esta condición?', type: 'radio', tip: 'El factor tiempo es clave: mientras antes se intervenga, mayor es el potencial regenerativo del organismo.', options: [
-    { value: 'Menos de 1 año', label: 'Menos de 1 año' },
-    { value: '1-3 años', label: '1-3 años' },
-    { value: '3-10 años', label: '3-10 años' },
-    { value: 'Más de 10 años', label: 'Más de 10 años' },
-  ]},
-  { key: 'tomaMedicamentos', section: 'Tu Condición de Salud Actual', sectionNum: 2, question: '¿Actualmente tomas medicamentos?', type: 'radio', tip: 'Ciertos fármacos pueden influir en los protocolos regenerativos. Es importante conocer tu perfil farmacológico.', options: [
-    { value: 'Sí', label: 'Sí' },
-    { value: 'No', label: 'No' },
-    { value: 'Varios', label: 'Varios' },
-  ]},
-  { key: 'terapiasPrevias', section: 'Tu Condición de Salud Actual', sectionNum: 2, question: '¿Has intentado otras terapias antes?', sub: 'Selecciona todas las que apliquen.', type: 'checkbox', multiKey: 'terapiasPrevias', tip: 'Saber qué has probado nos ayuda a no repetir caminos y enfocarnos en lo que realmente puede funcionar.', options: [
-    { value: 'Medicina tradicional', label: 'Medicina tradicional' },
-    { value: 'Medicina alternativa', label: 'Medicina alternativa' },
-    { value: 'Suplementos', label: 'Suplementos' },
-    { value: 'Terapias regenerativas', label: 'Terapias regenerativas' },
-    { value: 'Varias combinadas', label: 'Varias combinadas' },
-    { value: 'Ninguna', label: 'Ninguna' },
-  ]},
+function getFullPhone() {
+  return countryCode.value + ' ' + phoneNum.value.trim()
+}
 
-  // ── SECCIÓN 3 ──
-  { key: 'impactoCalidad', section: 'Nivel de Impacto', sectionNum: 3, question: '¿Cómo afecta esta condición tu calidad de vida?', type: 'radio', tip: 'La medicina regenerativa no busca solo aliviar síntomas, sino recuperar función y calidad de vida real.', options: [
-    { value: 'Leve', label: '😌 Leve — Casi no me afecta' },
-    { value: 'Moderada', label: '😐 Moderada — Molesta, pero funcional' },
-    { value: 'Alta', label: '😣 Alta — Limita mis actividades' },
-    { value: 'Severamente limitante', label: '😫 Severa — No puedo hacer mi vida normal' },
-  ]},
-  { key: 'preocupacion', section: 'Nivel de Impacto', sectionNum: 3, question: '¿Qué es lo que más te preocupa?', type: 'radio', tip: 'Identificar tu mayor preocupación nos permite enfocar la evaluación en lo que realmente importa para ti.', options: [
-    { value: 'Dolor', label: 'El dolor' },
-    { value: 'Pérdida de función', label: 'Perder mi capacidad funcional' },
-    { value: 'Dependencia futura', label: 'Volverme dependiente' },
-    { value: 'No saber qué hacer', label: 'No tener claridad sobre qué hacer' },
-    { value: 'Empeoramiento progresivo', label: 'Que siga empeorando' },
-  ]},
+function validatePersonal() {
+  const e: Record<string, string> = {}
+  if (nombre.value.trim().length < 2) e.nombre = 'Ingresa tu nombre'
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) e.email = 'Email inválido'
+  if (phoneNum.value.trim().length < 7) e.telefono = 'Teléfono inválido'
+  formErrors.value = e
+  return Object.keys(e).length === 0
+}
 
-  // ── SECCIÓN 4 ──
-  { key: 'conocimiento', section: 'Conocimiento sobre Medicina Regenerativa', sectionNum: 4, question: '¿Qué tanto has investigado sobre medicina regenerativa?', sub: 'Células madre, exosomas, péptidos, sueroterapia…', type: 'radio', tip: 'No necesitas ser un experto. Nosotros te guiamos con información clara y basada en ciencia.', options: [
-    { value: 'Muy poco, apenas estoy explorando', label: '🌱 Muy poco, estoy explorando' },
-    { value: 'He leído información general', label: '📖 He leído información general' },
-    { value: 'He investigado a profundidad', label: '🔬 He investigado a profundidad' },
-    { value: 'Ya he recibido terapias regenerativas', label: '💉 Ya recibí terapias antes' },
-    { value: 'Tengo expectativas muy claras', label: '🎯 Tengo expectativas claras' },
-  ]},
-  { key: 'expectativas', section: 'Conocimiento sobre Medicina Regenerativa', sectionNum: 4, question: '¿Qué crees que puede lograr la medicina regenerativa en tu caso?', type: 'textarea', placeholder: 'Cuéntanos con tus palabras…', tip: 'Tus expectativas son el punto de partida para una evaluación honesta y alineada con la realidad científica.' },
+function startWizard() {
+  if (!validatePersonal()) return
+  mode.value = 'wizard'
+  activeStep.value = 0
+  dir.value = 'fwd'
+}
 
-  // ── SECCIÓN 5 ──
-  { key: 'estres', section: 'Estrés y Carga Laboral', sectionNum: 5, question: '¿Cómo describirías tu nivel de estrés laboral actual?', type: 'radio', tip: 'El estrés crónico acelera el envejecimiento celular. Por eso es parte fundamental de cualquier evaluación regenerativa.', options: [
-    { value: 'Bajo', label: '😌 Bajo' },
-    { value: 'Moderado', label: '😐 Moderado' },
-    { value: 'Alto', label: '😰 Alto' },
-    { value: 'Crónico / constante', label: '🔥 Crónico / constante' },
-  ]},
-  { key: 'descanso', section: 'Estrés y Carga Laboral', sectionNum: 5, question: '¿Tu rutina diaria te permite descansar y recuperarte adecuadamente?', type: 'radio', tip: 'El sueño profundo es cuando el cuerpo activa sus mecanismos de reparación celular. Sin descanso, la regeneración se dificulta.', options: [
-    { value: 'Sí', label: '✅ Sí' },
-    { value: 'A veces', label: '⚠️ A veces' },
-    { value: 'No', label: '❌ No' },
-  ]},
+function nextStep() {
+  dir.value = 'fwd'
+  if (isLastStep.value) {
+    handleSubmit()
+  } else {
+    activeStep.value++
+  }
+}
 
-  // ── SECCIÓN 6 ──
-  { key: 'situacion', section: 'Compromiso y Expectativas', sectionNum: 6, question: '¿Cuál describe mejor tu situación actual?', type: 'radio', tip: 'La claridad es el primer paso hacia una decisión informada. No importa en qué etapa estés, lo importante es empezar.', options: [
-    { value: 'Busco claridad antes de intervenir', label: '🧭 Busco claridad antes de decidir' },
-    { value: 'Estoy confundido y necesito orientación', label: '🤔 Estoy confundido, necesito guía' },
-    { value: 'Estoy listo para evaluar medicina regenerativa', label: '✅ Listo para evaluar opciones' },
-    { value: 'Busco una solución rápida', label: '⚡ Busco una solución rápida' },
-  ]},
-  { key: 'entiendeGarantia', section: 'Compromiso y Expectativas', sectionNum: 6, question: '¿Entiendes que la medicina regenerativa no es una garantía universal?', sub: 'Los resultados varían según cada persona.', type: 'radio', tip: 'No prometemos milagros, prometemos honestidad científica. La regeneración depende de tu biología única.', options: [
-    { value: 'Sí', label: '✅ Sí, lo entiendo' },
-    { value: 'No estoy seguro', label: '🤷‍♂️ No estoy seguro' },
-    { value: 'Pensaba que sí lo era', label: '🔍 Pensaba que era garantía' },
-  ]},
+function prevStep() {
+  dir.value = 'back'
+  if (isFirstStep.value) {
+    mode.value = 'intro'
+  } else {
+    activeStep.value--
+  }
+}
 
-  // ── SECCIÓN 7 ──
-  { key: 'invertirEnClaridad', section: 'Capacidad Decisional y Económica', sectionNum: 7, question: '¿Estás dispuesto a invertir en claridad antes de tomar decisiones terapéuticas?', sub: 'La evaluación DECIDE™ es una sesión estructurada especializada.', type: 'radio', tip: 'Invertir en diagnóstico antes que en tratamiento es la decisión más inteligente y rentable a largo plazo.', options: [
-    { value: 'Sí', label: '✅ Sí' },
-    { value: 'Necesito más información', label: 'ℹ️ Necesito más información' },
-    { value: 'No', label: '❌ No' },
-  ]},
-  { key: 'situacionFinanciera', section: 'Capacidad Decisional y Económica', sectionNum: 7, question: '¿Cuál describe mejor tu situación financiera actual?', sub: 'Los tratamientos regenerativos pueden representar una inversión significativa.', type: 'radio', tip: 'La transparencia financiera es parte de nuestro compromiso. Te ayudamos a evaluar opciones realistas para ti.', options: [
-    { value: 'Estoy financieramente preparado', label: '💰 Preparado para evaluar opciones avanzadas' },
-    { value: 'Necesitaría planificar la inversión', label: '📋 Necesitaría planificar' },
-    { value: 'No estoy en posición de invertir', label: '🔴 No puedo invertir actualmente' },
-  ]},
-  { key: 'seguroMedico', section: 'Capacidad Decisional y Económica', sectionNum: 7, question: '¿Cuentas con seguro de gastos médicos privado?', type: 'radio', tip: 'Algunos seguros médicos cubren parte de la evaluación diagnóstica. Vale la pena verificarlo.', options: [
-    { value: 'Sí', label: '✅ Sí' },
-    { value: 'No', label: '❌ No' },
-  ]},
-
-  // ── SECCIÓN 8 ──
-  { key: 'planOptimizacion', section: 'Alternativa Responsable', sectionNum: 8, question: 'Si no calificas para tratamiento ahora, ¿seguirías un plan de optimización biológica de 90 días?', sub: 'Mejorar tu entorno metabólico y sistémico antes de intervenir.', type: 'radio', tip: 'A veces preparar el terreno biológico es más importante que intervenir directamente. La paciencia estratégica da resultados.', options: [
-    { value: 'Sí, si es lo más responsable', label: '✅ Sí, si es lo correcto' },
-    { value: 'Dependería del plan', label: '🤔 Dependería del plan' },
-    { value: 'No', label: '❌ No' },
-  ]},
-
-  // ── SECCIÓN 9 ──
-  { key: 'chequeos', section: 'Seguimiento Médico', sectionNum: 9, question: '¿Cada cuánto realizas chequeos médicos?', type: 'radio', tip: 'La prevención y el monitoreo constante son la base de la longevidad. No esperes a tener síntomas para conocerte.', options: [
-    { value: 'Anual', label: '📅 Anual' },
-    { value: 'Semestral', label: '📅 Semestral' },
-    { value: 'Solo cuando hay síntomas', label: '🆘 Solo cuando hay síntomas' },
-    { value: 'Rara vez', label: '⏳ Rara vez' },
-  ]},
-
-  // ── SECCIÓN 10 ──
-  { key: 'tieneMedico', section: 'Relación con tu Médico Tratante', sectionNum: 10, question: '¿Cuentas con un médico de cabecera o tratante principal?', type: 'radio', tip: 'La coordinación entre tu médico y nuestro equipo multiplica las probabilidades de éxito del plan regenerativo.', options: [
-    { value: 'Sí, tengo uno estable', label: '👨‍⚕️ Sí, tengo médico estable' },
-    { value: 'Sí, consulto varios sin coordinación', label: '🔄 Varios sin coordinación' },
-    { value: 'No tengo médico de referencia', label: '❌ No tengo médico' },
-    { value: 'Solo consulto cuando hay crisis', label: '🚨 Solo en crisis' },
-  ]},
-  { key: 'relacionMedico', section: 'Relación con tu Médico Tratante', sectionNum: 10, question: '¿Cómo describirías tu relación con tu médico actual?', type: 'radio', tip: 'La confianza con tu médico de cabecera es clave. No buscamos reemplazarlo, sino sumar una capa especializada.', options: [
-    { value: 'Confianza alta', label: '🤝 Confianza alta y comunicación abierta' },
-    { value: 'Confianza moderada', label: '👍 Confianza moderada' },
-    { value: 'Distante', label: '👋 Distante / poco seguimiento' },
-    { value: 'No me siento escuchado', label: '😤 No me siento escuchado' },
-    { value: 'Cambio frecuentemente de médico', label: '🔄 Cambio frecuente de médico' },
-  ]},
-  { key: 'recomendacionesMedico', section: 'Relación con tu Médico Tratante', sectionNum: 10, question: '¿Tu médico ha emitido recomendaciones específicas sobre tu condición?', type: 'radio', tip: 'A veces el sistema de salud no tiene todas las respuestas. La medicina regenerativa abre opciones que muchos especialistas aún no contemplan.', options: [
-    { value: 'Sí, tengo un plan claro', label: '📋 Sí, tengo un plan claro' },
-    { value: 'Sí, pero no ha funcionado', label: '⚠️ Sí, pero no funcionó' },
-    { value: 'Solo control farmacológico', label: '💊 Solo control farmacológico' },
-    { value: 'Me dijeron que es normal para mi edad', label: '👴 "Es normal para mi edad"' },
-    { value: 'No tengo recomendaciones claras', label: '❓ No tengo claridad' },
-  ]},
-  { key: 'medicoMencionoRM', section: 'Relación con tu Médico Tratante', sectionNum: 10, question: '¿Tu médico ha mencionado la medicina regenerativa como opción?', type: 'radio', tip: 'Muchos médicos aún no conocen el potencial real de la medicina regenerativa. Nosotros colaboramos con ellos para cerrar esa brecha.', options: [
-    { value: 'Sí', label: '✅ Sí' },
-    { value: 'No', label: '❌ No' },
-    { value: 'La descartó', label: '🚫 La descartó' },
-    { value: 'No hemos hablado del tema', label: '🤐 No lo hemos hablado' },
-  ]},
-  { key: 'dispuestoCoordinar', section: 'Relación con tu Médico Tratante', sectionNum: 10, question: '¿Estarías dispuesto a coordinar una preparación metabólica si tu médico lo recomienda?', sub: 'Antes de evaluar regeneración.', type: 'radio', tip: 'El enfoque multidisciplinario multiplica los resultados. Trabajamos en conjunto con tu médico, no por encima de él.', options: [
-    { value: 'Sí', label: '✅ Sí' },
-    { value: 'Dependería del contexto', label: '🤔 Depende del contexto' },
-    { value: 'No', label: '❌ No' },
-  ]},
-
-  // ── CONFIRMACIÓN ──
-  { key: 'confirmacion', section: 'Confirmación Final', sectionNum: 11, question: '¿Deseas avanzar a una evaluación estructurada?', sub: 'PowerHouse Biotech no vende tratamientos ni promete resultados universales. Primero evaluamos elegibilidad.', type: 'radio', tip: 'No se trata de venderte nada. Se trata de darte claridad real sobre si la medicina regenerativa es adecuada para ti.', options: [
-    { value: 'si_quiero_claridad', label: '✅ Sí, quiero claridad antes de intervenir' },
-    { value: 'necesito_pensarlo', label: '⏸️ Necesito pensarlo' },
-  ]},
-]
+async function handleSubmit() {
+  submitLoading.value = true
+  const fullPhone = getFullPhone()
+  try {
+    await fetch(WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nombre: nombre.value,
+        email: email.value,
+        telefono: fullPhone,
+        cuestionario: answers.value,
+        total_preguntas: totalQuestions.value,
+        respondidas: answeredCount.value,
+        paso: 'cuestionario_phb',
+      }),
+    })
+  } catch {}
+  await new Promise((r) => setTimeout(r, 400))
+  submitLoading.value = false
+  mode.value = 'done'
+  formSubmitted.value = true
+}
 
 function onDocumentClick(e: MouseEvent) {
   const t = e.target as HTMLElement
@@ -226,123 +267,11 @@ function onDocumentClick(e: MouseEvent) {
 
 onMounted(() => {
   document.addEventListener('click', onDocumentClick)
-  const q = route.query
-  if (q.nombre) data.value.nombre = q.nombre as string
-  if (q.email) data.value.email = q.email as string
-  if (q.telefono) {
-    const tel = q.telefono as string
-    const known = countries.map(c => c.code).sort((a, b) => b.length - a.length)
-    for (const code of known) {
-      if (tel.startsWith(code + ' ') || tel.startsWith(code)) {
-        countryCode.value = code
-        phoneNum.value = tel.replace(code, '').trim()
-        return
-      }
-    }
-    phoneNum.value = tel
-  }
 })
 
 onUnmounted(() => {
   document.removeEventListener('click', onDocumentClick)
 })
-
-const total = questions.length
-const idx = ref(0)
-const dir = ref<'fwd' | 'back'>('fwd')
-const sending = ref(false)
-const done = ref(false)
-const errMsg = ref('')
-
-const current = computed(() => questions[idx.value])
-const progress = computed(() => ((idx.value + 1) / total) * 100)
-const isLast = computed(() => idx.value >= total - 1)
-const isFirst = computed(() => idx.value <= 0)
-
-function value(key: string): any {
-  return (data.value as any)[key]
-}
-function setValue(key: string, v: any) {
-  ;(data.value as any)[key] = v
-}
-
-function toggleMulti(arrKey: string, val: string) {
-  const a = data.value[arrKey as keyof typeof data.value] as unknown as string[]
-  const i = a.indexOf(val)
-  if (i === -1) a.push(val)
-  else a.splice(i, 1)
-}
-function isChecked(arrKey: string, val: string) {
-  const a = data.value[arrKey as keyof typeof data.value] as unknown as string[]
-  return a.includes(val)
-}
-
-function isValid(q: Question): boolean {
-  const v = value(q.key)
-  if (q.type === 'text') return typeof v === 'string' && v.trim().length >= 2
-  if (q.type === 'email') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v ?? '')
-  if (q.type === 'tel') return q.key === 'telefono' ? phoneNum.value.trim().length >= 7 : typeof v === 'string' && v.trim().length >= 7
-  if (q.type === 'number') return typeof v === 'string' && v.trim().length > 0
-  if (q.type === 'radio') return !!v
-  if (q.type === 'textarea') return typeof v === 'string' && v.trim().length >= 5
-  if (q.type === 'checkbox') {
-    const a = value(q.key) as string[]
-    if (!q.multiKey) return false
-    const arr = data.value[q.multiKey as keyof typeof data.value] as string[]
-    if (arr.length === 0) return false
-    if (q.multiOtroKey && arr.includes('Otro')) {
-      const otro = data.value[q.multiOtroKey as keyof typeof data.value] as string
-      return otro.trim().length >= 2
-    }
-    return true
-  }
-  return false
-}
-
-function getFullPhone() {
-  return countryCode.value + ' ' + phoneNum.value.trim()
-}
-
-async function sendStepUpdate() {
-  try {
-    await fetch(WEBHOOK, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...data.value, telefono: getFullPhone(), paso: idx.value + 1, pregunta: current.value.key }),
-    })
-  } catch {}
-}
-
-function next() {
-  if (!isValid(current.value)) return
-  sendStepUpdate()
-  if (isLast.value) { submitForm(); return }
-  dir.value = 'fwd'
-  idx.value++
-}
-function prev() {
-  if (isFirst.value) return
-  dir.value = 'back'
-  idx.value--
-}
-
-async function submitForm() {
-  sending.value = true
-  errMsg.value = ''
-  const payload = { ...data.value, telefono: getFullPhone(), timestamp: Date.now() }
-  try {
-    const r = await fetch(WEBHOOK, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-    if (!r.ok) throw new Error(`HTTP ${r.status}`)
-    done.value = true
-  } catch {
-    errMsg.value = 'Error al enviar. Intenta de nuevo.'
-  } finally {
-    sending.value = false
-  }
-}
 </script>
 
 <template>
@@ -356,178 +285,143 @@ async function submitForm() {
       </a>
     </header>
 
-    <main v-if="!done" class="fp__main">
-      <!-- Progress -->
-      <div class="fp__progress">
-        <div class="fp__progress-bar">
-          <div class="fp__progress-fill" :style="{ width: progress + '%' }"></div>
+    <!-- ═══ DONE ═══ -->
+    <main v-if="mode === 'done'" class="fp__main fp__main--done">
+      <div class="fp__done">
+        <div class="fp__done-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <h2 class="fp__done-title">¡Cuestionario enviado!</h2>
+        <p class="fp__done-text">
+          Gracias por completar el Cuestionario de Inteligencia Biológica PHB™. Hemos recibido tus respuestas y un especialista las revisará para diseñar tu ruta de regeneración.
+        </p>
+        <div class="fp__done-links">
+          <router-link to="/" class="fp__done-btn">Volver al inicio</router-link>
+          <a href="https://powerhousebiotech.com/" target="_blank" rel="noopener noreferrer" class="fp__done-link">VER POWERHOUSE BIOTECH →</a>
         </div>
-        <span class="fp__progress-text">Paso {{ idx + 1 }} de {{ total }}</span>
+      </div>
+    </main>
+
+    <!-- ═══ INTRO ═══ -->
+    <main v-else-if="mode === 'intro'" class="fp__main">
+      <div class="fp__card">
+        <h1 class="fp__title">Cuestionario de Inteligencia Biológica PHB™</h1>
+        <p class="fp__period">Periodo de referencia: últimos 90 días</p>
+
+        <div class="fp-scale">
+          <span class="fp-scale__label">Escala:</span>
+          <div class="fp-scale__items">
+            <span class="fp-scale__item"><strong>0</strong> Nunca / No</span>
+            <span class="fp-scale__item"><strong>1</strong> Ocasional o leve</span>
+            <span class="fp-scale__item"><strong>2</strong> Frecuente o moderado</span>
+            <span class="fp-scale__item"><strong>3</strong> Persistente / En tratamiento</span>
+          </div>
+        </div>
+
+        <div class="fp-personal">
+          <p class="fp-personal__label">Tus datos de contacto</p>
+          <div class="fp-field">
+            <input v-model="nombre" placeholder="Nombre completo" :class="{ error: formErrors.nombre }" @input="formErrors.nombre = ''" />
+          </div>
+          <p v-if="formErrors.nombre" class="fp-field__error">{{ formErrors.nombre }}</p>
+          <div class="fp-field">
+            <input v-model="email" type="email" placeholder="Correo electrónico" :class="{ error: formErrors.email }" @input="formErrors.email = ''" />
+          </div>
+          <p v-if="formErrors.email" class="fp-field__error">{{ formErrors.email }}</p>
+          <div class="fp-field fp-field--phone">
+            <div class="fp-phone-pick">
+              <button type="button" class="fp-phone-pick__btn" @click="showCountryPicker = !showCountryPicker">
+                <span class="fp-phone-pick__flag">{{ currentCountry.flag }}</span>
+                <span class="fp-phone-pick__code">{{ currentCountry.code }}</span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+              <div v-if="showCountryPicker" class="fp-phone-pick__drop">
+                <button v-for="c in countries" :key="c.code + c.label" type="button" class="fp-phone-pick__opt" :class="{ active: countryCode === c.code }" @click="selectCountry(c)">
+                  <span class="fp-phone-pick__flag">{{ c.flag }}</span>
+                  <span class="fp-phone-pick__code">{{ c.code }}</span>
+                  <span class="fp-phone-pick__label">{{ c.label }}</span>
+                </button>
+              </div>
+            </div>
+            <input v-model="phoneNum" type="tel" placeholder="Teléfono / WhatsApp" :class="{ error: formErrors.telefono }" @input="formErrors.telefono = ''" />
+          </div>
+          <p v-if="formErrors.telefono" class="fp-field__error">{{ formErrors.telefono }}</p>
+        </div>
+
+        <div class="fp__summary">
+          <i class="fa-solid fa-list-check"></i>
+          <span><strong>50 preguntas</strong> organizadas en <strong>12 secciones</strong>. Tiempo estimado: 10-15 minutos.</span>
+        </div>
+
+        <button type="button" class="fp__btn fp__btn--start" @click="startWizard">
+          COMENZAR CUESTIONARIO →
+        </button>
+
+        <router-link to="/" class="fp__back">← Volver al inicio</router-link>
+      </div>
+    </main>
+
+    <!-- ═══ WIZARD ═══ -->
+    <main v-else class="fp__main">
+      <!-- Step progress -->
+      <div class="fp__progress-wrap">
+        <div class="fp__step-indicator">
+          <span class="fp__step-badge">Sección {{ activeStep + 1 }} de {{ totalSteps }}</span>
+          <span class="fp__step-name">{{ currentSection.title }}</span>
+        </div>
+        <div class="fp__progress-bar">
+          <div class="fp__progress-fill" :style="{ width: stepProgress + '%' }"></div>
+        </div>
       </div>
 
-      <div class="fp__section-badge">Sección {{ current.sectionNum }} — {{ current.section }}</div>
+      <Transition :name="dir" mode="out-in">
+        <div class="fp__card fp__card--step" :key="activeStep">
+          <div class="fp__section-header">
+            <span class="fp__section-num">{{ currentSection.id }}</span>
+            <h2 class="fp__section-title">{{ currentSection.title }}</h2>
+          </div>
 
-      <!-- Question -->
-      <transition :name="dir" mode="out-in">
-        <div class="fp__card" :key="idx">
-
-          <p v-if="current.tip" class="fp__tip"><i class="fa-solid fa-lightbulb"></i> {{ current.tip }}</p>
-
-          <!-- Text / Email / Tel / Number -->
-          <template v-if="['text','email','tel','number'].includes(current.type)">
-            <h2 class="fp__question">{{ current.question }}</h2>
-            <template v-if="current.key === 'telefono'">
-              <div class="fp__field fp__field--phone">
-                <div class="fp-phone-pick">
-                  <button type="button" class="fp-phone-pick__btn" @click="showCountryPicker = !showCountryPicker">
-                    <span class="fp-phone-pick__flag">{{ currentCountry.flag }}</span>
-                    <span class="fp-phone-pick__code">{{ currentCountry.code }}</span>
-                    <i class="fa-solid fa-chevron-down"></i>
-                  </button>
-                  <div v-if="showCountryPicker" class="fp-phone-pick__drop">
-                    <button
-                      v-for="c in countries"
-                      :key="c.code + c.label"
-                      type="button"
-                      class="fp-phone-pick__opt"
-                      :class="{ active: countryCode === c.code }"
-                      @click="selectCountry(c)"
-                    >
-                      <span class="fp-phone-pick__flag">{{ c.flag }}</span>
-                      <span class="fp-phone-pick__code">{{ c.code }}</span>
-                      <span class="fp-phone-pick__label">{{ c.label }}</span>
-                    </button>
-                  </div>
-                </div>
-                <input
-                  v-model="phoneNum"
-                  type="tel"
-                  :placeholder="current.placeholder"
-                  @keydown.enter="next"
-                  autofocus
-                />
-              </div>
-            </template>
-            <template v-else>
-              <div class="fp__field">
-                <input
-                  :type="current.type === 'email' ? 'email' : current.type === 'number' ? 'number' : 'text'"
-                  :placeholder="current.placeholder"
-                  :value="value(current.key)"
-                  @input="setValue(current.key, ($event.target as HTMLInputElement).value)"
-                  @keydown.enter="next"
-                  autofocus
-                />
-              </div>
-            </template>
-          </template>
-
-          <!-- Textarea -->
-          <template v-else-if="current.type === 'textarea'">
-            <p v-if="current.tip" class="fp__tip"><i class="fa-solid fa-lightbulb"></i> {{ current.tip }}</p>
-            <h2 class="fp__question">{{ current.question }}</h2>
-            <div class="fp__field">
-              <textarea
-                :placeholder="current.placeholder"
-                :value="value(current.key)"
-                @input="setValue(current.key, ($event.target as HTMLTextAreaElement).value)"
-                rows="4"
-              ></textarea>
-            </div>
-          </template>
-
-          <!-- Radio -->
-          <template v-else-if="current.type === 'radio'">
-            <p v-if="current.tip" class="fp__tip"><i class="fa-solid fa-lightbulb"></i> {{ current.tip }}</p>
-            <h2 class="fp__question">{{ current.question }}</h2>
-            <p v-if="current.sub" class="fp__sub">{{ current.sub }}</p>
-            <div class="fp__options">
-              <label
-                v-for="o in current.options"
-                :key="o.value"
-                class="fp__option"
-                :class="{ active: value(current.key) === o.value }"
-              >
-                <input
-                  type="radio"
-                  :name="current.key"
-                  :value="o.value"
-                  :checked="value(current.key) === o.value"
-                  @change="setValue(current.key, o.value)"
-                />
-                <span class="fp__option-dot"></span>
-                <span class="fp__option-label">{{ o.label }}</span>
+          <div v-for="q in currentSection.questions" :key="q.id" class="fp-question">
+            <p class="fp-question__text">{{ q.id }}. {{ q.text }}</p>
+            <div class="fp-question__options">
+              <label v-for="n in 4" :key="n - 1" class="fp-option" :class="{ selected: answers[q.id] === n - 1 }">
+                <input type="radio" :name="'q' + q.id" :value="n - 1" :checked="answers[q.id] === n - 1" @change="setAnswer(q.id, n - 1)" />
+                <span class="fp-option__value">{{ n - 1 }}</span>
               </label>
             </div>
-          </template>
-
-          <!-- Checkbox (multi-select) -->
-          <template v-else-if="current.type === 'checkbox'">
-            <p v-if="current.tip" class="fp__tip"><i class="fa-solid fa-lightbulb"></i> {{ current.tip }}</p>
-            <h2 class="fp__question">{{ current.question }}</h2>
-            <p v-if="current.sub" class="fp__sub">{{ current.sub }}</p>
-            <div class="fp__options">
-              <label
-                v-for="o in current.options"
-                :key="o.value"
-                class="fp__option"
-                :class="{ active: isChecked(current.multiKey!, o.value) }"
-              >
-                <input
-                  type="checkbox"
-                  :checked="isChecked(current.multiKey!, o.value)"
-                  @change="toggleMulti(current.multiKey!, o.value)"
-                />
-                <span class="fp__option-box">
-                  <i class="fa-solid fa-check"></i>
-                </span>
-                <span class="fp__option-label">{{ o.label }}</span>
-              </label>
+            <button type="button" class="fp-question__info-btn" @click="toggleInfo(q.id)">
+              <i class="fa-regular fa-circle-info"></i>
+              {{ showInfo[q.id] ? 'Ocultar' : 'Ver' }} interpretación y biomarcadores
+            </button>
+            <div v-if="showInfo[q.id]" class="fp-question__details">
+              <p><strong>Interpretación:</strong> {{ q.interpretation }}</p>
+              <p><strong>Biomarcadores relacionados:</strong> {{ q.biomarkers }}</p>
             </div>
-            <div v-if="current.multiOtroKey && isChecked(current.multiKey!, 'Otro')" class="fp__field" style="margin-top: 0.75rem">
-              <input
-                v-model="(data as any)[current.multiOtroKey]"
-                placeholder="Especifica tu diagnóstico"
-              />
-            </div>
-          </template>
+          </div>
 
-          <!-- Navigation -->
-          <div class="fp__nav">
-            <button v-if="!isFirst" type="button" class="fp__btn fp__btn--back" @click="prev">
+          <div class="fp-nav">
+            <button type="button" class="fp-nav__btn fp-nav__btn--prev" @click="prevStep">
               <i class="fa-solid fa-arrow-left"></i> Anterior
             </button>
-            <div class="fp__nav-spacer"></div>
+            <div class="fp-nav__spacer"></div>
             <button
               type="button"
-              class="fp__btn fp__btn--next"
-              :class="{ 'fp__btn--submit': isLast }"
-              :disabled="!isValid(current) || sending"
-              @click="next"
+              class="fp-nav__btn fp-nav__btn--next"
+              :class="{ 'fp-nav__btn--submit': isLastStep }"
+              :disabled="submitLoading"
+              @click="nextStep"
             >
-              <template v-if="isLast">
-                {{ sending ? 'Enviando…' : 'Enviar Evaluación' }}
+              <template v-if="isLastStep">
+                {{ submitLoading ? 'Enviando...' : 'ENVIAR CUESTIONARIO' }}
               </template>
               <template v-else>
                 Siguiente <i class="fa-solid fa-arrow-right"></i>
               </template>
             </button>
           </div>
-          <p v-if="errMsg" class="fp__error">{{ errMsg }}</p>
         </div>
-      </transition>
-    </main>
+      </Transition>
 
-    <!-- Done -->
-    <main v-else class="fp__main fp__main--done">
-      <div class="fp__done">
-        <div class="fp__done-icon"><i class="fa-solid fa-circle-check"></i></div>
-        <h2 class="fp__done-title">Evaluación recibida</h2>
-        <p class="fp__done-text">Gracias por completar el formulario. Nuestro equipo revisará tu información y te contactará para coordinar los siguientes pasos.</p>
-        <div class="fp__done-links">
-          <router-link to="/" class="fp__done-btn">Volver al inicio</router-link>
-          <a href="https://powerhousebiotech.com/" target="_blank" rel="noopener noreferrer" class="fp__done-link">VER POWERHOUSE BIOTECH →</a>
-        </div>
+      <div class="fp__overall-progress" v-if="answeredCount > 0">
+        <span>{{ answeredCount }}/{{ totalQuestions }} preguntas respondidas en total</span>
       </div>
     </main>
   </div>
@@ -545,7 +439,6 @@ async function submitForm() {
   overflow-x: hidden;
 }
 
-// ── Header ───────────────────────────────────────────────────────────────────
 .fp__header {
   position: sticky;
   top: 0;
@@ -578,9 +471,8 @@ async function submitForm() {
   &:hover { color: $PHB-BLUE-LIGHT; }
 }
 
-// ── Main ──────────────────────────────────────────────────────────────────────
 .fp__main {
-  max-width: 560px;
+  max-width: 680px;
   margin: 0 auto;
   padding: 1.5rem 1.25rem 3rem;
 }
@@ -592,121 +484,113 @@ async function submitForm() {
   min-height: 70vh;
 }
 
-// ── Progress ──────────────────────────────────────────────────────────────────
-.fp__progress {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  margin-bottom: 1.25rem;
-}
-
-.fp__progress-bar {
-  flex: 1;
-  height: 5px;
-  background: rgba(255, 255, 255, 0.07);
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.fp__progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, $PHB-CYAN, $PHB-BLUE);
-  border-radius: 999px;
-  transition: width 0.45s ease;
-}
-
-.fp__progress-text {
-  font-size: 0.75rem;
-  color: $PHB-TEXT-3;
-  white-space: nowrap;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-// ── Section badge ─────────────────────────────────────────────────────────────
-.fp__section-badge {
-  display: inline-flex;
-  font-family: fonts.$font-interface;
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba($PHB-CYAN, 0.6);
-  border: 1px solid $PHB-BORDER;
-  border-radius: 999px;
-  padding: 0.25rem 0.7rem;
-  margin-bottom: 1.5rem;
-}
-
-// ── Card ──────────────────────────────────────────────────────────────────────
 .fp__card {
   background: $PHB-SURFACE;
   border: 1px solid $PHB-BORDER;
   border-radius: 20px;
   padding: 2rem 1.5rem;
   box-shadow: $PHB-SHADOW-SM;
-}
 
-.fp__tip {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.45rem;
-  font-size: 0.78rem;
-  color: rgba($PHB-CYAN, 0.7);
-  margin: 0 0 1rem;
-  line-height: 1.45;
-  i {
-    font-size: 0.7rem;
-    margin-top: 0.2rem;
-    color: $PHB-CYAN;
-    flex-shrink: 0;
+  &--step {
+    padding: 1.5rem;
   }
 }
 
-.fp__question {
+.fp__title {
   @include fonts.heading-font(700);
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   color: $PHB-TEXT-1;
-  margin: 0 0 0.5rem;
-  line-height: 1.3;
+  margin: 0 0 0.25rem;
 }
 
-.fp__sub {
-  font-size: 0.82rem;
+.fp__period {
+  font-size: 0.8rem;
   color: $PHB-TEXT-3;
-  margin: 0 0 1.25rem;
-  line-height: 1.5;
+  margin: 0 0 1rem;
+  font-weight: 500;
 }
 
-// ── Field ─────────────────────────────────────────────────────────────────────
-.fp__field {
-  input, textarea {
+// ── Scale ───────────────────────────────────────────────────────────────────
+.fp-scale {
+  background: $PHB-SURFACE-2;
+  border: 1px solid $PHB-BORDER;
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 1.25rem;
+
+  &__label {
+    display: block;
+    font-family: fonts.$font-interface;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: $PHB-CYAN;
+    margin-bottom: 0.35rem;
+  }
+
+  &__items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+  }
+
+  &__item {
+    font-size: 0.72rem;
+    color: $PHB-TEXT-3;
+    line-height: 1.4;
+    strong { color: $PHB-TEXT-2; font-weight: 700; margin-right: 0.15rem; }
+  }
+}
+
+// ── Personal ────────────────────────────────────────────────────────────────
+.fp-personal {
+  margin-bottom: 1.25rem;
+
+  &__label {
+    font-family: fonts.$font-interface;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba($PHB-CYAN, 0.5);
+    margin: 0 0 0.5rem;
+  }
+}
+
+.fp-field {
+  margin-bottom: 0.3rem;
+
+  input {
     width: 100%;
-    padding: 0.9rem 1.1rem;
+    padding: 0.8rem 1rem;
     background: $PHB-SURFACE-2;
     border: 1px solid $PHB-BORDER;
-    border-radius: 12px;
+    border-radius: 10px;
     color: $PHB-TEXT-1;
     font-family: fonts.$font-secondary;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     outline: none;
     transition: border-color 0.2s, background 0.2s;
+
     &::placeholder { color: $PHB-TEXT-3; }
     &:focus { border-color: $PHB-CYAN; background: color.adjust($PHB-SURFACE-2, $lightness: 2%); }
+    &.error { border-color: $PHB-URGENT; }
   }
-  textarea { resize: vertical; min-height: 110px; }
 
   &--phone {
     display: flex;
     gap: 0.5rem;
-    input {
-      flex: 1;
-      min-width: 0;
-    }
+    input { flex: 1; min-width: 0; }
   }
 }
 
-// ── Country Picker ──────────────────────────────────────────────────────────
+.fp-field__error {
+  font-size: 0.72rem;
+  color: $PHB-URGENT-LIGHT;
+  margin: 0 0 0.2rem 0.3rem;
+}
+
 .fp-phone-pick {
   position: relative;
   flex-shrink: 0;
@@ -715,10 +599,10 @@ async function submitForm() {
     display: flex;
     align-items: center;
     gap: 0.35rem;
-    padding: 0.9rem 0.7rem;
+    padding: 0.8rem 0.7rem;
     background: $PHB-SURFACE-2;
     border: 1px solid $PHB-BORDER;
-    border-radius: 12px;
+    border-radius: 10px;
     color: $PHB-TEXT-1;
     font-family: fonts.$font-secondary;
     font-size: 0.85rem;
@@ -730,7 +614,6 @@ async function submitForm() {
   }
 
   &__flag { font-size: 1.15rem; line-height: 1; }
-
   &__code { font-weight: 600; font-size: 0.82rem; }
 
   &__drop {
@@ -769,156 +652,300 @@ async function submitForm() {
   &__label { color: $PHB-TEXT-3; font-size: 0.78rem; margin-left: auto; }
 }
 
-// ── Options ───────────────────────────────────────────────────────────────────
-.fp__options {
+// ── Intro summary ──────────────────────────────────────────────────────────
+.fp__summary {
   display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-  margin-top: 1rem;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  background: rgba($PHB-CYAN, 0.04);
+  border: 1px solid rgba($PHB-CYAN, 0.08);
+  border-radius: 10px;
+  margin-bottom: 1.25rem;
+  font-size: 0.82rem;
+  color: $PHB-TEXT-3;
+  line-height: 1.4;
+
+  i { color: $PHB-CYAN; font-size: 1rem; flex-shrink: 0; }
+  strong { color: $PHB-TEXT-2; }
 }
 
-.fp__option {
+// ── Start button ───────────────────────────────────────────────────────────
+.fp__btn--start {
+  margin-bottom: 0.75rem;
+}
+
+// ── Progress (wizard) ──────────────────────────────────────────────────────
+.fp__progress-wrap {
+  margin-bottom: 1rem;
+}
+
+.fp__step-indicator {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.85rem 1.1rem;
-  background: $PHB-SURFACE-2;
-  border: 1.5px solid transparent;
-  border-radius: 14px;
+  margin-bottom: 0.5rem;
+}
+
+.fp__step-badge {
+  font-family: fonts.$font-interface;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $PHB-CYAN;
+  border: 1px solid rgba($PHB-CYAN, 0.15);
+  border-radius: 999px;
+  padding: 0.25rem 0.6rem;
+  white-space: nowrap;
+}
+
+.fp__step-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: $PHB-TEXT-2;
+}
+
+.fp__progress-bar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.fp__progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, $PHB-CYAN, $PHB-BLUE);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.fp__overall-progress {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.72rem;
+  color: $PHB-TEXT-3;
+  font-weight: 500;
+}
+
+// ── Section header ─────────────────────────────────────────────────────────
+.fp__section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid $PHB-BORDER;
+}
+
+.fp__section-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba($PHB-CYAN, 0.1);
+  border: 1px solid rgba($PHB-CYAN, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: fonts.$font-interface;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: $PHB-CYAN;
+  flex-shrink: 0;
+}
+
+.fp__section-title {
+  @include fonts.heading-font(700);
+  font-size: 1.1rem;
+  color: $PHB-TEXT-1;
+  margin: 0;
+}
+
+// ── Question ───────────────────────────────────────────────────────────────
+.fp-question {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+
+  &:last-child { border-bottom: none; padding-bottom: 0; }
+  &:first-child { padding-top: 0; }
+
+  &__text {
+    font-size: 0.82rem;
+    color: $PHB-TEXT-2;
+    line-height: 1.5;
+    margin: 0 0 0.6rem;
+  }
+
+  &__options {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+  }
+
+  &__info-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: fonts.$font-interface;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: rgba($PHB-CYAN, 0.6);
+    cursor: pointer;
+    transition: color 0.2s;
+    i { font-size: 0.7rem; }
+    &:hover { color: $PHB-CYAN; }
+  }
+
+  &__details {
+    margin-top: 0.5rem;
+    padding: 0.6rem 0.75rem;
+    background: rgba($PHB-CYAN, 0.04);
+    border: 1px solid rgba($PHB-CYAN, 0.08);
+    border-radius: 8px;
+    font-size: 0.72rem;
+    color: $PHB-TEXT-3;
+    line-height: 1.5;
+    p { margin: 0 0 0.25rem; &:last-child { margin: 0; } }
+    strong { color: $PHB-TEXT-2; font-weight: 600; }
+  }
+}
+
+// ── Option ─────────────────────────────────────────────────────────────────
+.fp-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid $PHB-BORDER;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s, transform 0.15s;
-  user-select: none;
+  transition: all 0.2s;
 
   &:hover {
-    background: color.adjust($PHB-SURFACE-2, $lightness: 4%);
-    border-color: rgba($PHB-CYAN, 0.15);
+    border-color: rgba($PHB-CYAN, 0.3);
+    background: rgba($PHB-CYAN, 0.06);
   }
 
-  &.active {
-    background: rgba($PHB-CYAN, 0.08);
+  &.selected {
+    background: rgba($PHB-CYAN, 0.15);
     border-color: $PHB-CYAN;
   }
 
-  input { display: none; }
-}
+  input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
 
-.fp__option-label {
-  font-size: 0.92rem;
-  color: $PHB-TEXT-2;
-  line-height: 1.3;
-  .fp__option.active & { color: $PHB-TEXT-1; font-weight: 600; }
-}
-
-// Radio dot
-.fp__option-dot {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  border: 2px solid $PHB-BORDER;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: border-color 0.2s, background 0.2s;
-
-  .fp__option.active & {
-    border-color: $PHB-CYAN;
-    background: $PHB-CYAN;
-    box-shadow: 0 0 0 3px rgba($PHB-CYAN, 0.15);
+  &__value {
+    font-family: fonts.$font-interface;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: $PHB-TEXT-3;
+    pointer-events: none;
+    .selected & { color: $PHB-CYAN; }
   }
 }
 
-// Checkbox box
-.fp__option-box {
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  border: 2px solid $PHB-BORDER;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: border-color 0.2s, background 0.2s;
-  font-size: 0.65rem;
-  color: transparent;
-
-  .fp__option.active & {
-    border-color: $PHB-CYAN;
-    background: $PHB-CYAN;
-    color: $PHB-TEXT-1;
-  }
-}
-
-// ── Navigation ────────────────────────────────────────────────────────────────
-.fp__nav {
+// ── Navigation ─────────────────────────────────────────────────────────────
+.fp-nav {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid $PHB-BORDER;
+
+  &__spacer { flex: 1; }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.4rem;
+    border: none;
+    border-radius: 10px;
+    font-family: fonts.$font-accent;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
+    i { font-size: 0.75rem; }
+    &:disabled { opacity: 0.35; cursor: default; }
+
+    &--prev {
+      background: transparent;
+      color: $PHB-TEXT-3;
+      border: 1px solid $PHB-BORDER;
+      &:hover:not(:disabled) { background: $PHB-SURFACE-2; color: $PHB-TEXT-2; }
+    }
+
+    &--next {
+      background: rgba($PHB-CYAN, 0.08);
+      border: 1px solid $PHB-BORDER-MEDIUM;
+      color: $PHB-CYAN;
+      &:hover:not(:disabled) { background: rgba($PHB-CYAN, 0.15); }
+    }
+
+    &--submit {
+      background: linear-gradient(135deg, $PHB-CYAN, $PHB-BLUE);
+      color: $PHB-TEXT-1;
+      border-color: transparent;
+      box-shadow: 0 4px 20px rgba($PHB-CYAN, 0.2);
+      &:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 28px rgba($PHB-CYAN, 0.35); }
+    }
+  }
 }
 
-.fp__nav-spacer { flex: 1; }
+// ── Back link ──────────────────────────────────────────────────────────────
+.fp__back {
+  display: block;
+  text-align: center;
+  font-size: 0.8rem;
+  color: $PHB-TEXT-3;
+  text-decoration: none;
+  margin-top: 0.5rem;
+  transition: color 0.2s;
+  &:hover { color: $PHB-CYAN; }
+}
 
+// ── Submit / Start button ──────────────────────────────────────────────────
 .fp__btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.8rem 1.6rem;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, $PHB-CYAN, $PHB-BLUE);
+  color: $PHB-TEXT-1;
   border: none;
   border-radius: 10px;
   font-family: fonts.$font-accent;
-  font-size: 0.82rem;
-  font-weight: 700;
+  font-size: 0.85rem;
+  font-weight: 800;
   letter-spacing: 0.04em;
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
-  i { font-size: 0.78rem; }
-  &:disabled { opacity: 0.35; cursor: default; }
+  transition: transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba($PHB-CYAN, 0.25);
 
-  &--back {
-    background: transparent;
-    color: $PHB-TEXT-3;
-    border: 1px solid $PHB-BORDER;
-    &:hover:not(:disabled) { background: $PHB-SURFACE; color: $PHB-TEXT-2; }
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 28px rgba($PHB-CYAN, 0.4);
   }
 
-  &--next {
-    background: rgba($PHB-CYAN, 0.08);
-    border: 1px solid $PHB-BORDER-MEDIUM;
-    color: $PHB-CYAN;
-    &:hover:not(:disabled) { background: rgba($PHB-CYAN, 0.15); }
-  }
-
-  &--submit {
-    background: linear-gradient(135deg, $PHB-CYAN, $PHB-BLUE);
-    color: $PHB-TEXT-1;
-    border-color: transparent;
-    box-shadow: 0 4px 20px rgba($PHB-CYAN, 0.2);
-    &:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 28px rgba($PHB-CYAN, 0.35); }
-  }
+  &:disabled { opacity: 0.6; cursor: default; }
 }
 
-.fp__error {
-  text-align: center;
-  color: $PHB-URGENT-LIGHT;
-  font-size: 0.85rem;
-  margin-top: 1rem;
-}
-
-// ── Transitions ───────────────────────────────────────────────────────────────
-.fwd-enter-active, .fwd-leave-active,
-.back-enter-active, .back-leave-active {
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.fwd-enter-from { opacity: 0; transform: translateX(40px); }
-.fwd-leave-to { opacity: 0; transform: translateX(-40px); }
-.back-enter-from { opacity: 0; transform: translateX(-40px); }
-.back-leave-to { opacity: 0; transform: translateX(40px); }
-
-// ── Done ──────────────────────────────────────────────────────────────────────
+// ── Done ───────────────────────────────────────────────────────────────────
 .fp__done {
   text-align: center;
-  max-width: 440px;
+  max-width: 480px;
 }
 
 .fp__done-icon {
@@ -969,4 +996,15 @@ async function submitForm() {
   text-decoration: none;
   &:hover { color: $PHB-BLUE-LIGHT; }
 }
+
+// ── Transitions ────────────────────────────────────────────────────────────
+.fwd-enter-active, .fwd-leave-active,
+.back-enter-active, .back-leave-active {
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fwd-enter-from { opacity: 0; transform: translateX(40px); }
+.fwd-leave-to { opacity: 0; transform: translateX(-40px); }
+.back-enter-from { opacity: 0; transform: translateX(-40px); }
+.back-leave-to { opacity: 0; transform: translateX(40px); }
 </style>
