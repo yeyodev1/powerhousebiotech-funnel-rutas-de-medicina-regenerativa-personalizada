@@ -395,9 +395,20 @@ function scrollTo(id: string) {
           <br><br>
           Comprende quién eres biológicamente y qué frena tu recuperación.
         </p>
-        <router-link to="/formulario" class="phb-cta__btn">
-          INICIA TU EVALUACIÓN AQUÍ →
-        </router-link>
+        <div class="phb-cta__actions">
+          <router-link to="/formulario" class="phb-cta__btn">
+            INICIA TU EVALUACIÓN AQUÍ →
+          </router-link>
+          <a
+            href="https://chat.whatsapp.com/K43yrnUQbVq2O9hn93X03c"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="phb-cta__ws"
+          >
+            <i class="fa-brands fa-whatsapp"></i>
+            Unirme a la comunidad de WhatsApp
+          </a>
+        </div>
       </div>
     </section>
 
@@ -1473,6 +1484,14 @@ function scrollTo(id: string) {
   margin: 0 auto 2rem;
 }
 
+.phb-cta__actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .phb-cta__btn {
   display: inline-flex;
   padding: 1.1rem 2.5rem;
@@ -1492,6 +1511,33 @@ function scrollTo(id: string) {
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 32px rgba($PHB-CYAN, 0.35);
+  }
+}
+
+.phb-cta__ws {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 2rem;
+  background: #25d366;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: fonts.$font-accent;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(#25d366, 0.3);
+  transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
+
+  i {
+    font-size: 1.15rem;
+  }
+
+  &:hover {
+    background: #20bd5a;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 28px rgba(#25d366, 0.45);
   }
 }
 
