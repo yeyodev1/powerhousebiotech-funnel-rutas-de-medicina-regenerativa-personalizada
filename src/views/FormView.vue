@@ -253,7 +253,7 @@ async function handleSubmit() {
         paso: 'cuestionario_phb',
       }),
     })
-  } catch {}
+  } catch { }
   await new Promise((r) => setTimeout(r, 400))
   submitLoading.value = false
   mode.value = 'done'
@@ -346,10 +346,6 @@ onUnmounted(() => {
           <p v-if="formErrors.telefono" class="fp-field__error">{{ formErrors.telefono }}</p>
         </div>
 
-        <div class="fp__summary">
-          <i class="fa-solid fa-list-check"></i>
-          <span><strong>50 preguntas</strong> organizadas en <strong>12 secciones</strong>. Tiempo estimado: 10-15 minutos.</span>
-        </div>
 
         <button type="button" class="fp__btn fp__btn--start" @click="startWizard">
           COMENZAR CUESTIONARIO →
@@ -459,8 +455,16 @@ onUnmounted(() => {
   @include fonts.heading-font(700);
   font-size: 0.95rem;
   letter-spacing: 0.05em;
-  small { font-weight: 400; font-size: 0.85em; }
-  sup { font-size: 0.5em; top: -0.6em; }
+
+  small {
+    font-weight: 400;
+    font-size: 0.85em;
+  }
+
+  sup {
+    font-size: 0.5em;
+    top: -0.6em;
+  }
 }
 
 .fp__top-link {
@@ -468,7 +472,10 @@ onUnmounted(() => {
   font-weight: 600;
   color: $PHB-CYAN;
   text-decoration: none;
-  &:hover { color: $PHB-BLUE-LIGHT; }
+
+  &:hover {
+    color: $PHB-BLUE-LIGHT;
+  }
 }
 
 .fp__main {
@@ -539,7 +546,12 @@ onUnmounted(() => {
     font-size: 0.72rem;
     color: $PHB-TEXT-3;
     line-height: 1.4;
-    strong { color: $PHB-TEXT-2; font-weight: 700; margin-right: 0.15rem; }
+
+    strong {
+      color: $PHB-TEXT-2;
+      font-weight: 700;
+      margin-right: 0.15rem;
+    }
   }
 }
 
@@ -573,15 +585,28 @@ onUnmounted(() => {
     outline: none;
     transition: border-color 0.2s, background 0.2s;
 
-    &::placeholder { color: $PHB-TEXT-3; }
-    &:focus { border-color: $PHB-CYAN; background: color.adjust($PHB-SURFACE-2, $lightness: 2%); }
-    &.error { border-color: $PHB-URGENT; }
+    &::placeholder {
+      color: $PHB-TEXT-3;
+    }
+
+    &:focus {
+      border-color: $PHB-CYAN;
+      background: color.adjust($PHB-SURFACE-2, $lightness: 2%);
+    }
+
+    &.error {
+      border-color: $PHB-URGENT;
+    }
   }
 
   &--phone {
     display: flex;
     gap: 0.5rem;
-    input { flex: 1; min-width: 0; }
+
+    input {
+      flex: 1;
+      min-width: 0;
+    }
   }
 }
 
@@ -609,12 +634,27 @@ onUnmounted(() => {
     cursor: pointer;
     white-space: nowrap;
     transition: border-color 0.2s;
-    i { font-size: 0.6rem; color: $PHB-TEXT-3; margin-left: 0.15rem; }
-    &:hover { border-color: $PHB-CYAN; }
+
+    i {
+      font-size: 0.6rem;
+      color: $PHB-TEXT-3;
+      margin-left: 0.15rem;
+    }
+
+    &:hover {
+      border-color: $PHB-CYAN;
+    }
   }
 
-  &__flag { font-size: 1.15rem; line-height: 1; }
-  &__code { font-weight: 600; font-size: 0.82rem; }
+  &__flag {
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
+  &__code {
+    font-weight: 600;
+    font-size: 0.82rem;
+  }
 
   &__drop {
     position: absolute;
@@ -645,11 +685,23 @@ onUnmounted(() => {
     font-size: 0.85rem;
     cursor: pointer;
     transition: background 0.15s;
-    &:hover { background: rgba($PHB-CYAN, 0.08); }
-    &.active { background: rgba($PHB-CYAN, 0.12); color: $PHB-TEXT-1; font-weight: 600; }
+
+    &:hover {
+      background: rgba($PHB-CYAN, 0.08);
+    }
+
+    &.active {
+      background: rgba($PHB-CYAN, 0.12);
+      color: $PHB-TEXT-1;
+      font-weight: 600;
+    }
   }
 
-  &__label { color: $PHB-TEXT-3; font-size: 0.78rem; margin-left: auto; }
+  &__label {
+    color: $PHB-TEXT-3;
+    font-size: 0.78rem;
+    margin-left: auto;
+  }
 }
 
 // ── Intro summary ──────────────────────────────────────────────────────────
@@ -666,8 +718,15 @@ onUnmounted(() => {
   color: $PHB-TEXT-3;
   line-height: 1.4;
 
-  i { color: $PHB-CYAN; font-size: 1rem; flex-shrink: 0; }
-  strong { color: $PHB-TEXT-2; }
+  i {
+    color: $PHB-CYAN;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  strong {
+    color: $PHB-TEXT-2;
+  }
 }
 
 // ── Start button ───────────────────────────────────────────────────────────
@@ -766,8 +825,14 @@ onUnmounted(() => {
   padding: 0.85rem 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 
-  &:last-child { border-bottom: none; padding-bottom: 0; }
-  &:first-child { padding-top: 0; }
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  &:first-child {
+    padding-top: 0;
+  }
 
   &__text {
     font-size: 0.82rem;
@@ -795,8 +860,14 @@ onUnmounted(() => {
     color: rgba($PHB-CYAN, 0.6);
     cursor: pointer;
     transition: color 0.2s;
-    i { font-size: 0.7rem; }
-    &:hover { color: $PHB-CYAN; }
+
+    i {
+      font-size: 0.7rem;
+    }
+
+    &:hover {
+      color: $PHB-CYAN;
+    }
   }
 
   &__details {
@@ -808,8 +879,19 @@ onUnmounted(() => {
     font-size: 0.72rem;
     color: $PHB-TEXT-3;
     line-height: 1.5;
-    p { margin: 0 0 0.25rem; &:last-child { margin: 0; } }
-    strong { color: $PHB-TEXT-2; font-weight: 600; }
+
+    p {
+      margin: 0 0 0.25rem;
+
+      &:last-child {
+        margin: 0;
+      }
+    }
+
+    strong {
+      color: $PHB-TEXT-2;
+      font-weight: 600;
+    }
   }
 }
 
@@ -851,7 +933,10 @@ onUnmounted(() => {
     font-weight: 700;
     color: $PHB-TEXT-3;
     pointer-events: none;
-    .selected & { color: $PHB-CYAN; }
+
+    .selected & {
+      color: $PHB-CYAN;
+    }
   }
 }
 
@@ -864,7 +949,9 @@ onUnmounted(() => {
   padding-top: 1rem;
   border-top: 1px solid $PHB-BORDER;
 
-  &__spacer { flex: 1; }
+  &__spacer {
+    flex: 1;
+  }
 
   &__btn {
     display: inline-flex;
@@ -879,21 +966,35 @@ onUnmounted(() => {
     letter-spacing: 0.04em;
     cursor: pointer;
     transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
-    i { font-size: 0.75rem; }
-    &:disabled { opacity: 0.35; cursor: default; }
+
+    i {
+      font-size: 0.75rem;
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
 
     &--prev {
       background: transparent;
       color: $PHB-TEXT-3;
       border: 1px solid $PHB-BORDER;
-      &:hover:not(:disabled) { background: $PHB-SURFACE-2; color: $PHB-TEXT-2; }
+
+      &:hover:not(:disabled) {
+        background: $PHB-SURFACE-2;
+        color: $PHB-TEXT-2;
+      }
     }
 
     &--next {
       background: rgba($PHB-CYAN, 0.08);
       border: 1px solid $PHB-BORDER-MEDIUM;
       color: $PHB-CYAN;
-      &:hover:not(:disabled) { background: rgba($PHB-CYAN, 0.15); }
+
+      &:hover:not(:disabled) {
+        background: rgba($PHB-CYAN, 0.15);
+      }
     }
 
     &--submit {
@@ -901,7 +1002,11 @@ onUnmounted(() => {
       color: $PHB-TEXT-1;
       border-color: transparent;
       box-shadow: 0 4px 20px rgba($PHB-CYAN, 0.2);
-      &:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 28px rgba($PHB-CYAN, 0.35); }
+
+      &:hover:not(:disabled) {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 28px rgba($PHB-CYAN, 0.35);
+      }
     }
   }
 }
@@ -915,7 +1020,10 @@ onUnmounted(() => {
   text-decoration: none;
   margin-top: 0.5rem;
   transition: color 0.2s;
-  &:hover { color: $PHB-CYAN; }
+
+  &:hover {
+    color: $PHB-CYAN;
+  }
 }
 
 // ── Submit / Start button ──────────────────────────────────────────────────
@@ -939,7 +1047,10 @@ onUnmounted(() => {
     box-shadow: 0 8px 28px rgba($PHB-CYAN, 0.4);
   }
 
-  &:disabled { opacity: 0.6; cursor: default; }
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
 }
 
 // ── Done ───────────────────────────────────────────────────────────────────
@@ -987,24 +1098,48 @@ onUnmounted(() => {
   text-decoration: none;
   box-shadow: 0 4px 20px rgba($PHB-CYAN, 0.2);
   transition: transform 0.15s, box-shadow 0.2s;
-  &:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba($PHB-CYAN, 0.35); }
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 28px rgba($PHB-CYAN, 0.35);
+  }
 }
 
 .fp__done-link {
   font-size: 0.85rem;
   color: $PHB-CYAN;
   text-decoration: none;
-  &:hover { color: $PHB-BLUE-LIGHT; }
+
+  &:hover {
+    color: $PHB-BLUE-LIGHT;
+  }
 }
 
 // ── Transitions ────────────────────────────────────────────────────────────
-.fwd-enter-active, .fwd-leave-active,
-.back-enter-active, .back-leave-active {
+.fwd-enter-active,
+.fwd-leave-active,
+.back-enter-active,
+.back-leave-active {
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.fwd-enter-from { opacity: 0; transform: translateX(40px); }
-.fwd-leave-to { opacity: 0; transform: translateX(-40px); }
-.back-enter-from { opacity: 0; transform: translateX(-40px); }
-.back-leave-to { opacity: 0; transform: translateX(40px); }
+.fwd-enter-from {
+  opacity: 0;
+  transform: translateX(40px);
+}
+
+.fwd-leave-to {
+  opacity: 0;
+  transform: translateX(-40px);
+}
+
+.back-enter-from {
+  opacity: 0;
+  transform: translateX(-40px);
+}
+
+.back-leave-to {
+  opacity: 0;
+  transform: translateX(40px);
+}
 </style>
