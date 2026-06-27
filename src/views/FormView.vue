@@ -30,18 +30,19 @@ interface Question {
   placeholder?: string
   multiKey?: string
   multiOtroKey?: string
+  tip?: string
 }
 
 const questions: Question[] = [
   // ── SECCIÓN 1 ──
-  { key: 'nombre', section: 'Información Básica', sectionNum: 1, question: '¿Cuál es tu nombre completo?', type: 'text', placeholder: 'Ej: Juan Pérez' },
-  { key: 'edad', section: 'Información Básica', sectionNum: 1, question: '¿Cuántos años tienes?', type: 'number', placeholder: 'Ej: 45' },
-  { key: 'ciudad', section: 'Información Básica', sectionNum: 1, question: '¿En qué ciudad y país vives?', type: 'text', placeholder: 'Ej: Ciudad de México, MX' },
-  { key: 'email', section: 'Información Básica', sectionNum: 1, question: '¿Cuál es tu correo electrónico?', type: 'email', placeholder: 'correo@ejemplo.com' },
-  { key: 'telefono', section: 'Información Básica', sectionNum: 1, question: '¿Cuál es tu teléfono o WhatsApp?', type: 'tel', placeholder: 'Ej: +52 55 1234 5678' },
+  { key: 'nombre', section: 'Información Básica', sectionNum: 1, question: '¿Cuál es tu nombre completo?', type: 'text', placeholder: 'Ej: Juan Pérez', tip: 'Tu nombre nos permite personalizar cada recomendación para ti.' },
+  { key: 'edad', section: 'Información Básica', sectionNum: 1, question: '¿Cuántos años tienes?', type: 'number', placeholder: 'Ej: 45', tip: 'Tu edad biológica puede ser muy distinta a tu edad cronológica. La medicina regenerativa trabaja con la primera.' },
+  { key: 'ciudad', section: 'Información Básica', sectionNum: 1, question: '¿En qué ciudad y país vives?', type: 'text', placeholder: 'Ej: Ciudad de México, MX', tip: 'Queremos confirmar si tienes acceso presencial a nuestros centros de evaluación.' },
+  { key: 'email', section: 'Información Básica', sectionNum: 1, question: '¿Cuál es tu correo electrónico?', type: 'email', placeholder: 'correo@ejemplo.com', tip: 'Tus datos están protegidos con total confidencialidad. Solo los usaremos para tu evaluación.' },
+  { key: 'telefono', section: 'Información Básica', sectionNum: 1, question: '¿Cuál es tu teléfono o WhatsApp?', type: 'tel', placeholder: 'Ej: +52 55 1234 5678', tip: 'Te contactaremos solo para coordinar tu evaluación, nada de spam.' },
 
   // ── SECCIÓN 2 ──
-  { key: 'diagnostico', section: 'Tu Condición de Salud Actual', sectionNum: 2, question: '¿Cuál es tu diagnóstico principal?', sub: 'Selecciona todas las opciones que apliquen.', type: 'checkbox', multiKey: 'diagnostico', multiOtroKey: 'diagnosticoOtro', options: [
+  { key: 'diagnostico', section: 'Tu Condición de Salud Actual', sectionNum: 2, question: '¿Cuál es tu diagnóstico principal?', sub: 'Selecciona todas las opciones que apliquen.', type: 'checkbox', multiKey: 'diagnostico', multiOtroKey: 'diagnosticoOtro', tip: 'Cada condición tiene un perfil biológico único. Identificarlo con precisión es el primer paso hacia la regeneración.', options: [
     { value: 'Diabetes', label: 'Diabetes' },
     { value: 'Hipertensión', label: 'Hipertensión' },
     { value: 'Artritis / Problema articular', label: 'Artritis / Problema articular' },
@@ -50,18 +51,18 @@ const questions: Question[] = [
     { value: 'Problema metabólico', label: 'Problema metabólico' },
     { value: 'Otro', label: 'Otro' },
   ]},
-  { key: 'tiempoCondicion', section: 'Tu Condición de Salud Actual', sectionNum: 2, question: '¿Cuánto tiempo llevas con esta condición?', type: 'radio', options: [
+  { key: 'tiempoCondicion', section: 'Tu Condición de Salud Actual', sectionNum: 2, question: '¿Cuánto tiempo llevas con esta condición?', type: 'radio', tip: 'El factor tiempo es clave: mientras antes se intervenga, mayor es el potencial regenerativo del organismo.', options: [
     { value: 'Menos de 1 año', label: 'Menos de 1 año' },
     { value: '1-3 años', label: '1-3 años' },
     { value: '3-10 años', label: '3-10 años' },
     { value: 'Más de 10 años', label: 'Más de 10 años' },
   ]},
-  { key: 'tomaMedicamentos', section: 'Tu Condición de Salud Actual', sectionNum: 2, question: '¿Actualmente tomas medicamentos?', type: 'radio', options: [
+  { key: 'tomaMedicamentos', section: 'Tu Condición de Salud Actual', sectionNum: 2, question: '¿Actualmente tomas medicamentos?', type: 'radio', tip: 'Ciertos fármacos pueden influir en los protocolos regenerativos. Es importante conocer tu perfil farmacológico.', options: [
     { value: 'Sí', label: 'Sí' },
     { value: 'No', label: 'No' },
     { value: 'Varios', label: 'Varios' },
   ]},
-  { key: 'terapiasPrevias', section: 'Tu Condición de Salud Actual', sectionNum: 2, question: '¿Has intentado otras terapias antes?', sub: 'Selecciona todas las que apliquen.', type: 'checkbox', multiKey: 'terapiasPrevias', options: [
+  { key: 'terapiasPrevias', section: 'Tu Condición de Salud Actual', sectionNum: 2, question: '¿Has intentado otras terapias antes?', sub: 'Selecciona todas las que apliquen.', type: 'checkbox', multiKey: 'terapiasPrevias', tip: 'Saber qué has probado nos ayuda a no repetir caminos y enfocarnos en lo que realmente puede funcionar.', options: [
     { value: 'Medicina tradicional', label: 'Medicina tradicional' },
     { value: 'Medicina alternativa', label: 'Medicina alternativa' },
     { value: 'Suplementos', label: 'Suplementos' },
@@ -71,13 +72,13 @@ const questions: Question[] = [
   ]},
 
   // ── SECCIÓN 3 ──
-  { key: 'impactoCalidad', section: 'Nivel de Impacto', sectionNum: 3, question: '¿Cómo afecta esta condición tu calidad de vida?', type: 'radio', options: [
+  { key: 'impactoCalidad', section: 'Nivel de Impacto', sectionNum: 3, question: '¿Cómo afecta esta condición tu calidad de vida?', type: 'radio', tip: 'La medicina regenerativa no busca solo aliviar síntomas, sino recuperar función y calidad de vida real.', options: [
     { value: 'Leve', label: '😌 Leve — Casi no me afecta' },
     { value: 'Moderada', label: '😐 Moderada — Molesta, pero funcional' },
     { value: 'Alta', label: '😣 Alta — Limita mis actividades' },
     { value: 'Severamente limitante', label: '😫 Severa — No puedo hacer mi vida normal' },
   ]},
-  { key: 'preocupacion', section: 'Nivel de Impacto', sectionNum: 3, question: '¿Qué es lo que más te preocupa?', type: 'radio', options: [
+  { key: 'preocupacion', section: 'Nivel de Impacto', sectionNum: 3, question: '¿Qué es lo que más te preocupa?', type: 'radio', tip: 'Identificar tu mayor preocupación nos permite enfocar la evaluación en lo que realmente importa para ti.', options: [
     { value: 'Dolor', label: 'El dolor' },
     { value: 'Pérdida de función', label: 'Perder mi capacidad funcional' },
     { value: 'Dependencia futura', label: 'Volverme dependiente' },
@@ -86,66 +87,66 @@ const questions: Question[] = [
   ]},
 
   // ── SECCIÓN 4 ──
-  { key: 'conocimiento', section: 'Conocimiento sobre Medicina Regenerativa', sectionNum: 4, question: '¿Qué tanto has investigado sobre medicina regenerativa?', sub: 'Células madre, exosomas, péptidos, sueroterapia…', type: 'radio', options: [
+  { key: 'conocimiento', section: 'Conocimiento sobre Medicina Regenerativa', sectionNum: 4, question: '¿Qué tanto has investigado sobre medicina regenerativa?', sub: 'Células madre, exosomas, péptidos, sueroterapia…', type: 'radio', tip: 'No necesitas ser un experto. Nosotros te guiamos con información clara y basada en ciencia.', options: [
     { value: 'Muy poco, apenas estoy explorando', label: '🌱 Muy poco, estoy explorando' },
     { value: 'He leído información general', label: '📖 He leído información general' },
     { value: 'He investigado a profundidad', label: '🔬 He investigado a profundidad' },
     { value: 'Ya he recibido terapias regenerativas', label: '💉 Ya recibí terapias antes' },
     { value: 'Tengo expectativas muy claras', label: '🎯 Tengo expectativas claras' },
   ]},
-  { key: 'expectativas', section: 'Conocimiento sobre Medicina Regenerativa', sectionNum: 4, question: '¿Qué crees que puede lograr la medicina regenerativa en tu caso?', type: 'textarea', placeholder: 'Cuéntanos con tus palabras…' },
+  { key: 'expectativas', section: 'Conocimiento sobre Medicina Regenerativa', sectionNum: 4, question: '¿Qué crees que puede lograr la medicina regenerativa en tu caso?', type: 'textarea', placeholder: 'Cuéntanos con tus palabras…', tip: 'Tus expectativas son el punto de partida para una evaluación honesta y alineada con la realidad científica.' },
 
   // ── SECCIÓN 5 ──
-  { key: 'estres', section: 'Estrés y Carga Laboral', sectionNum: 5, question: '¿Cómo describirías tu nivel de estrés laboral actual?', type: 'radio', options: [
+  { key: 'estres', section: 'Estrés y Carga Laboral', sectionNum: 5, question: '¿Cómo describirías tu nivel de estrés laboral actual?', type: 'radio', tip: 'El estrés crónico acelera el envejecimiento celular. Por eso es parte fundamental de cualquier evaluación regenerativa.', options: [
     { value: 'Bajo', label: '😌 Bajo' },
     { value: 'Moderado', label: '😐 Moderado' },
     { value: 'Alto', label: '😰 Alto' },
     { value: 'Crónico / constante', label: '🔥 Crónico / constante' },
   ]},
-  { key: 'descanso', section: 'Estrés y Carga Laboral', sectionNum: 5, question: '¿Tu rutina diaria te permite descansar y recuperarte adecuadamente?', type: 'radio', options: [
+  { key: 'descanso', section: 'Estrés y Carga Laboral', sectionNum: 5, question: '¿Tu rutina diaria te permite descansar y recuperarte adecuadamente?', type: 'radio', tip: 'El sueño profundo es cuando el cuerpo activa sus mecanismos de reparación celular. Sin descanso, la regeneración se dificulta.', options: [
     { value: 'Sí', label: '✅ Sí' },
     { value: 'A veces', label: '⚠️ A veces' },
     { value: 'No', label: '❌ No' },
   ]},
 
   // ── SECCIÓN 6 ──
-  { key: 'situacion', section: 'Compromiso y Expectativas', sectionNum: 6, question: '¿Cuál describe mejor tu situación actual?', type: 'radio', options: [
+  { key: 'situacion', section: 'Compromiso y Expectativas', sectionNum: 6, question: '¿Cuál describe mejor tu situación actual?', type: 'radio', tip: 'La claridad es el primer paso hacia una decisión informada. No importa en qué etapa estés, lo importante es empezar.', options: [
     { value: 'Busco claridad antes de intervenir', label: '🧭 Busco claridad antes de decidir' },
     { value: 'Estoy confundido y necesito orientación', label: '🤔 Estoy confundido, necesito guía' },
     { value: 'Estoy listo para evaluar medicina regenerativa', label: '✅ Listo para evaluar opciones' },
     { value: 'Busco una solución rápida', label: '⚡ Busco una solución rápida' },
   ]},
-  { key: 'entiendeGarantia', section: 'Compromiso y Expectativas', sectionNum: 6, question: '¿Entiendes que la medicina regenerativa no es una garantía universal?', sub: 'Los resultados varían según cada persona.', type: 'radio', options: [
+  { key: 'entiendeGarantia', section: 'Compromiso y Expectativas', sectionNum: 6, question: '¿Entiendes que la medicina regenerativa no es una garantía universal?', sub: 'Los resultados varían según cada persona.', type: 'radio', tip: 'No prometemos milagros, prometemos honestidad científica. La regeneración depende de tu biología única.', options: [
     { value: 'Sí', label: '✅ Sí, lo entiendo' },
     { value: 'No estoy seguro', label: '🤷‍♂️ No estoy seguro' },
     { value: 'Pensaba que sí lo era', label: '🔍 Pensaba que era garantía' },
   ]},
 
   // ── SECCIÓN 7 ──
-  { key: 'invertirEnClaridad', section: 'Capacidad Decisional y Económica', sectionNum: 7, question: '¿Estás dispuesto a invertir en claridad antes de tomar decisiones terapéuticas?', sub: 'La evaluación DECIDE™ es una sesión estructurada especializada.', type: 'radio', options: [
+  { key: 'invertirEnClaridad', section: 'Capacidad Decisional y Económica', sectionNum: 7, question: '¿Estás dispuesto a invertir en claridad antes de tomar decisiones terapéuticas?', sub: 'La evaluación DECIDE™ es una sesión estructurada especializada.', type: 'radio', tip: 'Invertir en diagnóstico antes que en tratamiento es la decisión más inteligente y rentable a largo plazo.', options: [
     { value: 'Sí', label: '✅ Sí' },
     { value: 'Necesito más información', label: 'ℹ️ Necesito más información' },
     { value: 'No', label: '❌ No' },
   ]},
-  { key: 'situacionFinanciera', section: 'Capacidad Decisional y Económica', sectionNum: 7, question: '¿Cuál describe mejor tu situación financiera actual?', sub: 'Los tratamientos regenerativos pueden representar una inversión significativa.', type: 'radio', options: [
+  { key: 'situacionFinanciera', section: 'Capacidad Decisional y Económica', sectionNum: 7, question: '¿Cuál describe mejor tu situación financiera actual?', sub: 'Los tratamientos regenerativos pueden representar una inversión significativa.', type: 'radio', tip: 'La transparencia financiera es parte de nuestro compromiso. Te ayudamos a evaluar opciones realistas para ti.', options: [
     { value: 'Estoy financieramente preparado', label: '💰 Preparado para evaluar opciones avanzadas' },
     { value: 'Necesitaría planificar la inversión', label: '📋 Necesitaría planificar' },
     { value: 'No estoy en posición de invertir', label: '🔴 No puedo invertir actualmente' },
   ]},
-  { key: 'seguroMedico', section: 'Capacidad Decisional y Económica', sectionNum: 7, question: '¿Cuentas con seguro de gastos médicos privado?', type: 'radio', options: [
+  { key: 'seguroMedico', section: 'Capacidad Decisional y Económica', sectionNum: 7, question: '¿Cuentas con seguro de gastos médicos privado?', type: 'radio', tip: 'Algunos seguros médicos cubren parte de la evaluación diagnóstica. Vale la pena verificarlo.', options: [
     { value: 'Sí', label: '✅ Sí' },
     { value: 'No', label: '❌ No' },
   ]},
 
   // ── SECCIÓN 8 ──
-  { key: 'planOptimizacion', section: 'Alternativa Responsable', sectionNum: 8, question: 'Si no calificas para tratamiento ahora, ¿seguirías un plan de optimización biológica de 90 días?', sub: 'Mejorar tu entorno metabólico y sistémico antes de intervenir.', type: 'radio', options: [
+  { key: 'planOptimizacion', section: 'Alternativa Responsable', sectionNum: 8, question: 'Si no calificas para tratamiento ahora, ¿seguirías un plan de optimización biológica de 90 días?', sub: 'Mejorar tu entorno metabólico y sistémico antes de intervenir.', type: 'radio', tip: 'A veces preparar el terreno biológico es más importante que intervenir directamente. La paciencia estratégica da resultados.', options: [
     { value: 'Sí, si es lo más responsable', label: '✅ Sí, si es lo correcto' },
     { value: 'Dependería del plan', label: '🤔 Dependería del plan' },
     { value: 'No', label: '❌ No' },
   ]},
 
   // ── SECCIÓN 9 ──
-  { key: 'chequeos', section: 'Seguimiento Médico', sectionNum: 9, question: '¿Cada cuánto realizas chequeos médicos?', type: 'radio', options: [
+  { key: 'chequeos', section: 'Seguimiento Médico', sectionNum: 9, question: '¿Cada cuánto realizas chequeos médicos?', type: 'radio', tip: 'La prevención y el monitoreo constante son la base de la longevidad. No esperes a tener síntomas para conocerte.', options: [
     { value: 'Anual', label: '📅 Anual' },
     { value: 'Semestral', label: '📅 Semestral' },
     { value: 'Solo cuando hay síntomas', label: '🆘 Solo cuando hay síntomas' },
@@ -153,40 +154,40 @@ const questions: Question[] = [
   ]},
 
   // ── SECCIÓN 10 ──
-  { key: 'tieneMedico', section: 'Relación con tu Médico Tratante', sectionNum: 10, question: '¿Cuentas con un médico de cabecera o tratante principal?', type: 'radio', options: [
+  { key: 'tieneMedico', section: 'Relación con tu Médico Tratante', sectionNum: 10, question: '¿Cuentas con un médico de cabecera o tratante principal?', type: 'radio', tip: 'La coordinación entre tu médico y nuestro equipo multiplica las probabilidades de éxito del plan regenerativo.', options: [
     { value: 'Sí, tengo uno estable', label: '👨‍⚕️ Sí, tengo médico estable' },
     { value: 'Sí, consulto varios sin coordinación', label: '🔄 Varios sin coordinación' },
     { value: 'No tengo médico de referencia', label: '❌ No tengo médico' },
     { value: 'Solo consulto cuando hay crisis', label: '🚨 Solo en crisis' },
   ]},
-  { key: 'relacionMedico', section: 'Relación con tu Médico Tratante', sectionNum: 10, question: '¿Cómo describirías tu relación con tu médico actual?', type: 'radio', options: [
+  { key: 'relacionMedico', section: 'Relación con tu Médico Tratante', sectionNum: 10, question: '¿Cómo describirías tu relación con tu médico actual?', type: 'radio', tip: 'La confianza con tu médico de cabecera es clave. No buscamos reemplazarlo, sino sumar una capa especializada.', options: [
     { value: 'Confianza alta', label: '🤝 Confianza alta y comunicación abierta' },
     { value: 'Confianza moderada', label: '👍 Confianza moderada' },
     { value: 'Distante', label: '👋 Distante / poco seguimiento' },
     { value: 'No me siento escuchado', label: '😤 No me siento escuchado' },
     { value: 'Cambio frecuentemente de médico', label: '🔄 Cambio frecuente de médico' },
   ]},
-  { key: 'recomendacionesMedico', section: 'Relación con tu Médico Tratante', sectionNum: 10, question: '¿Tu médico ha emitido recomendaciones específicas sobre tu condición?', type: 'radio', options: [
+  { key: 'recomendacionesMedico', section: 'Relación con tu Médico Tratante', sectionNum: 10, question: '¿Tu médico ha emitido recomendaciones específicas sobre tu condición?', type: 'radio', tip: 'A veces el sistema de salud no tiene todas las respuestas. La medicina regenerativa abre opciones que muchos especialistas aún no contemplan.', options: [
     { value: 'Sí, tengo un plan claro', label: '📋 Sí, tengo un plan claro' },
     { value: 'Sí, pero no ha funcionado', label: '⚠️ Sí, pero no funcionó' },
     { value: 'Solo control farmacológico', label: '💊 Solo control farmacológico' },
     { value: 'Me dijeron que es normal para mi edad', label: '👴 "Es normal para mi edad"' },
     { value: 'No tengo recomendaciones claras', label: '❓ No tengo claridad' },
   ]},
-  { key: 'medicoMencionoRM', section: 'Relación con tu Médico Tratante', sectionNum: 10, question: '¿Tu médico ha mencionado la medicina regenerativa como opción?', type: 'radio', options: [
+  { key: 'medicoMencionoRM', section: 'Relación con tu Médico Tratante', sectionNum: 10, question: '¿Tu médico ha mencionado la medicina regenerativa como opción?', type: 'radio', tip: 'Muchos médicos aún no conocen el potencial real de la medicina regenerativa. Nosotros colaboramos con ellos para cerrar esa brecha.', options: [
     { value: 'Sí', label: '✅ Sí' },
     { value: 'No', label: '❌ No' },
     { value: 'La descartó', label: '🚫 La descartó' },
     { value: 'No hemos hablado del tema', label: '🤐 No lo hemos hablado' },
   ]},
-  { key: 'dispuestoCoordinar', section: 'Relación con tu Médico Tratante', sectionNum: 10, question: '¿Estarías dispuesto a coordinar una preparación metabólica si tu médico lo recomienda?', sub: 'Antes de evaluar regeneración.', type: 'radio', options: [
+  { key: 'dispuestoCoordinar', section: 'Relación con tu Médico Tratante', sectionNum: 10, question: '¿Estarías dispuesto a coordinar una preparación metabólica si tu médico lo recomienda?', sub: 'Antes de evaluar regeneración.', type: 'radio', tip: 'El enfoque multidisciplinario multiplica los resultados. Trabajamos en conjunto con tu médico, no por encima de él.', options: [
     { value: 'Sí', label: '✅ Sí' },
     { value: 'Dependería del contexto', label: '🤔 Depende del contexto' },
     { value: 'No', label: '❌ No' },
   ]},
 
   // ── CONFIRMACIÓN ──
-  { key: 'confirmacion', section: 'Confirmación Final', sectionNum: 11, question: '¿Deseas avanzar a una evaluación estructurada?', sub: 'PowerHouse Biotech no vende tratamientos ni promete resultados universales. Primero evaluamos elegibilidad.', type: 'radio', options: [
+  { key: 'confirmacion', section: 'Confirmación Final', sectionNum: 11, question: '¿Deseas avanzar a una evaluación estructurada?', sub: 'PowerHouse Biotech no vende tratamientos ni promete resultados universales. Primero evaluamos elegibilidad.', type: 'radio', tip: 'No se trata de venderte nada. Se trata de darte claridad real sobre si la medicina regenerativa es adecuada para ti.', options: [
     { value: 'si_quiero_claridad', label: '✅ Sí, quiero claridad antes de intervenir' },
     { value: 'necesito_pensarlo', label: '⏸️ Necesito pensarlo' },
   ]},
@@ -301,6 +302,8 @@ async function submitForm() {
       <transition :name="dir" mode="out-in">
         <div class="fp__card" :key="idx">
 
+          <p v-if="current.tip" class="fp__tip"><i class="fa-solid fa-lightbulb"></i> {{ current.tip }}</p>
+
           <!-- Text / Email / Tel / Number -->
           <template v-if="['text','email','tel','number'].includes(current.type)">
             <h2 class="fp__question">{{ current.question }}</h2>
@@ -318,6 +321,7 @@ async function submitForm() {
 
           <!-- Textarea -->
           <template v-else-if="current.type === 'textarea'">
+            <p v-if="current.tip" class="fp__tip"><i class="fa-solid fa-lightbulb"></i> {{ current.tip }}</p>
             <h2 class="fp__question">{{ current.question }}</h2>
             <div class="fp__field">
               <textarea
@@ -331,6 +335,7 @@ async function submitForm() {
 
           <!-- Radio -->
           <template v-else-if="current.type === 'radio'">
+            <p v-if="current.tip" class="fp__tip"><i class="fa-solid fa-lightbulb"></i> {{ current.tip }}</p>
             <h2 class="fp__question">{{ current.question }}</h2>
             <p v-if="current.sub" class="fp__sub">{{ current.sub }}</p>
             <div class="fp__options">
@@ -355,6 +360,7 @@ async function submitForm() {
 
           <!-- Checkbox (multi-select) -->
           <template v-else-if="current.type === 'checkbox'">
+            <p v-if="current.tip" class="fp__tip"><i class="fa-solid fa-lightbulb"></i> {{ current.tip }}</p>
             <h2 class="fp__question">{{ current.question }}</h2>
             <p v-if="current.sub" class="fp__sub">{{ current.sub }}</p>
             <div class="fp__options">
@@ -536,6 +542,22 @@ async function submitForm() {
   border-radius: 20px;
   padding: 2rem 1.5rem;
   box-shadow: $PHB-SHADOW-SM;
+}
+
+.fp__tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  color: rgba($PHB-CYAN, 0.7);
+  margin: 0 0 1rem;
+  line-height: 1.45;
+  i {
+    font-size: 0.7rem;
+    margin-top: 0.2rem;
+    color: $PHB-CYAN;
+    flex-shrink: 0;
+  }
 }
 
 .fp__question {
