@@ -155,7 +155,7 @@ function scrollTo(id: string) {
       <div class="phb-header__inner">
         <a href="/" class="phb-logo" aria-label="PowerHouse Biotech">
           <img :src="logoSrc" alt="PowerHouse Biotech" class="phb-logo__img" />
-          <span class="phb-logo__text">POWERHOUSE <small>BIOTECH</small><sup>™</sup></span>
+          <!-- <span class="phb-logo__text">POWERHOUSE <small>BIOTECH</small><sup>™</sup></span> -->
         </a>
         <button
           class="phb-hamburger"
@@ -171,7 +171,7 @@ function scrollTo(id: string) {
           <a @click="scrollTo('fundador')">El Fundador</a>
           <a @click="scrollTo('ruta')">Método</a>
           <router-link to="/formulario" class="phb-nav__cta">
-            SOLICITAR REVISIÓN
+            INICIA AQUÍ
           </router-link>
         </nav>
       </div>
