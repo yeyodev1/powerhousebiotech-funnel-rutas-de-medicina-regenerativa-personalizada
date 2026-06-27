@@ -5,12 +5,15 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const navOpen = ref(false)
-const form = ref({ nombre: '', email: '', telefono: '' })
+const form = ref({ nombre: '', email: '', telefono: '+52 ' })
 const errors = ref<Record<string, string>>({})
 const loading = ref(false)
 
 import logoSrc from '@/assets/logos/logo.png'
 import juanPhoto from '@/assets/team/juan.png'
+import heroBg from '@/assets/stock/ancianos.jpg'
+
+const WEBHOOK = 'https://services.leadconnectorhq.com/hooks/P62nq2IVqxaQbOrD3P1R/webhook-trigger/rG4rYvva3xMz9mEx11Xq'
 
 function validate() {
   const e: Record<string, string> = {}
@@ -21,12 +24,27 @@ function validate() {
   return Object.keys(e).length === 0
 }
 
+function onTelInput(e: Event) {
+  const raw = (e.target as HTMLInputElement).value
+  const prefix = '+52 '
+  if (!raw.startsWith(prefix)) { form.value.telefono = prefix; return }
+  form.value.telefono = raw
+}
+
 async function handleSubmit() {
   if (!validate()) return
   loading.value = true
-  await new Promise((r) => setTimeout(r, 600))
+  try {
+    await fetch(WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre: form.value.nombre, email: form.value.email, telefono: form.value.telefono, paso: 'registro_inicial' }),
+    })
+  } catch {}
+  await new Promise((r) => setTimeout(r, 400))
   loading.value = false
-  router.push('/formulario')
+  const q = new URLSearchParams({ nombre: form.value.nombre, email: form.value.email, telefono: form.value.telefono })
+  router.push('/formulario?' + q.toString())
 }
 
 const steps = [
@@ -130,7 +148,7 @@ function scrollTo(id: string) {
 
     <!-- ════════ HERO ════════ -->
     <section id="hero" class="phb-hero">
-      <div class="phb-hero__bg"></div>
+      <div class="phb-hero__bg" :style="{ backgroundImage: `url(${heroBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }"></div>
       <div class="phb-hero__grid">
         <div class="phb-hero__content">
           <p class="phb-hero__badge">Evaluación de Viabilidad Regenerativa™</p>
@@ -186,11 +204,11 @@ function scrollTo(id: string) {
               <div class="phb-field">
                 <i class="fa-solid fa-phone phb-field__icon"></i>
                 <input
-                  v-model="form.telefono"
+                  :value="form.telefono"
                   type="tel"
                   placeholder="Teléfono / WhatsApp"
                   :class="{ error: errors.telefono }"
-                  @input="errors.telefono = ''"
+                  @input="onTelInput"
                 />
               </div>
               <p v-if="errors.telefono" class="phb-field__error">{{ errors.telefono }}</p>
@@ -548,7 +566,15 @@ function scrollTo(id: string) {
 .phb-hero__bg {
   position: absolute;
   inset: 0;
-  background: $PHB-MESH-GRADIENT, $PHB-NAVY-DARK;
+  background: $PHB-NAVY-DARK;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(23, 24, 70, 0.7), rgba(40, 54, 69, 0.85));
+    z-index: 1;
+  }
 
   &::after {
     content: '';
@@ -570,6 +596,7 @@ function scrollTo(id: string) {
         rgba(255, 255, 255, 0.018) 61px
       );
     pointer-events: none;
+    z-index: 2;
   }
 }
 
@@ -686,7 +713,9 @@ function scrollTo(id: string) {
 }
 
 .phb-form-card {
-  background: $PHB-SURFACE;
+  background: rgba(30, 34, 96, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid $PHB-BORDER;
   border-radius: 20px;
   padding: 2rem;

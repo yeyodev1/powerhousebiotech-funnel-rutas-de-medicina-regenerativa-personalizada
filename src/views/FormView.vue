@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
-const WEBHOOK = import.meta.env.VITE_WEBHOOK_FORM
+const route = useRoute()
+const WEBHOOK = 'https://services.leadconnectorhq.com/hooks/P62nq2IVqxaQbOrD3P1R/webhook-trigger/rG4rYvva3xMz9mEx11Xq'
 
 const data = ref({
-  nombre: '', edad: '', ciudad: '', email: '', telefono: '',
+  nombre: '', edad: '', ciudad: '', email: '', telefono: '+52 ',
   diagnostico: [] as string[], diagnosticoOtro: '',
   tiempoCondicion: '', tomaMedicamentos: '', terapiasPrevias: [] as string[],
   impactoCalidad: '', preocupacion: '',
@@ -193,6 +194,13 @@ const questions: Question[] = [
   ]},
 ]
 
+onMounted(() => {
+  const q = route.query
+  if (q.nombre) data.value.nombre = q.nombre as string
+  if (q.email) data.value.email = q.email as string
+  if (q.telefono) data.value.telefono = q.telefono as string
+})
+
 const total = questions.length
 const idx = ref(0)
 const dir = ref<'fwd' | 'back'>('fwd')
@@ -204,6 +212,13 @@ const current = computed(() => questions[idx.value])
 const progress = computed(() => ((idx.value + 1) / total) * 100)
 const isLast = computed(() => idx.value >= total - 1)
 const isFirst = computed(() => idx.value <= 0)
+
+function onTelInput(e: Event) {
+  const raw = (e.target as HTMLInputElement).value
+  const prefix = '+52 '
+  if (!raw.startsWith(prefix)) { data.value.telefono = prefix; return }
+  data.value.telefono = raw
+}
 
 function value(key: string): any {
   return (data.value as any)[key]
@@ -245,8 +260,19 @@ function isValid(q: Question): boolean {
   return false
 }
 
+async function sendStepUpdate() {
+  try {
+    await fetch(WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...data.value, paso: idx.value + 1, pregunta: current.value.key }),
+    })
+  } catch {}
+}
+
 function next() {
   if (!isValid(current.value)) return
+  sendStepUpdate()
   if (isLast.value) { submitForm(); return }
   dir.value = 'fwd'
   idx.value++
@@ -311,8 +337,8 @@ async function submitForm() {
               <input
                 :type="current.type === 'email' ? 'email' : current.type === 'tel' ? 'tel' : current.type === 'number' ? 'number' : 'text'"
                 :placeholder="current.placeholder"
-                :value="value(current.key)"
-                @input="setValue(current.key, ($event.target as HTMLInputElement).value)"
+                :value="current.key === 'telefono' ? data.telefono : value(current.key)"
+                @input="current.key === 'telefono' ? onTelInput($event) : setValue(current.key, ($event.target as HTMLInputElement).value)"
                 @keydown.enter="next"
                 autofocus
               />
