@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
@@ -7,7 +7,7 @@ const route = useRoute()
 const WEBHOOK = 'https://services.leadconnectorhq.com/hooks/P62nq2IVqxaQbOrD3P1R/webhook-trigger/rG4rYvva3xMz9mEx11Xq'
 
 const data = ref({
-  nombre: '', edad: '', ciudad: '', email: '', telefono: '+52 ',
+  nombre: '', edad: '', ciudad: '', email: '', telefono: '',
   diagnostico: [] as string[], diagnosticoOtro: '',
   tiempoCondicion: '', tomaMedicamentos: '', terapiasPrevias: [] as string[],
   impactoCalidad: '', preocupacion: '',
@@ -18,6 +18,31 @@ const data = ref({
   tieneMedico: '', relacionMedico: '', recomendacionesMedico: '',
   medicoMencionoRM: '', dispuestoCoordinar: '', confirmacion: '',
 })
+const phoneNum = ref('')
+const countryCode = ref('+52')
+const showCountryPicker = ref(false)
+
+const countries = [
+  { code: '+52', flag: '🇲🇽', label: 'MX' },
+  { code: '+1', flag: '🇺🇸', label: 'US' },
+  { code: '+1', flag: '🇨🇦', label: 'CA' },
+  { code: '+54', flag: '🇦🇷', label: 'AR' },
+  { code: '+55', flag: '🇧🇷', label: 'BR' },
+  { code: '+56', flag: '🇨🇱', label: 'CL' },
+  { code: '+57', flag: '🇨🇴', label: 'CO' },
+  { code: '+51', flag: '🇵🇪', label: 'PE' },
+  { code: '+593', flag: '🇪🇨', label: 'EC' },
+  { code: '+58', flag: '🇻🇪', label: 'VE' },
+  { code: '+502', flag: '🇬🇹', label: 'GT' },
+  { code: '+34', flag: '🇪🇸', label: 'ES' },
+]
+
+const currentCountry = computed(() => countries.find(c => c.code === countryCode.value) || countries[0])
+
+function selectCountry(c: typeof countries[0]) {
+  countryCode.value = c.code
+  showCountryPicker.value = false
+}
 
 type QType = 'text' | 'tel' | 'email' | 'number' | 'radio' | 'checkbox' | 'textarea'
 interface Question {
@@ -194,11 +219,32 @@ const questions: Question[] = [
   ]},
 ]
 
+function onDocumentClick(e: MouseEvent) {
+  const t = e.target as HTMLElement
+  if (!t.closest('.fp-phone-pick')) showCountryPicker.value = false
+}
+
 onMounted(() => {
+  document.addEventListener('click', onDocumentClick)
   const q = route.query
   if (q.nombre) data.value.nombre = q.nombre as string
   if (q.email) data.value.email = q.email as string
-  if (q.telefono) data.value.telefono = q.telefono as string
+  if (q.telefono) {
+    const tel = q.telefono as string
+    const known = countries.map(c => c.code).sort((a, b) => b.length - a.length)
+    for (const code of known) {
+      if (tel.startsWith(code + ' ') || tel.startsWith(code)) {
+        countryCode.value = code
+        phoneNum.value = tel.replace(code, '').trim()
+        return
+      }
+    }
+    phoneNum.value = tel
+  }
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', onDocumentClick)
 })
 
 const total = questions.length
@@ -212,13 +258,6 @@ const current = computed(() => questions[idx.value])
 const progress = computed(() => ((idx.value + 1) / total) * 100)
 const isLast = computed(() => idx.value >= total - 1)
 const isFirst = computed(() => idx.value <= 0)
-
-function onTelInput(e: Event) {
-  const raw = (e.target as HTMLInputElement).value
-  const prefix = '+52 '
-  if (!raw.startsWith(prefix)) { data.value.telefono = prefix; return }
-  data.value.telefono = raw
-}
 
 function value(key: string): any {
   return (data.value as any)[key]
@@ -242,7 +281,7 @@ function isValid(q: Question): boolean {
   const v = value(q.key)
   if (q.type === 'text') return typeof v === 'string' && v.trim().length >= 2
   if (q.type === 'email') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v ?? '')
-  if (q.type === 'tel') return typeof v === 'string' && v.trim().length >= 7
+  if (q.type === 'tel') return q.key === 'telefono' ? phoneNum.value.trim().length >= 7 : typeof v === 'string' && v.trim().length >= 7
   if (q.type === 'number') return typeof v === 'string' && v.trim().length > 0
   if (q.type === 'radio') return !!v
   if (q.type === 'textarea') return typeof v === 'string' && v.trim().length >= 5
@@ -260,12 +299,16 @@ function isValid(q: Question): boolean {
   return false
 }
 
+function getFullPhone() {
+  return countryCode.value + ' ' + phoneNum.value.trim()
+}
+
 async function sendStepUpdate() {
   try {
     await fetch(WEBHOOK, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...data.value, paso: idx.value + 1, pregunta: current.value.key }),
+      body: JSON.stringify({ ...data.value, telefono: getFullPhone(), paso: idx.value + 1, pregunta: current.value.key }),
     })
   } catch {}
 }
@@ -286,7 +329,7 @@ function prev() {
 async function submitForm() {
   sending.value = true
   errMsg.value = ''
-  const payload = { ...data.value, timestamp: Date.now() }
+  const payload = { ...data.value, telefono: getFullPhone(), timestamp: Date.now() }
   try {
     const r = await fetch(WEBHOOK, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -333,16 +376,50 @@ async function submitForm() {
           <!-- Text / Email / Tel / Number -->
           <template v-if="['text','email','tel','number'].includes(current.type)">
             <h2 class="fp__question">{{ current.question }}</h2>
-            <div class="fp__field">
-              <input
-                :type="current.type === 'email' ? 'email' : current.type === 'tel' ? 'tel' : current.type === 'number' ? 'number' : 'text'"
-                :placeholder="current.placeholder"
-                :value="current.key === 'telefono' ? data.telefono : value(current.key)"
-                @input="current.key === 'telefono' ? onTelInput($event) : setValue(current.key, ($event.target as HTMLInputElement).value)"
-                @keydown.enter="next"
-                autofocus
-              />
-            </div>
+            <template v-if="current.key === 'telefono'">
+              <div class="fp__field fp__field--phone">
+                <div class="fp-phone-pick">
+                  <button type="button" class="fp-phone-pick__btn" @click="showCountryPicker = !showCountryPicker">
+                    <span class="fp-phone-pick__flag">{{ currentCountry.flag }}</span>
+                    <span class="fp-phone-pick__code">{{ currentCountry.code }}</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                  </button>
+                  <div v-if="showCountryPicker" class="fp-phone-pick__drop">
+                    <button
+                      v-for="c in countries"
+                      :key="c.code + c.label"
+                      type="button"
+                      class="fp-phone-pick__opt"
+                      :class="{ active: countryCode === c.code }"
+                      @click="selectCountry(c)"
+                    >
+                      <span class="fp-phone-pick__flag">{{ c.flag }}</span>
+                      <span class="fp-phone-pick__code">{{ c.code }}</span>
+                      <span class="fp-phone-pick__label">{{ c.label }}</span>
+                    </button>
+                  </div>
+                </div>
+                <input
+                  v-model="phoneNum"
+                  type="tel"
+                  :placeholder="current.placeholder"
+                  @keydown.enter="next"
+                  autofocus
+                />
+              </div>
+            </template>
+            <template v-else>
+              <div class="fp__field">
+                <input
+                  :type="current.type === 'email' ? 'email' : current.type === 'number' ? 'number' : 'text'"
+                  :placeholder="current.placeholder"
+                  :value="value(current.key)"
+                  @input="setValue(current.key, ($event.target as HTMLInputElement).value)"
+                  @keydown.enter="next"
+                  autofocus
+                />
+              </div>
+            </template>
           </template>
 
           <!-- Textarea -->
@@ -618,6 +695,78 @@ async function submitForm() {
     &:focus { border-color: $PHB-CYAN; background: color.adjust($PHB-SURFACE-2, $lightness: 2%); }
   }
   textarea { resize: vertical; min-height: 110px; }
+
+  &--phone {
+    display: flex;
+    gap: 0.5rem;
+    input {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+}
+
+// ── Country Picker ──────────────────────────────────────────────────────────
+.fp-phone-pick {
+  position: relative;
+  flex-shrink: 0;
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.9rem 0.7rem;
+    background: $PHB-SURFACE-2;
+    border: 1px solid $PHB-BORDER;
+    border-radius: 12px;
+    color: $PHB-TEXT-1;
+    font-family: fonts.$font-secondary;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.2s;
+    i { font-size: 0.6rem; color: $PHB-TEXT-3; margin-left: 0.15rem; }
+    &:hover { border-color: $PHB-CYAN; }
+  }
+
+  &__flag { font-size: 1.15rem; line-height: 1; }
+
+  &__code { font-weight: 600; font-size: 0.82rem; }
+
+  &__drop {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 20;
+    width: 210px;
+    max-height: 220px;
+    overflow-y: auto;
+    background: $PHB-SURFACE;
+    border: 1px solid $PHB-BORDER;
+    border-radius: 12px;
+    padding: 0.35rem;
+    box-shadow: $PHB-SHADOW-MD;
+  }
+
+  &__opt {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    color: $PHB-TEXT-2;
+    font-family: fonts.$font-secondary;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    &:hover { background: rgba($PHB-CYAN, 0.08); }
+    &.active { background: rgba($PHB-CYAN, 0.12); color: $PHB-TEXT-1; font-weight: 600; }
+  }
+
+  &__label { color: $PHB-TEXT-3; font-size: 0.78rem; margin-left: auto; }
 }
 
 // ── Options ───────────────────────────────────────────────────────────────────

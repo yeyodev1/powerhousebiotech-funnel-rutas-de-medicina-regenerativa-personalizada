@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
 const navOpen = ref(false)
-const form = ref({ nombre: '', email: '', telefono: '+52 ' })
+const form = ref({ nombre: '', email: '', telefono: '' })
+const phoneNum = ref('')
+const countryCode = ref('+52')
+const showCountryPicker = ref(false)
 const errors = ref<Record<string, string>>({})
 const loading = ref(false)
 
@@ -15,37 +18,66 @@ import heroBg from '@/assets/stock/ancianos.jpg'
 
 const WEBHOOK = 'https://services.leadconnectorhq.com/hooks/P62nq2IVqxaQbOrD3P1R/webhook-trigger/rG4rYvva3xMz9mEx11Xq'
 
+const countries = [
+  { code: '+52', flag: '🇲🇽', label: 'MX' },
+  { code: '+1', flag: '🇺🇸', label: 'US' },
+  { code: '+1', flag: '🇨🇦', label: 'CA' },
+  { code: '+54', flag: '🇦🇷', label: 'AR' },
+  { code: '+55', flag: '🇧🇷', label: 'BR' },
+  { code: '+56', flag: '🇨🇱', label: 'CL' },
+  { code: '+57', flag: '🇨🇴', label: 'CO' },
+  { code: '+51', flag: '🇵🇪', label: 'PE' },
+  { code: '+593', flag: '🇪🇨', label: 'EC' },
+  { code: '+58', flag: '🇻🇪', label: 'VE' },
+  { code: '+502', flag: '🇬🇹', label: 'GT' },
+  { code: '+34', flag: '🇪🇸', label: 'ES' },
+]
+
+const currentCountry = computed(() => countries.find(c => c.code === countryCode.value) || countries[0])
+
+function selectCountry(c: typeof countries[0]) {
+  countryCode.value = c.code
+  showCountryPicker.value = false
+}
+
 function validate() {
   const e: Record<string, string> = {}
   if (form.value.nombre.trim().length < 2) e.nombre = 'Ingresa tu nombre'
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email.trim())) e.email = 'Email inválido'
-  if (form.value.telefono.trim().length < 7) e.telefono = 'Teléfono inválido'
+  if (phoneNum.value.trim().length < 7) e.telefono = 'Teléfono inválido'
   errors.value = e
   return Object.keys(e).length === 0
 }
 
-function onTelInput(e: Event) {
-  const raw = (e.target as HTMLInputElement).value
-  const prefix = '+52 '
-  if (!raw.startsWith(prefix)) { form.value.telefono = prefix; return }
-  form.value.telefono = raw
+function getFullPhone() {
+  return countryCode.value + ' ' + phoneNum.value.trim()
 }
 
 async function handleSubmit() {
   if (!validate()) return
+  const fullPhone = getFullPhone()
+  form.value.telefono = fullPhone
   loading.value = true
   try {
     await fetch(WEBHOOK, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre: form.value.nombre, email: form.value.email, telefono: form.value.telefono, paso: 'registro_inicial' }),
+      body: JSON.stringify({ nombre: form.value.nombre, email: form.value.email, telefono: fullPhone, paso: 'registro_inicial' }),
     })
   } catch {}
   await new Promise((r) => setTimeout(r, 400))
   loading.value = false
-  const q = new URLSearchParams({ nombre: form.value.nombre, email: form.value.email, telefono: form.value.telefono })
+  const q = new URLSearchParams({ nombre: form.value.nombre, email: form.value.email, telefono: fullPhone })
   router.push('/formulario?' + q.toString())
 }
+
+function onDocumentClick(e: MouseEvent) {
+  const t = e.target as HTMLElement
+  if (!t.closest('.phb-phone-pick')) showCountryPicker.value = false
+}
+
+onMounted(() => document.addEventListener('click', onDocumentClick))
+onUnmounted(() => document.removeEventListener('click', onDocumentClick))
 
 const steps = [
   {
@@ -201,14 +233,34 @@ function scrollTo(id: string) {
                 />
               </div>
               <p v-if="errors.email" class="phb-field__error">{{ errors.email }}</p>
-              <div class="phb-field">
-                <i class="fa-solid fa-phone phb-field__icon"></i>
+              <div class="phb-field phb-field--phone">
+                <div class="phb-phone-pick">
+                  <button type="button" class="phb-phone-pick__btn" @click="showCountryPicker = !showCountryPicker">
+                    <span class="phb-phone-pick__flag">{{ currentCountry.flag }}</span>
+                    <span class="phb-phone-pick__code">{{ currentCountry.code }}</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                  </button>
+                  <div v-if="showCountryPicker" class="phb-phone-pick__drop">
+                    <button
+                      v-for="c in countries"
+                      :key="c.code + c.label"
+                      type="button"
+                      class="phb-phone-pick__opt"
+                      :class="{ active: countryCode === c.code }"
+                      @click="selectCountry(c)"
+                    >
+                      <span class="phb-phone-pick__flag">{{ c.flag }}</span>
+                      <span class="phb-phone-pick__code">{{ c.code }}</span>
+                      <span class="phb-phone-pick__label">{{ c.label }}</span>
+                    </button>
+                  </div>
+                </div>
                 <input
-                  :value="form.telefono"
+                  v-model="phoneNum"
                   type="tel"
                   placeholder="Teléfono / WhatsApp"
                   :class="{ error: errors.telefono }"
-                  @input="onTelInput"
+                  @input="errors.telefono = ''"
                 />
               </div>
               <p v-if="errors.telefono" class="phb-field__error">{{ errors.telefono }}</p>
@@ -352,14 +404,9 @@ function scrollTo(id: string) {
           La Medicina Regenerativa puede ser tu oportunidad. Pero el tratamiento correcto
           comienza antes. Comprende quién eres biológicamente y qué frena tu recuperación.
         </p>
-        <a
-          href="https://powerhousebiotech.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="phb-cta__btn"
-        >
+        <router-link to="/formulario" class="phb-cta__btn">
           AGENDA UNA CONSULTA ORIENTATIVA →
-        </a>
+        </router-link>
         <div class="phb-cta__trust">
           <div v-for="(item, i) in trustItems" :key="i" class="phb-cta__trust-item">
             <i :class="item.icon"></i>
@@ -771,6 +818,78 @@ function scrollTo(id: string) {
     &:focus { border-color: $PHB-CYAN; background: color.adjust($PHB-SURFACE-2, $lightness: 2%); }
     &.error { border-color: $PHB-URGENT; }
   }
+
+  &--phone {
+    gap: 0.5rem;
+    input {
+      padding-left: 1rem;
+      flex: 1;
+      min-width: 0;
+    }
+  }
+}
+
+// ── Country Picker ──────────────────────────────────────────────────────────
+.phb-phone-pick {
+  position: relative;
+  flex-shrink: 0;
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.85rem 0.7rem;
+    background: $PHB-SURFACE-2;
+    border: 1px solid $PHB-BORDER;
+    border-radius: 10px;
+    color: $PHB-TEXT-1;
+    font-family: fonts.$font-secondary;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.2s;
+    i { font-size: 0.6rem; color: $PHB-TEXT-3; margin-left: 0.15rem; }
+    &:hover { border-color: $PHB-CYAN; }
+  }
+
+  &__flag { font-size: 1.15rem; line-height: 1; }
+
+  &__code { font-weight: 600; font-size: 0.82rem; }
+
+  &__drop {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 20;
+    width: 210px;
+    max-height: 220px;
+    overflow-y: auto;
+    background: $PHB-SURFACE;
+    border: 1px solid $PHB-BORDER;
+    border-radius: 12px;
+    padding: 0.35rem;
+    box-shadow: $PHB-SHADOW-MD;
+  }
+
+  &__opt {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    color: $PHB-TEXT-2;
+    font-family: fonts.$font-secondary;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    &:hover { background: rgba($PHB-CYAN, 0.08); }
+    &.active { background: rgba($PHB-CYAN, 0.12); color: $PHB-TEXT-1; font-weight: 600; }
+  }
+
+  &__label { color: $PHB-TEXT-3; font-size: 0.78rem; margin-left: auto; }
 }
 
 .phb-field__error {
