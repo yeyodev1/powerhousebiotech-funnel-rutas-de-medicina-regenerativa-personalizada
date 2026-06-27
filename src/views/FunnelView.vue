@@ -320,9 +320,9 @@ function scrollTo(id: string) {
           </div>
           <p class="phb-founder__bio">
             Juan Román II Garza Delgado es estratega, investigador y emprendedor en longevidad regenerativa, medicina de precisión y liderazgo bio-consciente.
-            <br>
+            <br><br>
             Como fundador y visionario de Eternal Medical Center y PowerHouse Biotech, impulsa un ecosistema innovador que integra medicina regenerativa, diagnóstico avanzado, tecnologías de salud, educación y optimización humana.
-            <br>
+            <br><br>
             Su trabajo combina biología del envejecimiento, biomarcadores, inteligencia artificial y pensamiento sistémico para desarrollar modelos que ayuden a las personas a extender sus años de salud, funcionalidad y alto desempeño.
           </p>
           <div class="phb-founder__links">
