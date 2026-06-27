@@ -385,22 +385,19 @@ function scrollTo(id: string) {
           </div>
         </div>
         <h2 class="phb-cta__title">
-          Entendé tu biología.<br />
-          Activá tu poder de regeneración.
+          Entiende tu biología.<br />
+          Activa tu poder de regeneración.
         </h2>
         <p class="phb-cta__sub">
-          La Medicina Regenerativa puede ser tu oportunidad. Pero el tratamiento correcto
-          comienza antes. Comprende quién eres biológicamente y qué frena tu recuperación.
+          La Medicina Regenerativa puede ser tu oportunidad. 
+          <br><br>
+          Pero el tratamiento correcto comienza antes. 
+          <br><br>
+          Comprende quién eres biológicamente y qué frena tu recuperación.
         </p>
         <router-link to="/formulario" class="phb-cta__btn">
-          AGENDA UNA CONSULTA ORIENTATIVA →
+          INICIA TU EVALUACIÓN AQUÍ →
         </router-link>
-        <div class="phb-cta__trust">
-          <div v-for="(item, i) in trustItems" :key="i" class="phb-cta__trust-item">
-            <i :class="item.icon"></i>
-            <span>{{ item.text }}</span>
-          </div>
-        </div>
       </div>
     </section>
 
