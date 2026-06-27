@@ -121,14 +121,9 @@ function scrollTo(id: string) {
           <a @click="scrollTo('diferenciador')">Filosofía</a>
           <a @click="scrollTo('fundador')">El Fundador</a>
           <a @click="scrollTo('ruta')">Método</a>
-          <a
-            href="https://powerhousebiotech.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="phb-nav__cta"
-          >
+          <router-link to="/formulario" class="phb-nav__cta">
             SOLICITAR REVISIÓN
-          </a>
+          </router-link>
         </nav>
       </div>
     </header>
