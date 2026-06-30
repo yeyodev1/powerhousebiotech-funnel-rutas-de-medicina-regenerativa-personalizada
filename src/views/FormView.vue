@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
 
-const WEBHOOK = 'https://services.leadconnectorhq.com/hooks/P62nq2IVqxaQbOrD3P1R/webhook-trigger/rG4rYvva3xMz9mEx11Xq'
+const WEBHOOK = import.meta.env.VITE_WEBHOOK_FORM
+const STEP_WEBHOOK = import.meta.env.VITE_WEBHOOK_FORM_STEP
+const LEAD_NOTE = 'Cuestionario completado desde formulario'
+const PROGRESS_NOTE_PREFIX = 'Progreso del formulario'
 
 interface QuestionItem {
   id: number
@@ -174,6 +178,15 @@ const countries = [
 ]
 
 const currentCountry = computed(() => countries.find(c => c.code === countryCode.value) || countries[0])
+const route = useRoute()
+
+function parseFullName(fullName: string) {
+  const parts = fullName.trim().split(/\s+/).filter(Boolean)
+  return {
+    nombre: parts[0] || '',
+    apellido: parts.slice(1).join(' '),
+  }
+}
 
 const currentSection = computed(() => sectionsData[activeStep.value])
 const totalSteps = computed(() => sectionsData.length)
@@ -199,7 +212,83 @@ function setAnswer(questionId: number, value: number) {
 }
 
 function getFullPhone() {
-  return countryCode.value + ' ' + phoneNum.value.trim()
+  return `${countryCode.value}${phoneNum.value.replace(/\D/g, '')}`
+}
+
+function hydrateContactFromQuery() {
+  const queryName = typeof route.query.nombre === 'string' ? route.query.nombre : ''
+  const queryEmail = typeof route.query.email === 'string' ? route.query.email : ''
+  const queryPhone = typeof route.query.telefono === 'string' ? route.query.telefono : ''
+
+  if (queryName && !nombre.value) nombre.value = queryName
+  if (queryEmail && !email.value) email.value = queryEmail
+
+  if (queryPhone && !phoneNum.value) {
+    const compactPhone = queryPhone.replace(/\s+/g, '')
+    const match = compactPhone.match(/^(\+\d{1,4})(\d+)$/)
+    if (match) {
+      countryCode.value = match[1]
+      phoneNum.value = match[2]
+    } else {
+      phoneNum.value = compactPhone.replace(/\D/g, '')
+    }
+  }
+}
+
+function buildProgressNote(scope: string, detail = '') {
+  const parts = [PROGRESS_NOTE_PREFIX, scope, `${answeredCount.value}/${totalQuestions.value} respondidas`]
+  if (detail) parts.push(detail)
+  return parts.join(' | ')
+}
+
+function buildQuestionDetail(questionId: number, value: number) {
+  const question = sectionsData[activeStep.value]?.questions.find(q => q.id === questionId)
+  const text = question ? question.text.slice(0, 70) : `Pregunta ${questionId}`
+  return `Q${questionId}=${value} · ${text}`
+}
+
+function buildSectionDetail() {
+  const parts = currentSection.value.questions
+    .map((question) => {
+      const answer = answers.value[question.id]
+      return answer === undefined ? null : buildQuestionDetail(question.id, answer)
+    })
+    .filter(Boolean)
+
+  return parts.length > 0 ? parts.join(' || ') : 'Sin respuestas registradas en esta sección'
+}
+
+async function sendStepUpdate(scope: string, detail = '') {
+  if (!STEP_WEBHOOK) return
+
+  const fullPhone = getFullPhone()
+  const { nombre: firstName, apellido } = parseFullName(nombre.value)
+  const note = buildProgressNote(scope, detail)
+
+  try {
+    await fetch(STEP_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nombre: firstName,
+        apellido,
+        email: email.value.trim(),
+        telefono: fullPhone,
+        note,
+        nota: note,
+        cuestionario: answers.value,
+        total_preguntas: totalQuestions.value,
+        respondidas: answeredCount.value,
+        paso: scope,
+        seccion_id: currentSection.value?.id,
+        seccion: currentSection.value?.title,
+        pregunta_id: detail ? Number(detail.match(/Q(\d+)=/)?.[1] || 0) : 0,
+        respuesta: detail ? Number(detail.match(/=(\d+)/)?.[1] ?? null) : null,
+      }),
+    })
+  } catch {
+    // Silencioso: no bloqueamos el wizard por fallos de red.
+  }
 }
 
 function validatePersonal() {
@@ -218,11 +307,12 @@ function startWizard() {
   dir.value = 'fwd'
 }
 
-function nextStep() {
+async function nextStep() {
   dir.value = 'fwd'
   if (isLastStep.value) {
-    handleSubmit()
+    await handleSubmit()
   } else {
+    await sendStepUpdate('seccion_completada', buildSectionDetail())
     activeStep.value++
   }
 }
@@ -239,14 +329,39 @@ function prevStep() {
 async function handleSubmit() {
   submitLoading.value = true
   const fullPhone = getFullPhone()
+  const { nombre: firstName, apellido } = parseFullName(nombre.value)
   try {
+    if (STEP_WEBHOOK) {
+      await fetch(STEP_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre: firstName,
+          apellido,
+          email: email.value.trim(),
+          telefono: fullPhone,
+          note: LEAD_NOTE,
+          nota: LEAD_NOTE,
+          cuestionario: answers.value,
+          total_preguntas: totalQuestions.value,
+          respondidas: answeredCount.value,
+          paso: 'cuestionario_phb_finalizado',
+          seccion_id: currentSection.value?.id,
+          seccion: currentSection.value?.title,
+        }),
+      })
+    }
+
     await fetch(WEBHOOK, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        nombre: nombre.value,
-        email: email.value,
+        nombre: firstName,
+        apellido,
+        email: email.value.trim(),
         telefono: fullPhone,
+        note: LEAD_NOTE,
+        nota: LEAD_NOTE,
         cuestionario: answers.value,
         total_preguntas: totalQuestions.value,
         respondidas: answeredCount.value,
@@ -266,6 +381,7 @@ function onDocumentClick(e: MouseEvent) {
 }
 
 onMounted(() => {
+  hydrateContactFromQuery()
   document.addEventListener('click', onDocumentClick)
 })
 

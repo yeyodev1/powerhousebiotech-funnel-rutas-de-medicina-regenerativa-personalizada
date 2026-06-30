@@ -17,7 +17,8 @@ import logoSrc from '@/assets/logos/logo.png'
 import juanPhoto from '@/assets/team/juan.png'
 import heroBg from '@/assets/stock/ancianos.jpg'
 
-const WEBHOOK = 'https://services.leadconnectorhq.com/hooks/P62nq2IVqxaQbOrD3P1R/webhook-trigger/rG4rYvva3xMz9mEx11Xq'
+const WEBHOOK = import.meta.env.VITE_WEBHOOK_FORM
+const LEAD_NOTE = 'Lead inicial capturado desde homepage'
 const countries = [
   { code: '+52', flag: '🇲🇽', label: 'MX' },
   { code: '+1', flag: '🇺🇸', label: 'US' },
@@ -35,13 +36,21 @@ const countries = [
 
 const currentCountry = computed(() => countries.find(c => c.code === countryCode.value) || countries[0])
 
+function parseFullName(fullName: string) {
+  const parts = fullName.trim().split(/\s+/).filter(Boolean)
+  return {
+    nombre: parts[0] || '',
+    apellido: parts.slice(1).join(' '),
+  }
+}
+
 function selectCountry(c: typeof countries[0]) {
   countryCode.value = c.code
   showCountryPicker.value = false
 }
 
 function getFullPhone() {
-  return countryCode.value + ' ' + phoneNum.value.trim()
+  return `${countryCode.value}${phoneNum.value.replace(/\D/g, '')}`
 }
 
 function validatePersonal() {
@@ -56,12 +65,21 @@ function validatePersonal() {
 async function handleSubmit() {
   if (!validatePersonal()) return
   const fullPhone = getFullPhone()
+  const { nombre: firstName, apellido } = parseFullName(nombre.value)
   submitLoading.value = true
   try {
     await fetch(WEBHOOK, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre: nombre.value, email: email.value, telefono: fullPhone, paso: 'registro_inicial' }),
+      body: JSON.stringify({
+        nombre: firstName,
+        apellido,
+        email: email.value.trim(),
+        telefono: fullPhone,
+        note: LEAD_NOTE,
+        nota: LEAD_NOTE,
+        paso: 'registro_inicial',
+      }),
     })
   } catch { }
   await new Promise((r) => setTimeout(r, 400))
