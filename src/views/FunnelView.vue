@@ -18,7 +18,11 @@ import juanPhoto from '@/assets/team/juan.png'
 import heroBg from '@/assets/stock/ancianos.jpg'
 
 const WEBHOOK = import.meta.env.VITE_WEBHOOK_FORM
-const LEAD_NOTE = 'Lead inicial capturado desde homepage'
+const LEAD_NOTE = [
+  '🧬 Lead inicial PHB',
+  '📍 Origen: Homepage',
+  '✅ Acción: creación de contacto',
+].join('\n')
 const countries = [
   { code: '+52', flag: '🇲🇽', label: 'MX' },
   { code: '+1', flag: '🇺🇸', label: 'US' },

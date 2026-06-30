@@ -4,7 +4,11 @@ import { useRoute } from 'vue-router'
 
 const WEBHOOK = import.meta.env.VITE_WEBHOOK_FORM
 const STEP_WEBHOOK = import.meta.env.VITE_WEBHOOK_FORM_STEP
-const LEAD_NOTE = 'Cuestionario completado desde formulario'
+const LEAD_NOTE = [
+  '🧬 Cuestionario PHB completado',
+  '🏁 Estado: finalizado',
+  '✅ Acción: contacto actualizado con respuestas completas',
+].join('\n')
 const PROGRESS_NOTE_PREFIX = 'Progreso del formulario'
 
 interface QuestionItem {
@@ -236,15 +240,23 @@ function hydrateContactFromQuery() {
 }
 
 function buildProgressNote(scope: string, detail = '') {
-  const parts = [PROGRESS_NOTE_PREFIX, scope, `${answeredCount.value}/${totalQuestions.value} respondidas`]
-  if (detail) parts.push(detail)
-  return parts.join(' | ')
+  const parts = [
+    '🧬 Progreso PHB',
+    `📍 Evento: ${scope}`,
+    `✅ Respondidas: ${answeredCount.value}/${totalQuestions.value}`,
+  ]
+
+  if (detail) {
+    parts.push('', '📝 Resumen de la sección', detail)
+  }
+
+  return parts.join('\n')
 }
 
 function buildQuestionDetail(questionId: number, value: number) {
   const question = sectionsData[activeStep.value]?.questions.find(q => q.id === questionId)
   const text = question ? question.text.slice(0, 70) : `Pregunta ${questionId}`
-  return `Q${questionId}=${value} · ${text}`
+  return `• Q${questionId}: ${value}\n  ${text}`
 }
 
 function buildSectionDetail() {
@@ -255,7 +267,9 @@ function buildSectionDetail() {
     })
     .filter(Boolean)
 
-  return parts.length > 0 ? parts.join(' || ') : 'Sin respuestas registradas en esta sección'
+  if (parts.length === 0) return '• Sin respuestas registradas en esta sección'
+
+  return ['📌 Respuestas de la sección', ...parts].join('\n')
 }
 
 async function sendStepUpdate(scope: string, detail = '') {
