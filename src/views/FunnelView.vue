@@ -18,6 +18,7 @@ import juanPhoto from '@/assets/team/juan.png'
 import heroBg from '@/assets/stock/ancianos.jpg'
 
 const WEBHOOK = import.meta.env.VITE_WEBHOOK_FORM
+const AGENT_WEBHOOK = import.meta.env.VITE_WEBHOOK_FORM_AGENT
 const LEAD_NOTE = [
   '🧬 Lead inicial PHB',
   '📍 Origen: Homepage',
@@ -57,6 +58,16 @@ function getFullPhone() {
   return `${countryCode.value}${phoneNum.value.replace(/\D/g, '')}`
 }
 
+async function postWebhook(url: string | undefined, payload: Record<string, unknown>) {
+  if (!url) return
+
+  await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+}
+
 function validatePersonal() {
   const e: Record<string, string> = {}
   if (nombre.value.trim().length < 2) e.nombre = 'Ingresa tu nombre'
@@ -70,21 +81,21 @@ async function handleSubmit() {
   if (!validatePersonal()) return
   const fullPhone = getFullPhone()
   const { nombre: firstName, apellido } = parseFullName(nombre.value)
+  const payload = {
+    nombre: firstName,
+    apellido,
+    email: email.value.trim(),
+    telefono: fullPhone,
+    note: LEAD_NOTE,
+    nota: LEAD_NOTE,
+    paso: 'registro_inicial',
+  }
   submitLoading.value = true
   try {
-    await fetch(WEBHOOK, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        nombre: firstName,
-        apellido,
-        email: email.value.trim(),
-        telefono: fullPhone,
-        note: LEAD_NOTE,
-        nota: LEAD_NOTE,
-        paso: 'registro_inicial',
-      }),
-    })
+    await Promise.allSettled([
+      postWebhook(WEBHOOK, payload),
+      postWebhook(AGENT_WEBHOOK, payload),
+    ])
   } catch { }
   await new Promise((r) => setTimeout(r, 400))
   submitLoading.value = false

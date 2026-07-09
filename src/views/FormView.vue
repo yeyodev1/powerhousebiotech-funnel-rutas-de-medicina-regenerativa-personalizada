@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 
 const WEBHOOK = import.meta.env.VITE_WEBHOOK_FORM
 const STEP_WEBHOOK = import.meta.env.VITE_WEBHOOK_FORM_STEP
+const AGENT_WEBHOOK = import.meta.env.VITE_WEBHOOK_FORM_AGENT
 const LEAD_NOTE = [
   '🧬 Cuestionario PHB completado',
   '🏁 Estado: finalizado',
@@ -219,6 +220,16 @@ function getFullPhone() {
   return `${countryCode.value}${phoneNum.value.replace(/\D/g, '')}`
 }
 
+async function postWebhook(url: string | undefined, payload: Record<string, unknown>) {
+  if (!url) return
+
+  await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+}
+
 function hydrateContactFromQuery() {
   const queryName = typeof route.query.nombre === 'string' ? route.query.nombre : ''
   const queryEmail = typeof route.query.email === 'string' ? route.query.email : ''
@@ -273,33 +284,31 @@ function buildSectionDetail() {
 }
 
 async function sendStepUpdate(scope: string, detail = '') {
-  if (!STEP_WEBHOOK) return
-
   const fullPhone = getFullPhone()
   const { nombre: firstName, apellido } = parseFullName(nombre.value)
   const note = buildProgressNote(scope, detail)
+  const payload = {
+    nombre: firstName,
+    apellido,
+    email: email.value.trim(),
+    telefono: fullPhone,
+    note,
+    nota: note,
+    cuestionario: answers.value,
+    total_preguntas: totalQuestions.value,
+    respondidas: answeredCount.value,
+    paso: scope,
+    seccion_id: currentSection.value?.id,
+    seccion: currentSection.value?.title,
+    pregunta_id: detail ? Number(detail.match(/Q(\d+)=/)?.[1] || 0) : 0,
+    respuesta: detail ? Number(detail.match(/=(\d+)/)?.[1] ?? null) : null,
+  }
 
   try {
-    await fetch(STEP_WEBHOOK, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        nombre: firstName,
-        apellido,
-        email: email.value.trim(),
-        telefono: fullPhone,
-        note,
-        nota: note,
-        cuestionario: answers.value,
-        total_preguntas: totalQuestions.value,
-        respondidas: answeredCount.value,
-        paso: scope,
-        seccion_id: currentSection.value?.id,
-        seccion: currentSection.value?.title,
-        pregunta_id: detail ? Number(detail.match(/Q(\d+)=/)?.[1] || 0) : 0,
-        respuesta: detail ? Number(detail.match(/=(\d+)/)?.[1] ?? null) : null,
-      }),
-    })
+    await Promise.allSettled([
+      postWebhook(STEP_WEBHOOK, payload),
+      postWebhook(AGENT_WEBHOOK, payload),
+    ])
   } catch {
     // Silencioso: no bloqueamos el wizard por fallos de red.
   }
@@ -344,44 +353,29 @@ async function handleSubmit() {
   submitLoading.value = true
   const fullPhone = getFullPhone()
   const { nombre: firstName, apellido } = parseFullName(nombre.value)
+  const finalPayload = {
+    nombre: firstName,
+    apellido,
+    email: email.value.trim(),
+    telefono: fullPhone,
+    note: LEAD_NOTE,
+    nota: LEAD_NOTE,
+    cuestionario: answers.value,
+    total_preguntas: totalQuestions.value,
+    respondidas: answeredCount.value,
+    paso: 'cuestionario_phb_finalizado',
+    seccion_id: currentSection.value?.id,
+    seccion: currentSection.value?.title,
+  }
   try {
-    if (STEP_WEBHOOK) {
-      await fetch(STEP_WEBHOOK, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nombre: firstName,
-          apellido,
-          email: email.value.trim(),
-          telefono: fullPhone,
-          note: LEAD_NOTE,
-          nota: LEAD_NOTE,
-          cuestionario: answers.value,
-          total_preguntas: totalQuestions.value,
-          respondidas: answeredCount.value,
-          paso: 'cuestionario_phb_finalizado',
-          seccion_id: currentSection.value?.id,
-          seccion: currentSection.value?.title,
-        }),
-      })
-    }
-
-    await fetch(WEBHOOK, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        nombre: firstName,
-        apellido,
-        email: email.value.trim(),
-        telefono: fullPhone,
-        note: LEAD_NOTE,
-        nota: LEAD_NOTE,
-        cuestionario: answers.value,
-        total_preguntas: totalQuestions.value,
-        respondidas: answeredCount.value,
+    await Promise.allSettled([
+      postWebhook(STEP_WEBHOOK, finalPayload),
+      postWebhook(WEBHOOK, {
+        ...finalPayload,
         paso: 'cuestionario_phb',
       }),
-    })
+      postWebhook(AGENT_WEBHOOK, finalPayload),
+    ])
   } catch { }
   await new Promise((r) => setTimeout(r, 400))
   submitLoading.value = false
