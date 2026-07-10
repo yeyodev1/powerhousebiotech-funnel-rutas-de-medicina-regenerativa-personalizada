@@ -212,8 +212,139 @@ function toggleInfo(id: number) {
   showInfo.value[id] = !showInfo.value[id]
 }
 
+// --- LocalStorage State Management ---
+function saveState() {
+  if (typeof window === 'undefined') return
+  localStorage.setItem('phb_answers', JSON.stringify(answers.value))
+  localStorage.setItem('phb_contact', JSON.stringify({
+    nombre: nombre.value,
+    email: email.value,
+    phoneNum: phoneNum.value,
+    countryCode: countryCode.value,
+  }))
+  localStorage.setItem('phb_active_step', String(activeStep.value))
+  localStorage.setItem('phb_mode', mode.value)
+}
+
+function loadState() {
+  if (typeof window === 'undefined') return
+  try {
+    const savedAnswers = localStorage.getItem('phb_answers')
+    if (savedAnswers) {
+      answers.value = JSON.parse(savedAnswers)
+    }
+
+    const savedContact = localStorage.getItem('phb_contact')
+    if (savedContact) {
+      const contact = JSON.parse(savedContact)
+      if (contact.nombre) nombre.value = contact.nombre
+      if (contact.email) email.value = contact.email
+      if (contact.phoneNum) phoneNum.value = contact.phoneNum
+      if (contact.countryCode) countryCode.value = contact.countryCode
+    }
+
+    const savedStep = localStorage.getItem('phb_active_step')
+    if (savedStep) {
+      activeStep.value = parseInt(savedStep, 10)
+    }
+
+    const savedMode = localStorage.getItem('phb_mode')
+    if (savedMode && (savedMode === 'intro' || savedMode === 'wizard' || savedMode === 'done')) {
+      mode.value = savedMode as 'intro' | 'wizard' | 'done'
+    }
+  } catch (err) {
+    console.error('Error loading state from localStorage:', err)
+  }
+}
+
+function clearState() {
+  if (typeof window === 'undefined') return
+  localStorage.removeItem('phb_answers')
+  localStorage.removeItem('phb_contact')
+  localStorage.removeItem('phb_active_step')
+  localStorage.removeItem('phb_mode')
+}
+
+// --- GHL Custom Field Keys Mapping ---
+function cleanStringForGhl(str: string): string {
+  // Convert to lowercase
+  let cleaned = str.toLowerCase()
+
+  // Replace space-like characters, hyphens, and slashes with underscores
+  cleaned = cleaned.replace(/[\s\t\n\r\-\/]+/g, '_')
+
+  // Remove anything that isn't lowercase letters, numbers, or underscores
+  cleaned = cleaned.replace(/[^a-z0-9_]/g, '')
+
+  // Collapse consecutive underscores
+  cleaned = cleaned.replace(/_+/g, '_')
+
+  // Trim leading/trailing underscores
+  cleaned = cleaned.replace(/^_+|_+$/g, '')
+
+  return cleaned
+}
+
+function getQuestionGhlKey(q: QuestionItem): string {
+  return `${q.id}_${cleanStringForGhl(q.text)}`
+}
+
+function buildCumulativePayload(stepScope: string, noteDetail = '') {
+  const fullPhone = getFullPhone()
+  const { nombre: firstName, apellido } = parseFullName(nombre.value)
+  const note = buildProgressNote(stepScope, noteDetail)
+
+  // New cumulative key-based map (for GHL custom fields)
+  const cuestionarioMap: Record<string, number | string> = {}
+  sectionsData.forEach((section) => {
+    section.questions.forEach((q) => {
+      const key = getQuestionGhlKey(q)
+      const val = answers.value[q.id]
+      cuestionarioMap[key] = val !== undefined ? val : ''
+    })
+  })
+
+  // Parse legacy pregunta_id and respuesta if noteDetail is provided
+  // We check for both the legacy "Qx=y" format and the actual "Qx: y" string format
+  let preguntaId = 0
+  let respuesta: number | null = null
+  if (noteDetail) {
+    const legacyMatch = noteDetail.match(/Q(\d+)=/)
+    if (legacyMatch) {
+      preguntaId = Number(legacyMatch[1] || 0)
+      respuesta = Number(noteDetail.match(/=(\d+)/)?.[1] ?? null)
+    } else {
+      const actualMatch = noteDetail.match(/Q(\d+):\s*(\d+)/)
+      if (actualMatch) {
+        preguntaId = Number(actualMatch[1] || 0)
+        respuesta = Number(actualMatch[2] ?? null)
+      }
+    }
+  }
+
+  return {
+    nombre: firstName,
+    apellido,
+    email: email.value.trim(),
+    telefono: fullPhone,
+    note,
+    nota: note,
+    paso: stepScope,
+    respondidas: answeredCount.value,
+    total_preguntas: totalQuestions.value,
+    seccion: currentSection.value?.title || '',
+    seccion_id: currentSection.value?.id || 0,
+    cuestionario: cuestionarioMap, // New cumulative mapping (Custom Field keys)
+    cuestionario_raw: answers.value, // Legacy ID-based mapping (e.g. { 1: 3, 2: 1 })
+    pregunta_id: preguntaId,
+    respuesta: respuesta,
+  }
+}
+
 function setAnswer(questionId: number, value: number) {
   answers.value[questionId] = value
+  saveState()
+  triggerDebouncedSync()
 }
 
 function getFullPhone() {
@@ -283,26 +414,34 @@ function buildSectionDetail() {
   return ['📌 Respuestas de la sección', ...parts].join('\n')
 }
 
-async function sendStepUpdate(scope: string, detail = '') {
-  const fullPhone = getFullPhone()
-  const { nombre: firstName, apellido } = parseFullName(nombre.value)
-  const note = buildProgressNote(scope, detail)
-  const payload = {
-    nombre: firstName,
-    apellido,
-    email: email.value.trim(),
-    telefono: fullPhone,
-    note,
-    nota: note,
-    cuestionario: answers.value,
-    total_preguntas: totalQuestions.value,
-    respondidas: answeredCount.value,
-    paso: scope,
-    seccion_id: currentSection.value?.id,
-    seccion: currentSection.value?.title,
-    pregunta_id: detail ? Number(detail.match(/Q(\d+)=/)?.[1] || 0) : 0,
-    respuesta: detail ? Number(detail.match(/=(\d+)/)?.[1] ?? null) : null,
+// --- Sync Dispatchers & Debounce ---
+let syncDebounceTimer: ReturnType<typeof setTimeout> | null = null
+
+function triggerDebouncedSync() {
+  if (syncDebounceTimer) {
+    clearTimeout(syncDebounceTimer)
   }
+  syncDebounceTimer = setTimeout(async () => {
+    const payload = buildCumulativePayload('llenando_cuestionario')
+    try {
+      await Promise.allSettled([
+        postWebhook(STEP_WEBHOOK, payload),
+        postWebhook(AGENT_WEBHOOK, payload),
+      ])
+    } catch (err) {
+      // Silently ignore network errors to keep wizard running smoothly
+    }
+  }, 600)
+}
+
+async function sendStepUpdate(scope: string, detail = '') {
+  // Cancel any pending debounced sync since we are doing an immediate sync
+  if (syncDebounceTimer) {
+    clearTimeout(syncDebounceTimer)
+    syncDebounceTimer = null
+  }
+
+  const payload = buildCumulativePayload(scope, detail)
 
   try {
     await Promise.allSettled([
@@ -310,7 +449,7 @@ async function sendStepUpdate(scope: string, detail = '') {
       postWebhook(AGENT_WEBHOOK, payload),
     ])
   } catch {
-    // Silencioso: no bloqueamos el wizard por fallos de red.
+    // Silently ignore network errors to keep wizard running smoothly
   }
 }
 
@@ -328,6 +467,8 @@ function startWizard() {
   mode.value = 'wizard'
   activeStep.value = 0
   dir.value = 'fwd'
+  saveState()
+  sendStepUpdate('comenzo_cuestionario')
 }
 
 async function nextStep() {
@@ -337,6 +478,7 @@ async function nextStep() {
   } else {
     await sendStepUpdate('seccion_completada', buildSectionDetail())
     activeStep.value++
+    saveState()
   }
 }
 
@@ -344,29 +486,24 @@ function prevStep() {
   dir.value = 'back'
   if (isFirstStep.value) {
     mode.value = 'intro'
+    saveState()
   } else {
     activeStep.value--
+    saveState()
+    sendStepUpdate('retrocedio_seccion')
   }
 }
 
 async function handleSubmit() {
   submitLoading.value = true
-  const fullPhone = getFullPhone()
-  const { nombre: firstName, apellido } = parseFullName(nombre.value)
-  const finalPayload = {
-    nombre: firstName,
-    apellido,
-    email: email.value.trim(),
-    telefono: fullPhone,
-    note: LEAD_NOTE,
-    nota: LEAD_NOTE,
-    cuestionario: answers.value,
-    total_preguntas: totalQuestions.value,
-    respondidas: answeredCount.value,
-    paso: 'cuestionario_phb_finalizado',
-    seccion_id: currentSection.value?.id,
-    seccion: currentSection.value?.title,
+
+  // Cancel any pending debounced sync
+  if (syncDebounceTimer) {
+    clearTimeout(syncDebounceTimer)
+    syncDebounceTimer = null
   }
+
+  const finalPayload = buildCumulativePayload('cuestionario_phb_finalizado', LEAD_NOTE)
   try {
     await Promise.allSettled([
       postWebhook(STEP_WEBHOOK, finalPayload),
@@ -376,6 +513,7 @@ async function handleSubmit() {
       }),
       postWebhook(AGENT_WEBHOOK, finalPayload),
     ])
+    clearState()
   } catch { }
   await new Promise((r) => setTimeout(r, 400))
   submitLoading.value = false
@@ -389,8 +527,17 @@ function onDocumentClick(e: MouseEvent) {
 }
 
 onMounted(() => {
+  loadState()
   hydrateContactFromQuery()
   document.addEventListener('click', onDocumentClick)
+
+  // Log the generated GHL custom field keys for developer debugging
+  console.log('--- PHB QUESTION GHL KEYS ---')
+  sectionsData.forEach((section) => {
+    section.questions.forEach((q) => {
+      console.log(`Q${q.id}:`, getQuestionGhlKey(q))
+    })
+  })
 })
 
 onUnmounted(() => {
