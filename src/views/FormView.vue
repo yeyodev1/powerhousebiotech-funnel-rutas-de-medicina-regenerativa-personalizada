@@ -153,6 +153,8 @@ const sectionsData: SectionData[] = [
 
 const answers = ref<Record<number, number>>({})
 const showInfo = ref<Record<number, boolean>>({})
+const lastAnsweredQuestionId = ref<number>(1)
+const lastAnsweredValue = ref<number>(0)
 
 const nombre = ref('')
 const email = ref('')
@@ -224,6 +226,8 @@ function saveState() {
   }))
   localStorage.setItem('phb_active_step', String(activeStep.value))
   localStorage.setItem('phb_mode', mode.value)
+  localStorage.setItem('phb_last_q', String(lastAnsweredQuestionId.value))
+  localStorage.setItem('phb_last_val', String(lastAnsweredValue.value))
 }
 
 function loadState() {
@@ -252,6 +256,16 @@ function loadState() {
     if (savedMode && (savedMode === 'intro' || savedMode === 'wizard' || savedMode === 'done')) {
       mode.value = savedMode as 'intro' | 'wizard' | 'done'
     }
+
+    const savedLastQ = localStorage.getItem('phb_last_q')
+    if (savedLastQ) {
+      lastAnsweredQuestionId.value = parseInt(savedLastQ, 10)
+    }
+
+    const savedLastVal = localStorage.getItem('phb_last_val')
+    if (savedLastVal) {
+      lastAnsweredValue.value = parseInt(savedLastVal, 10)
+    }
   } catch (err) {
     console.error('Error loading state from localStorage:', err)
   }
@@ -263,6 +277,8 @@ function clearState() {
   localStorage.removeItem('phb_contact')
   localStorage.removeItem('phb_active_step')
   localStorage.removeItem('phb_mode')
+  localStorage.removeItem('phb_last_q')
+  localStorage.removeItem('phb_last_val')
 }
 
 // --- GHL Custom Field Keys Mapping ---
@@ -304,20 +320,27 @@ function buildCumulativePayload(stepScope: string, noteDetail = '') {
     })
   })
 
-  // Parse legacy pregunta_id and respuesta if noteDetail is provided
-  // We check for both the legacy "Qx=y" format and the actual "Qx: y" string format
-  let preguntaId = 0
-  let respuesta: number | null = null
+    // Ensure pregunta_id and respuesta are never null/0 by tracking the last answered question
+  let preguntaId = lastAnsweredQuestionId.value || 1
+  let respuesta: number = lastAnsweredValue.value !== null ? lastAnsweredValue.value : 0
+
+  // Parse legacy/detail values if noteDetail is provided, falling back if not found
   if (noteDetail) {
     const legacyMatch = noteDetail.match(/Q(\d+)=/)
     if (legacyMatch) {
-      preguntaId = Number(legacyMatch[1] || 0)
-      respuesta = Number(noteDetail.match(/=(\d+)/)?.[1] ?? null)
+      preguntaId = Number(legacyMatch[1] || preguntaId)
+      const parsedRespuesta = Number(noteDetail.match(/=(\d+)/)?.[1] ?? null)
+      if (parsedRespuesta !== null && !isNaN(parsedRespuesta)) {
+        respuesta = parsedRespuesta
+      }
     } else {
       const actualMatch = noteDetail.match(/Q(\d+):\s*(\d+)/)
       if (actualMatch) {
-        preguntaId = Number(actualMatch[1] || 0)
-        respuesta = Number(actualMatch[2] ?? null)
+        preguntaId = Number(actualMatch[1] || preguntaId)
+        const parsedRespuesta = Number(actualMatch[2] ?? null)
+        if (parsedRespuesta !== null && !isNaN(parsedRespuesta)) {
+          respuesta = parsedRespuesta
+        }
       }
     }
   }
@@ -343,6 +366,8 @@ function buildCumulativePayload(stepScope: string, noteDetail = '') {
 
 function setAnswer(questionId: number, value: number) {
   answers.value[questionId] = value
+  lastAnsweredQuestionId.value = questionId
+  lastAnsweredValue.value = value
   saveState()
   triggerDebouncedSync()
 }
