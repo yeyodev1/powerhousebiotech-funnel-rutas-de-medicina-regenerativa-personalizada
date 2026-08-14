@@ -4,6 +4,11 @@ defineProps<{
   /** Link público del reporte; puede no estar si el backend no respondió */
   reportUrl: string
 }>()
+
+/** Calendario GHL de la cita orientativa (mismo default que usa el backend) */
+const BOOKING_URL =
+  (import.meta.env.VITE_BOOKING_URL as string) ||
+  'https://api.leadconnectorhq.com/widget/booking/Pt4IJuFRDFG2EsbVaZsR'
 </script>
 
 <template>
@@ -41,11 +46,19 @@ defineProps<{
 
     <div class="fp__done-links">
       <a
+        :href="BOOKING_URL"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="fp__done-btn"
+      >
+        <i class="fa-solid fa-calendar-check"></i> AGENDAR MI CITA ORIENTATIVA
+      </a>
+      <a
         v-if="reportUrl"
         :href="reportUrl"
         target="_blank"
         rel="noopener noreferrer"
-        class="fp__done-btn"
+        class="fp__done-btn fp__done-btn--ghost"
       >
         VER MI REPORTE <i class="fa-solid fa-arrow-up-right-from-square"></i>
       </a>
@@ -186,6 +199,22 @@ defineProps<{
   &:hover {
     transform: translateY(-2px);
     filter: brightness(1.07);
+  }
+
+  i {
+    font-size: 0.9em;
+  }
+
+  &--ghost {
+    background: none;
+    border: 1px solid $PHB-BORDER-MEDIUM;
+    color: $PHB-TEXT-2;
+
+    &:hover {
+      border-color: $PHB-CYAN;
+      color: $PHB-TEXT-1;
+      filter: none;
+    }
   }
 }
 
