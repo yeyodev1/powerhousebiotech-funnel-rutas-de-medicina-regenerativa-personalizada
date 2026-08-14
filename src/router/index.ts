@@ -14,9 +14,29 @@ declare module 'vue-router' {
   }
 }
 
+/**
+ * Duración de la animación de salida entre rutas (`.route-leave-active` en App.vue).
+ * El scroll se retrasa este tiempo para que la página no salte arriba mientras la
+ * vista anterior todavía es visible. Si cambias uno, cambia el otro.
+ */
+const ROUTE_LEAVE_MS = 180
+
+function prefersReducedMotion() {
+  return (
+    typeof window !== 'undefined' &&
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+  )
+}
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  scrollBehavior: () => ({ top: 0, behavior: 'instant' }),
+  scrollBehavior(_to, _from, savedPosition) {
+    const target = savedPosition ?? { top: 0, behavior: 'instant' as const }
+    if (prefersReducedMotion()) return target
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(target), ROUTE_LEAVE_MS)
+    })
+  },
   routes: [
     {
       path: '/',

@@ -188,7 +188,6 @@ function scrollTo(id: string) {
       <div class="phb-header__inner">
         <a href="/" class="phb-logo" aria-label="PowerHouse Biotech">
           <img :src="logoSrc" alt="PowerHouse Biotech" class="phb-logo__img" />
-          <!-- <span class="phb-logo__text">POWERHOUSE <small>BIOTECH</small><sup>™</sup></span> -->
         </a>
         <button
           class="phb-hamburger"
@@ -450,7 +449,6 @@ function scrollTo(id: string) {
       <div class="phb-footer__inner">
         <div class="phb-footer__brand">
           <img :src="logoSrc" alt="PowerHouse Biotech" class="phb-footer__logo-img" />
-          <span>POWERHOUSE BIOTECH<sup>™</sup></span>
         </div>
         <p class="phb-footer__byline">
           By <a href="https://juanromangarza.com/" target="_blank" rel="noopener noreferrer">Juan Román Garza</a>
@@ -1615,22 +1613,12 @@ function scrollTo(id: string) {
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.9rem;
 
   img {
-    height: 28px;
+    height: 42px;
     width: auto;
-  }
-
-  span {
-    @include fonts.heading-font(700);
-    font-size: 1rem;
-    color: $PHB-TEXT-2;
-    letter-spacing: 0.06em;
-
-    sup {
-      font-size: 0.45em;
-    }
+    object-fit: contain;
   }
 }
 

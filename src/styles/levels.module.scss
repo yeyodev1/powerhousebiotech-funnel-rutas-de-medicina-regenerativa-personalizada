@@ -1,0 +1,13 @@
+// Colores de nivel de carga sintomática del cuestionario PHB.
+// Compartidos entre los subcomponentes del formulario.
+// Los umbrales viven en `src/data/assessment.ts` (levelFromPercent).
+//
+// El `additionalData` de vite solo se prepende al entry de cada bloque <style>,
+// no a los archivos que este carga con @use: aquí hay que importar los colores
+// de forma explícita o $PHB-* queda indefinido.
+@use './colorVariables.module.scss' as *;
+
+$level-optimo: $PHB-ACCENT;
+$level-vigilancia: #f0c419;
+$level-alerta: #ff8a3d;
+$level-prioritario: #ff5a6e;
