@@ -3,7 +3,8 @@
 
 <template>
   <RouterView v-slot="{ Component, route }">
-    <Transition name="route" mode="out-in">
+    <!-- :duration: fallback por temporizador si se pierde el transitionend -->
+    <Transition name="route" mode="out-in" :duration="{ enter: 260, leave: 180 }">
       <component :is="Component" :key="route.path" />
     </Transition>
   </RouterView>

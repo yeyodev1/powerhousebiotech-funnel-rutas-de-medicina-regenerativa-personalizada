@@ -49,7 +49,10 @@ const emit = defineEmits<{
     :overall-progress="overallProgress"
   />
 
-  <Transition :name="dir" mode="out-in">
+  <!-- :duration explícito: si el navegador pierde el transitionend (pestaña
+       ocupada, throttling), Vue cae a un temporizador y la tarjeta saliente
+       igual se desmonta. Sin esto el wizard puede quedar clavado a mitad. -->
+  <Transition :name="dir" mode="out-in" :duration="260">
     <div class="fp__card fp__card--step" :key="activeStep">
       <div class="fp__section-header">
         <span class="fp__section-num">{{ section.id }}</span>

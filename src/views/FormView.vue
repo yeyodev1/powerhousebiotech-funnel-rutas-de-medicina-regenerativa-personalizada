@@ -165,7 +165,8 @@ onUnmounted(() => {
   <div class="fp">
     <FormBrandHeader :sync-state="syncState" :show-sync="mode === 'wizard'" />
 
-    <Transition name="fp-mode" mode="out-in">
+    <!-- :duration: fallback por temporizador si se pierde el transitionend -->
+    <Transition name="fp-mode" mode="out-in" :duration="{ enter: 280, leave: 180 }">
       <main v-if="mode === 'done'" key="done" class="fp__main fp__main--done">
         <FormDone :total-questions="totalQuestions" :report-url="reportUrl" />
       </main>
