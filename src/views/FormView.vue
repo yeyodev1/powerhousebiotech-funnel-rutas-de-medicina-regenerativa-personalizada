@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAssessmentState } from '@/composables/useAssessmentState'
 import { useAssessmentSync } from '@/composables/useAssessmentSync'
@@ -19,6 +19,7 @@ const {
   lastAnsweredQuestionId,
   lastAnsweredValue,
   nombre,
+  apellido,
   email,
   phoneNum,
   countryCode,
@@ -46,6 +47,20 @@ const { syncState, reportUrl } = sync
 
 const submitLoading = ref(false)
 const showMissing = ref(false)
+
+/**
+ * Si el hero ya capturó el contacto no se vuelve a pedir: solo se confirma.
+ * `editingContact` deja al paciente corregirlo si algo llegó mal.
+ */
+const editingContact = ref(false)
+const hasContact = computed(
+  () =>
+    nombre.value.trim().length >= 2 &&
+    apellido.value.trim().length >= 2 &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim()) &&
+    phoneNum.value.trim().length >= 7,
+)
+const contactPrefilled = computed(() => hasContact.value && !editingContact.value)
 
 function scrollTop() {
   if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -158,14 +173,17 @@ onUnmounted(() => {
       <main v-else-if="mode === 'intro'" key="intro" class="fp__main">
         <FormIntro
           v-model:nombre="nombre"
+          v-model:apellido="apellido"
           v-model:email="email"
           v-model:phone-num="phoneNum"
           v-model:country-code="countryCode"
           :errors="formErrors"
           :answered-count="answeredCount"
           :total-questions="totalQuestions"
+          :prefilled="contactPrefilled"
           @start="startWizard"
           @clear-error="clearError"
+          @edit-contact="editingContact = true"
         />
       </main>
 

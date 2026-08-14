@@ -3,6 +3,7 @@ import { ANSWER_SCALE } from '@/data/assessment'
 import ContactFields from './ContactFields.vue'
 
 const nombre = defineModel<string>('nombre', { required: true })
+const apellido = defineModel<string>('apellido', { required: true })
 const email = defineModel<string>('email', { required: true })
 const phoneNum = defineModel<string>('phoneNum', { required: true })
 const countryCode = defineModel<string>('countryCode', { required: true })
@@ -11,9 +12,11 @@ defineProps<{
   errors: Record<string, string>
   answeredCount: number
   totalQuestions: number
+  /** Contacto ya capturado en el hero: no se vuelve a pedir */
+  prefilled: boolean
 }>()
 
-const emit = defineEmits<{ start: []; clearError: [field: string] }>()
+const emit = defineEmits<{ start: []; clearError: [field: string]; editContact: [] }>()
 
 const scaleOptions = ANSWER_SCALE
 </script>
@@ -57,8 +60,20 @@ const scaleOptions = ANSWER_SCALE
       </div>
     </div>
 
+    <!-- Si los datos ya vinieron del hero no se vuelven a pedir: solo se confirman -->
+    <div v-if="prefilled" class="fp-known">
+      <div>
+        <span class="fp-known__label">Continuarás como</span>
+        <strong>{{ nombre }} {{ apellido }}</strong>
+        <span class="fp-known__meta">{{ email }} · {{ countryCode }} {{ phoneNum }}</span>
+      </div>
+      <button type="button" class="fp-known__edit" @click="emit('editContact')">Editar</button>
+    </div>
+
     <ContactFields
+      v-else
       v-model:nombre="nombre"
+      v-model:apellido="apellido"
       v-model:email="email"
       v-model:phone-num="phoneNum"
       v-model:country-code="countryCode"
@@ -186,6 +201,55 @@ const scaleOptions = ANSWER_SCALE
       color: $PHB-CYAN;
       @include fonts.heading-font(700);
       font-size: 0.78rem;
+    }
+  }
+}
+
+.fp-known {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: rgba($PHB-NAVY-DARK, 0.55);
+  border: 1px solid rgba($PHB-CYAN, 0.28);
+  border-radius: 14px;
+  padding: 0.95rem 1.15rem;
+  margin-bottom: 1.5rem;
+
+  strong {
+    display: block;
+    color: $PHB-TEXT-1;
+    @include fonts.heading-font(700);
+    font-size: 1rem;
+    margin: 0.1rem 0;
+  }
+
+  &__label {
+    @include fonts.accent-font(600);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: $PHB-CYAN;
+  }
+
+  &__meta {
+    font-size: 0.8rem;
+    color: $PHB-TEXT-3;
+  }
+
+  &__edit {
+    flex: none;
+    background: none;
+    border: 1px solid $PHB-BORDER-MEDIUM;
+    border-radius: 999px;
+    padding: 0.4rem 0.9rem;
+    color: $PHB-TEXT-3;
+    font-size: 0.78rem;
+    cursor: pointer;
+
+    &:hover {
+      color: $PHB-TEXT-1;
+      border-color: $PHB-CYAN;
     }
   }
 }

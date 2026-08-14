@@ -6,6 +6,7 @@ const router = useRouter()
 
 const navOpen = ref(false)
 const nombre = ref('')
+const apellido = ref('')
 const email = ref('')
 const phoneNum = ref('')
 const countryCode = ref('+52')
@@ -41,14 +42,6 @@ const countries = [
 
 const currentCountry = computed(() => countries.find(c => c.code === countryCode.value) || countries[0])
 
-function parseFullName(fullName: string) {
-  const parts = fullName.trim().split(/\s+/).filter(Boolean)
-  return {
-    nombre: parts[0] || '',
-    apellido: parts.slice(1).join(' '),
-  }
-}
-
 function selectCountry(c: typeof countries[0]) {
   countryCode.value = c.code
   showCountryPicker.value = false
@@ -71,6 +64,7 @@ async function postWebhook(url: string | undefined, payload: Record<string, unkn
 function validatePersonal() {
   const e: Record<string, string> = {}
   if (nombre.value.trim().length < 2) e.nombre = 'Ingresa tu nombre'
+  if (apellido.value.trim().length < 2) e.apellido = 'Ingresa tu apellido'
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) e.email = 'Email inválido'
   if (phoneNum.value.trim().length < 7) e.telefono = 'Teléfono inválido'
   formErrors.value = e
@@ -80,10 +74,11 @@ function validatePersonal() {
 async function handleSubmit() {
   if (!validatePersonal()) return
   const fullPhone = getFullPhone()
-  const { nombre: firstName, apellido } = parseFullName(nombre.value)
+  const firstName = nombre.value.trim()
+  const lastName = apellido.value.trim()
   const payload = {
     nombre: firstName,
-    apellido,
+    apellido: lastName,
     email: email.value.trim(),
     telefono: fullPhone,
     note: LEAD_NOTE,
@@ -99,7 +94,14 @@ async function handleSubmit() {
   } catch { }
   await new Promise((r) => setTimeout(r, 400))
   submitLoading.value = false
-  const q = new URLSearchParams({ nombre: nombre.value, email: email.value, telefono: fullPhone })
+
+  // El cuestionario lee estos parametros y ya no vuelve a pedir el contacto
+  const q = new URLSearchParams({
+    nombre: firstName,
+    apellido: lastName,
+    email: email.value.trim(),
+    telefono: fullPhone,
+  })
   router.push('/formulario?' + q.toString())
 }
 
@@ -237,12 +239,24 @@ function scrollTo(id: string) {
                 <i class="fa-regular fa-user phb-field__icon"></i>
                 <input
                   v-model="nombre"
-                  placeholder="Nombre completo"
+                  placeholder="Nombre"
+                  autocomplete="given-name"
                   :class="{ error: formErrors.nombre }"
                   @input="formErrors.nombre = ''"
                 />
               </div>
               <p v-if="formErrors.nombre" class="phb-field__error">{{ formErrors.nombre }}</p>
+              <div class="phb-field">
+                <i class="fa-regular fa-user phb-field__icon"></i>
+                <input
+                  v-model="apellido"
+                  placeholder="Apellido"
+                  autocomplete="family-name"
+                  :class="{ error: formErrors.apellido }"
+                  @input="formErrors.apellido = ''"
+                />
+              </div>
+              <p v-if="formErrors.apellido" class="phb-field__error">{{ formErrors.apellido }}</p>
               <div class="phb-field">
                 <i class="fa-regular fa-envelope phb-field__icon"></i>
                 <input

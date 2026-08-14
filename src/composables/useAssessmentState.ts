@@ -40,6 +40,11 @@ export const COUNTRIES: CountryOption[] = [
   { code: '+34', flag: '🇪🇸', label: 'ES' },
 ]
 
+/**
+ * Solo se usa para hidratar desde un `nombre` heredado que venga en la query
+ * con nombre y apellido juntos. La captura pide los dos campos por separado:
+ * partir por espacios se equivoca con nombres compuestos ("María José Pérez").
+ */
 export function parseFullName(fullName: string) {
   const parts = fullName.trim().split(/\s+/).filter(Boolean)
   return { nombre: parts[0] || '', apellido: parts.slice(1).join(' ') }
@@ -57,6 +62,7 @@ export function useAssessmentState() {
   const lastAnsweredValue = ref(0)
 
   const nombre = ref('')
+  const apellido = ref('')
   const email = ref('')
   const phoneNum = ref('')
   const countryCode = ref('+52')
@@ -127,11 +133,12 @@ export function useAssessmentState() {
   }
 
   function buildContact(): AssessmentContact {
-    const { nombre: firstName, apellido } = parseFullName(nombre.value)
+    const first = nombre.value.trim()
+    const last = apellido.value.trim()
     return {
-      nombre: firstName,
-      apellido,
-      fullName: nombre.value.trim(),
+      nombre: first,
+      apellido: last,
+      fullName: [first, last].filter(Boolean).join(' '),
       email: email.value.trim().toLowerCase(),
       telefono: getFullPhone(),
       countryCode: countryCode.value,
@@ -141,6 +148,7 @@ export function useAssessmentState() {
   function validatePersonal() {
     const e: Record<string, string> = {}
     if (nombre.value.trim().length < 2) e.nombre = 'Ingresa tu nombre'
+    if (apellido.value.trim().length < 2) e.apellido = 'Ingresa tu apellido'
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) e.email = 'Email inválido'
     if (phoneNum.value.trim().length < 7) e.telefono = 'Teléfono inválido'
     formErrors.value = e
@@ -155,6 +163,7 @@ export function useAssessmentState() {
       'phb_contact',
       JSON.stringify({
         nombre: nombre.value,
+        apellido: apellido.value,
         email: email.value,
         phoneNum: phoneNum.value,
         countryCode: countryCode.value,
@@ -176,6 +185,7 @@ export function useAssessmentState() {
       if (savedContact) {
         const contact = JSON.parse(savedContact)
         if (contact.nombre) nombre.value = contact.nombre
+        if (contact.apellido) apellido.value = contact.apellido
         if (contact.email) email.value = contact.email
         if (contact.phoneNum) phoneNum.value = contact.phoneNum
         if (contact.countryCode) countryCode.value = contact.countryCode
@@ -217,10 +227,21 @@ export function useAssessmentState() {
   function hydrateFromQuery(query: Record<string, unknown>) {
     const str = (v: unknown) => (typeof v === 'string' ? v : '')
     const queryName = str(query.nombre)
+    const queryLastName = str(query.apellido)
     const queryEmail = str(query.email)
     const queryPhone = str(query.telefono)
 
-    if (queryName && !nombre.value) nombre.value = queryName
+    if (queryName && !nombre.value) {
+      if (queryLastName) {
+        nombre.value = queryName
+      } else {
+        // Enlace antiguo: traia nombre y apellido juntos en un solo parametro
+        const parsed = parseFullName(queryName)
+        nombre.value = parsed.nombre
+        if (!apellido.value) apellido.value = parsed.apellido
+      }
+    }
+    if (queryLastName && !apellido.value) apellido.value = queryLastName
     if (queryEmail && !email.value) email.value = queryEmail
 
     if (queryPhone && !phoneNum.value) {
@@ -240,6 +261,7 @@ export function useAssessmentState() {
     lastAnsweredQuestionId,
     lastAnsweredValue,
     nombre,
+    apellido,
     email,
     phoneNum,
     countryCode,

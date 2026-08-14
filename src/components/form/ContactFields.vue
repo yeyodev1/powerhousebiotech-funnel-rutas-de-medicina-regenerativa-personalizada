@@ -3,6 +3,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { COUNTRIES, type CountryOption } from '@/composables/useAssessmentState'
 
 const nombre = defineModel<string>('nombre', { required: true })
+const apellido = defineModel<string>('apellido', { required: true })
 const email = defineModel<string>('email', { required: true })
 const phoneNum = defineModel<string>('phoneNum', { required: true })
 const countryCode = defineModel<string>('countryCode', { required: true })
@@ -36,15 +37,28 @@ const errors = computed(() => props.errors)
   <div class="fp-personal">
     <p class="fp-personal__label">Tus datos de contacto</p>
 
-    <div class="fp-field">
-      <input
-        v-model="nombre"
-        placeholder="Nombre completo"
-        :class="{ error: errors.nombre }"
-        @input="emit('clearError', 'nombre')"
-      />
+    <div class="fp-field fp-field--split">
+      <div>
+        <input
+          v-model="nombre"
+          placeholder="Nombre"
+          autocomplete="given-name"
+          :class="{ error: errors.nombre }"
+          @input="emit('clearError', 'nombre')"
+        />
+        <p v-if="errors.nombre" class="fp-field__error">{{ errors.nombre }}</p>
+      </div>
+      <div>
+        <input
+          v-model="apellido"
+          placeholder="Apellido"
+          autocomplete="family-name"
+          :class="{ error: errors.apellido }"
+          @input="emit('clearError', 'apellido')"
+        />
+        <p v-if="errors.apellido" class="fp-field__error">{{ errors.apellido }}</p>
+      </div>
     </div>
-    <p v-if="errors.nombre" class="fp-field__error">{{ errors.nombre }}</p>
 
     <div class="fp-field">
       <input
@@ -145,10 +159,18 @@ const errors = computed(() => props.errors)
     }
   }
 
+  // Nombre y apellido en dos columnas; en movil se apilan
+  &--split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.55rem;
+    align-items: start;
+  }
+
   &__error {
     color: levels.$level-prioritario;
     font-size: 0.78rem;
-    margin: -0.4rem 0 0.6rem;
+    margin: 0.25rem 0 0;
   }
 }
 
@@ -215,6 +237,12 @@ const errors = computed(() => props.errors)
     margin-left: auto;
     color: $PHB-TEXT-3;
     font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .fp-field--split {
+    grid-template-columns: 1fr;
   }
 }
 </style>
