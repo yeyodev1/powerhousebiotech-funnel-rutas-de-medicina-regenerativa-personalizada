@@ -29,3 +29,7 @@ coverage
 .env
 
 *.tsbuildinfo
+.vercel
+.env*
+
+node-compile-cache

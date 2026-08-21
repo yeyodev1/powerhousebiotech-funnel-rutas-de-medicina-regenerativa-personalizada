@@ -246,12 +246,18 @@ export function useAssessmentState() {
 
     if (queryPhone && !phoneNum.value) {
       const compact = queryPhone.replace(/\s+/g, '')
-      const match = compact.match(/^(\+\d{1,4})(\d+)$/)
-      if (match) {
-        countryCode.value = match[1]
-        phoneNum.value = match[2]
+      const digits = compact.replace(/\D/g, '')
+      // Prefijo de pais mas largo que coincida: sin esto, un +593 se leia como
+      // "+5939" (regex greedy) y, al no existir, caia al default +52 (Mexico).
+      const known = [...COUNTRIES]
+        .map((c) => c.code)
+        .sort((a, b) => b.length - a.length)
+        .find((code) => digits.startsWith(code.slice(1)))
+      if (known) {
+        countryCode.value = known
+        phoneNum.value = digits.slice(known.length - 1)
       } else {
-        phoneNum.value = compact.replace(/\D/g, '')
+        phoneNum.value = digits
       }
     }
   }
