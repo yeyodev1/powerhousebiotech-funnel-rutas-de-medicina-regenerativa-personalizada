@@ -9,7 +9,7 @@ const nombre = ref('')
 const apellido = ref('')
 const email = ref('')
 const phoneNum = ref('')
-const countryCode = ref('+52')
+const countryCode = ref(detectDefaultCountryCode())
 const showCountryPicker = ref(false)
 const formErrors = ref<Record<string, string>>({})
 const submitLoading = ref(false)
@@ -17,6 +17,7 @@ const submitLoading = ref(false)
 import logoSrc from '@/assets/logos/logo.png'
 import juanPhoto from '@/assets/team/juan.png'
 import heroBg from '@/assets/stock/ancianos.jpg'
+import { detectDefaultCountryCode, extractInternational, buildFullPhone } from '@/utils/phone'
 
 const WEBHOOK = import.meta.env.VITE_WEBHOOK_FORM
 const AGENT_WEBHOOK = import.meta.env.VITE_WEBHOOK_FORM_AGENT
@@ -48,7 +49,17 @@ function selectCountry(c: typeof countries[0]) {
 }
 
 function getFullPhone() {
-  return `${countryCode.value}${phoneNum.value.replace(/\D/g, '')}`
+  return buildFullPhone(countryCode.value, phoneNum.value)
+}
+
+// Si pegan/escriben un numero internacional (+1…, 001…), ajusta el pais solo
+function onPhoneInput() {
+  formErrors.value.telefono = ''
+  const hit = extractInternational(phoneNum.value, countries.map((c) => c.code))
+  if (hit) {
+    countryCode.value = hit.code
+    phoneNum.value = hit.national
+  }
 }
 
 async function postWebhook(url: string | undefined, payload: Record<string, unknown>) {
@@ -295,7 +306,7 @@ function scrollTo(id: string) {
                   type="tel"
                   placeholder="Teléfono / WhatsApp"
                   :class="{ error: formErrors.telefono }"
-                  @input="formErrors.telefono = ''"
+                  @input="onPhoneInput"
                 />
               </div>
               <p v-if="formErrors.telefono" class="phb-field__error">{{ formErrors.telefono }}</p>

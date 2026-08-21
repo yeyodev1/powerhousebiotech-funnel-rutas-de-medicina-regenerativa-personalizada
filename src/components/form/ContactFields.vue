@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { COUNTRIES, type CountryOption } from '@/composables/useAssessmentState'
+import { extractInternational } from '@/utils/phone'
 
 const nombre = defineModel<string>('nombre', { required: true })
 const apellido = defineModel<string>('apellido', { required: true })
@@ -19,6 +20,16 @@ const current = computed(
 function selectCountry(c: CountryOption) {
   countryCode.value = c.code
   showPicker.value = false
+}
+
+// Ajusta el pais solo si escriben/pegan un numero internacional (+1…, 001…)
+function onPhoneInput() {
+  emit('clearError', 'telefono')
+  const hit = extractInternational(phoneNum.value, COUNTRIES.map((c) => c.code))
+  if (hit) {
+    countryCode.value = hit.code
+    phoneNum.value = hit.national
+  }
 }
 
 // El dropdown se cierra al tocar fuera; sin esto queda abierto sobre el teclado móvil

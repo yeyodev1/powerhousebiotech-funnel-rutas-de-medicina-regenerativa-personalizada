@@ -8,6 +8,7 @@ import {
   LEVEL_LABELS,
 } from '@/data/assessment'
 import type { AssessmentContact } from '@/services/assessment'
+import { detectDefaultCountryCode, buildFullPhone } from '@/utils/phone'
 
 export type FormMode = 'intro' | 'wizard' | 'done'
 
@@ -65,7 +66,7 @@ export function useAssessmentState() {
   const apellido = ref('')
   const email = ref('')
   const phoneNum = ref('')
-  const countryCode = ref('+52')
+  const countryCode = ref(detectDefaultCountryCode())
   const formErrors = ref<Record<string, string>>({})
 
   const mode = ref<FormMode>('intro')
@@ -129,7 +130,7 @@ export function useAssessmentState() {
 
   // ─── Contacto ───────────────────────────────────────────────────────────────
   function getFullPhone() {
-    return `${countryCode.value}${phoneNum.value.replace(/\D/g, '')}`
+    return buildFullPhone(countryCode.value, phoneNum.value)
   }
 
   function buildContact(): AssessmentContact {
